@@ -42,10 +42,6 @@ class _HomeState extends State<Home> {
               spacing: 10,
               children: [
                 Expanded(
-                    flex: 3,
-                    child: SearchBarClientes(hint: "Cliente", actions: searchBarActions, inputController: inputController)
-                ),
-                Expanded(
                   flex: 1,
                   child: SizedBox(
                     height: 56,
@@ -58,8 +54,8 @@ class _HomeState extends State<Home> {
                 ),
               ],
             ),
-            ExpandableCard(title: Text("Carta"), child: Text("Informacion"), expanded: Text("Mas informacion"), estatus: Text("Estatus"),
-                onTap: (){})
+            ExpandableCard(title: Text("Carta"), expanded: Text("Mas informacion"), estatus: Text("Estatus"),
+                onTap: (){}, child: Text("Informacion"))
           ],
         ),
       ),

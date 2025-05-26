@@ -21,7 +21,7 @@ class MyApp extends ConsumerWidget {
               GlobalMaterialLocalizations.delegate,
             ],
             theme: ThemeData(useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue)),
-            routerConfig: ref.watch(routerProvider),
+            routerConfig: ref.watch(routerProvider)
           );
         }
     );
