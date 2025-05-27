@@ -4,12 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 class SearchBarClientes extends StatelessWidget {
   const SearchBarClientes({
-    Key? key,
+    super.key,
     required this.hint,
     required this.actions,
     required this.inputController,
     required this.setIdCliente,
-  }) : super(key: key);
+  });
 
   final String hint;
 

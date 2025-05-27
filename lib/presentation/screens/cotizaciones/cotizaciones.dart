@@ -1,6 +1,7 @@
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_cliente.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_movimiento.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
+import 'package:crm/presentation/widgets/custom_drawer.dart';
 import 'package:crm/presentation/widgets/drawer_busqueda.dart';
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ class Cotizaciones extends ConsumerWidget {
           ),
         ),
         backgroundColor: Theme.of(context).primaryColor,
+        iconTheme: IconThemeData(color: theme.onPrimary),
         actions: [
           FittedBox(
             child: IconButton(
@@ -57,6 +59,7 @@ class Cotizaciones extends ConsumerWidget {
           ),
         ],
       ),
+      drawer: CustomDrawer(theme: theme),
       body: Padding(
           padding:EdgeInsets.all(10),
           child: Column(

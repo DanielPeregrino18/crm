@@ -4,7 +4,7 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final bool isEnabled;
   TextEditingController controller;
-  CustomTextField({Key? key, required this.label, required this.isEnabled, required this.controller}) : super(key: key);
+  CustomTextField({super.key, required this.label, required this.isEnabled, required this.controller});
 
   @override
   Widget build(BuildContext context) {
