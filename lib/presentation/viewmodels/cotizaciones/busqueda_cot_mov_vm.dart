@@ -20,5 +20,6 @@ class BusquedaCotMovVM extends ChangeNotifier {
       2,
       10,
     );
+    print(res.TOTAL);
   }
 }
