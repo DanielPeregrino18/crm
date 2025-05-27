@@ -20,4 +20,12 @@ abstract class ApiCabCotizaciones {
       @Query('idSubscription') int idSubscription
       );
   
+  @GET('/GetCabCotMov')
+  Future<CabCotizacion> getCabCotMov(
+      @Query('idAlmacen') int idAlmacen,
+      @Query('idCotizacion') int idCotizacion,
+      @Query('idSaas') String idSaas,
+      @Query('idCompany') int idCompany,
+      @Query('idSubscription') int idSubscription
+      );
 }
