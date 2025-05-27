@@ -1,13 +1,16 @@
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
+import 'package:crm/presentation/screens/pedidos/widgets/buscar_pedido_movimiento.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
+import 'package:crm/presentation/widgets/drawer_busqueda.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:crm/presentation/widgets/search_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Pedidos extends ConsumerStatefulWidget {
   const Pedidos({super.key});
@@ -91,15 +94,20 @@ class _PedidosState extends ConsumerState<Pedidos> {
     ];
 
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: theme.primary,
         iconTheme: IconThemeData(color: theme.onPrimary),
         title: Text('Pedidos', style: TextStyle(color: theme.onPrimary)),
         actions: [
-          IconButton(
-            tooltip: 'Buscar pedido',
-            icon: Icon(Icons.search),
-            onPressed: () {},
+          FittedBox(
+            child: IconButton(
+              icon: Icon(Icons.search, size: 30.sp),
+              tooltip: 'Buscar pedido',
+              onPressed: () {
+                scaffoldKey.currentState?.openEndDrawer();
+              },
+            ),
           ),
           IconButton(
             tooltip: 'Nuevo pedido',
@@ -109,6 +117,10 @@ class _PedidosState extends ConsumerState<Pedidos> {
         ],
       ),
       drawer: CustomDrawer(theme: theme),
+      endDrawer: DrawerBusqueda(
+        title: 'Buscar pedido',
+        tabBars: {'Por movimiento': BuscarPedidoMovimiento()},
+      ),
       body: ListView(
         children: [
           MenuAlmacenPeriodo(theme: theme),
