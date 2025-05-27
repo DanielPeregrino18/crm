@@ -58,6 +58,24 @@ class CabCotizacion {
   bool? RETIENE_IVA;
   double? IVA_RETENIDO_TOTAL;
 
+  //campos de  GetCabCotMov
+  String? TIPO_COTIZACION;
+  int? ID_SUCURSAL_CTE;
+  int? ID_MODELO;
+  int? MOTOR;
+  int? ANO;
+  String? TRANSMISION;
+  bool? DESACTIVADA;
+  DateTime? FECHAENTREGA;
+  DateTime? VIGENCIA;
+  int? ID_PRIORIDAD;
+  int? ID_TIPO_ENTREGA;
+  String? OC_PATH;
+  String? USO_CFDI;
+  bool? VENTAS_PLAZOS;
+  int? ID_USUARIO_CREO;
+  int? ID_MOTIVO_CANC;
+  bool? IVA_INTERIOR;
   CabCotizacion(this.RENGLON, this.ID_COTIZACION, this.CLIENTE, this.VENDEDOR,
       this.ESTATUS, this.TOTAL, this.PARIDAD, this.NOMBRE_ALMACEN,
       this.ID_ALMACEN, this.FECHA, this.ID_VENDEDOR, this.NOMBRE_VENDEDOR,
@@ -72,7 +90,12 @@ class CabCotizacion {
       this.EntregarEnCP, this.EntregarEnCiudad, this.EntregarEnEstado,
       this.EntregarEnCalles, this.ImprimirSinPrecios, this.Nombre,
       this.Id_Gravamen, this.CampoAddenda, this.FECHA_INICIOC, this.FECHA_FINC,
-      this.FECHA_OC, this.IEPS, this.RETIENE_IVA, this.IVA_RETENIDO_TOTAL);
+      this.FECHA_OC, this.IEPS, this.RETIENE_IVA, this.IVA_RETENIDO_TOTAL,
+      this.TIPO_COTIZACION, this.ID_SUCURSAL_CTE, this.ID_MODELO, this.MOTOR,
+      this.ANO, this.TRANSMISION, this.DESACTIVADA, this.FECHAENTREGA,
+      this.VIGENCIA, this.ID_PRIORIDAD, this.ID_TIPO_ENTREGA, this.OC_PATH,
+      this.USO_CFDI, this.VENTAS_PLAZOS, this.ID_USUARIO_CREO,
+      this.ID_MOTIVO_CANC, this.IVA_INTERIOR);
 
   factory CabCotizacion.fromJson(Map<String,dynamic> json) => _$CabCotizacionFromJson(json);
   Map<String, dynamic> toJson() => _$CabCotizacionToJson(this);

@@ -1,3 +1,4 @@
+import 'package:crm/presentation/screens/cotizaciones/widgets/card_cotizacion.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_cliente.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_movimiento.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
@@ -11,13 +12,20 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/search_button.dart';
 
-class Cotizaciones extends ConsumerWidget {
+class Cotizaciones extends ConsumerStatefulWidget {
   Cotizaciones({Key? key}) : super(key: key);
-  final scaffoldKey = GlobalKey<ScaffoldState>();
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
 
-    var cotizacionVM = ref.read(cotizacionVMProvider);
+  @override
+  ConsumerState<Cotizaciones> createState() => _CotizacionesState();
+}
+
+class _CotizacionesState extends ConsumerState<Cotizaciones> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  Widget build(BuildContext context) {
+
+    var cotizacionVM = ref.watch(cotizacionVMProvider);
     var theme = Theme.of(context).colorScheme;
 
     final List<Widget> searchBarActions = [
@@ -78,16 +86,24 @@ class Cotizaciones extends ConsumerWidget {
                     child: SizedBox(
                       height: 56,
                       child: SearchButton(
-                        onPressed: () {
-
-                        },
+                        onPressed: () async {
+                          await cotizacionVM.buscarCotizacionesRango();
+                          setState(() {});
+                          },
                       ),
                     ),
                   ),
                 ],
               ),
               Divider(height: 20,),
-              //ExpandableCard(title: Text("title"), expanded: Text("expanded"), estatus: Text("fact"), onTap: (){}, child: Text("data"))
+              Expanded(
+                child: ListView.builder(
+                    itemCount: cotizacionVM.cotizaciones.length,
+                    itemBuilder: (context, index) {
+                      return CardCotizacion(cotizacion: cotizacionVM.cotizaciones[index]);
+                    },
+                ),
+              )
             ],
           ),
       ),
