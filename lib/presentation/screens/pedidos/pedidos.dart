@@ -1,7 +1,11 @@
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
+import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
+import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
+import 'package:crm/presentation/widgets/search_bar_clientes.dart';
+import 'package:crm/presentation/widgets/search_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -75,6 +79,17 @@ class _PedidosState extends ConsumerState<Pedidos> {
     final ColorScheme theme = Theme.of(context).colorScheme;
     List<Almacen> almacenes = ref.watch(almacenesProvider);
 
+    CotizcionesVM cotizacionVM = ref.watch(cotizacionVMProvider);
+
+    final List<Widget> searchBarActions = [
+      IconButton(
+        onPressed: () {
+          cotizacionVM.clearInputCLiente();
+        },
+        icon: Icon(Icons.clear, color: theme.primary),
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.primary,
@@ -82,20 +97,66 @@ class _PedidosState extends ConsumerState<Pedidos> {
         title: Text('Pedidos', style: TextStyle(color: theme.onPrimary)),
         actions: [
           IconButton(
-            tooltip: 'Menú de Opciones',
-            icon: Icon(Icons.more_vert),
+            tooltip: 'Buscar pedido',
+            icon: Icon(Icons.search),
+            onPressed: () {},
+          ),
+          IconButton(
+            tooltip: 'Nuevo pedido',
+            icon: Icon(Icons.add),
             onPressed: () {},
           ),
         ],
       ),
       drawer: CustomDrawer(theme: theme),
-      body: Center(child: Text('Cards pedidos')),
+      body: ListView(
+        children: [
+          MenuAlmacenPeriodo(theme: theme),
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              children: [
+                Row(
+                  spacing: 10,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: SearchBarClientes(
+                        hint: 'Cliente',
+                        actions: searchBarActions,
+                        inputController: cotizacionVM.clienteController,
+                        setIdCliente: (id) {
+                          cotizacionVM.idCliente = id;
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: 56,
+                        child: SearchButton(
+                          onPressed: () async {
+                            await cotizacionVM.buscarCotizacionesRango();
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (almacenes.isEmpty) {
-            cargarAlmacenes();
-          } else {
-            guardarAlmacenes(almacenes);
+          if (!isLoading) {
+            if (almacenes.isEmpty) {
+              cargarAlmacenes();
+            } else {
+              guardarAlmacenes(almacenes);
+            }
           }
         },
         child: Icon(Icons.storefront),

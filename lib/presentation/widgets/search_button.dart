@@ -15,7 +15,7 @@ class SearchButton extends StatelessWidget {
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         elevation: WidgetStatePropertyAll(4),
-        shadowColor: WidgetStatePropertyAll(theme.primary.withAlpha(60)),
+        // shadowColor: WidgetStatePropertyAll(theme.primary.withAlpha(60)),
       ),
       onPressed: () {
         onPressed();
