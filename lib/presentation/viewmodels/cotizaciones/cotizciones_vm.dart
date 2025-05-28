@@ -11,24 +11,19 @@ final cotizacionVMProvider = StateProvider<CotizcionesVM>(
 
 class CotizcionesVM extends ChangeNotifier {
   //Busqueda Principal
-  final DateFormat formatter = DateFormat('dd/MM/yyyy');
   int idAlmacen = 0;
   SearchController clienteController = SearchController();
   int idCliente = 0;
   int idTipoFecha = 0;
-  String? fechaInicial;
-  String? fechaFin;
+  DateTime fechaInicial = DateTime.now();
+  DateTime fechaFin = DateTime.now();
   ApiCabCotizaciones apiCabCotizaciones;
   List<CabCotizacion> cotizaciones = [];
 
-  CotizcionesVM(this.apiCabCotizaciones) {
-    fechaInicial = formatter.format(DateTime.now());
-    fechaFin = formatter.format(DateTime.now());
-  }
+  CotizcionesVM(this.apiCabCotizaciones);
 
-  void clearInputCLiente() async {
+  void clearInputCliente() async {
     clienteController.clear();
-
   }
 
   Future buscarCotizacionesRango() async{

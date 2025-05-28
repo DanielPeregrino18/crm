@@ -51,7 +51,7 @@ dependencies:
   json_annotation: ^4.9.0
   path_provider: ^2.1.5
   flutter_secure_storage: ^9.2.4
-
+  fluttertoast: ^8.2.12
   flutter_localizations:
     sdk: flutter
 
