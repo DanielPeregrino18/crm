@@ -6,6 +6,7 @@ import 'package:crm/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class BuscarPedidoMovimiento extends ConsumerWidget {
   const BuscarPedidoMovimiento({super.key});
@@ -15,6 +16,7 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
     final almSeleccionado = ref.watch(almacenSeleccionadoProvider);
     final controller = ref.watch(movimientoControllerProvider);
     final buscarPedMovVM = ref.watch(getPedidoProvider.notifier);
+    late bool result;
 
     return Padding(
       padding: EdgeInsets.all(10),
@@ -33,14 +35,18 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
           ),
           CustomButton(
             label: "Buscar",
-            onPressed: () {
-              buscarPedMovVM.getPedido(
+            onPressed: () async {
+              result = await buscarPedMovVM.getPedido(
                 almSeleccionado.value == null ? 0 : almSeleccionado.value!.id_almacen,
                 int.parse(controller.text),
                 "19cf4bcd-c52c-41bf-9fc8-b1f3d91af2df",
                 2,
                 10,
               );
+              if (result) {
+                debugPrint('hola');
+                context.go('/pedidos/pedido');
+              }
             },
           ),
         ],

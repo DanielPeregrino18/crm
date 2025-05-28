@@ -11,6 +11,7 @@ import 'package:crm/presentation/widgets/search_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class Pedidos extends ConsumerStatefulWidget {
   const Pedidos({super.key});
@@ -112,7 +113,9 @@ class _PedidosState extends ConsumerState<Pedidos> {
           IconButton(
             tooltip: 'Nuevo pedido',
             icon: Icon(Icons.add),
-            onPressed: () {},
+            onPressed: () {
+              context.go('/pedidos/pedido', extra: false);
+            },
           ),
         ],
       ),

@@ -22,7 +22,7 @@ class GetPedido extends _$GetPedido {
 
   final RepositorioPedidos _repositorioPedidos = RepositorioPedidos();
 
-  Future<void> getPedido(
+  Future<bool> getPedido(
     int idAlmacen,
     int idPedido,
     String idSaas,
@@ -38,11 +38,11 @@ class GetPedido extends _$GetPedido {
         idSubscription,
       );
       state = AsyncData(pedido);
-      debugPrint('Datos del pedido cargados correctamente');
+      return true;
     } catch (e) {
       state = AsyncData(null);
-      debugPrint('Error al obtener los datos del pedido');
-      debugPrint('$e');
+      debugPrint('Error al obtener los datos del pedido: $e');
+      return false;
     }
   }
 }
