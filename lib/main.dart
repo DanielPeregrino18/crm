@@ -1,11 +1,22 @@
+import 'package:crm/config/DB/object_box_connection.dart';
+import 'package:crm/config/DI/dependencias.dart';
 import 'package:crm/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void main() {
-  runApp( ProviderScope(child: MyApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final ObjectBoxConnection objectBox = await ObjectBoxConnection.create();
+
+  runApp(
+    ProviderScope(
+      overrides: [objectBoxProvider.overrideWithValue(objectBox)],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends ConsumerWidget {

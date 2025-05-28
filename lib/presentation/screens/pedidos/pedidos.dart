@@ -1,9 +1,17 @@
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
+import 'package:crm/presentation/screens/pedidos/widgets/buscar_pedido_movimiento.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
+import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
+import 'package:crm/presentation/widgets/drawer_busqueda.dart';
+import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
+import 'package:crm/presentation/widgets/search_bar_clientes.dart';
+import 'package:crm/presentation/widgets/search_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class Pedidos extends ConsumerStatefulWidget {
   const Pedidos({super.key});
@@ -75,27 +83,95 @@ class _PedidosState extends ConsumerState<Pedidos> {
     final ColorScheme theme = Theme.of(context).colorScheme;
     List<Almacen> almacenes = ref.watch(almacenesProvider);
 
+    CotizcionesVM cotizacionVM = ref.watch(cotizacionVMProvider);
+
+    final List<Widget> searchBarActions = [
+      IconButton(
+        onPressed: () {
+          cotizacionVM.clearInputCLiente();
+        },
+        icon: Icon(Icons.clear, color: theme.primary),
+      ),
+    ];
+
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         backgroundColor: theme.primary,
         iconTheme: IconThemeData(color: theme.onPrimary),
         title: Text('Pedidos', style: TextStyle(color: theme.onPrimary)),
         actions: [
+          FittedBox(
+            child: IconButton(
+              icon: Icon(Icons.search, size: 30.sp),
+              tooltip: 'Buscar pedido',
+              onPressed: () {
+                scaffoldKey.currentState?.openEndDrawer();
+              },
+            ),
+          ),
           IconButton(
-            tooltip: 'Menú de Opciones',
-            icon: Icon(Icons.more_vert),
-            onPressed: () {},
+            tooltip: 'Nuevo pedido',
+            icon: Icon(Icons.add),
+            onPressed: () {
+              context.go('/pedidos/pedido', extra: false);
+            },
           ),
         ],
       ),
       drawer: CustomDrawer(theme: theme),
-      body: Center(child: Text('Cards pedidos')),
+      endDrawer: DrawerBusqueda(
+        title: 'Buscar pedido',
+        tabBars: {'Por movimiento': BuscarPedidoMovimiento()},
+      ),
+      body: ListView(
+        children: [
+          MenuAlmacenPeriodo(theme: theme),
+          Padding(
+            padding: const EdgeInsets.all(15),
+            child: Column(
+              children: [
+                Row(
+                  spacing: 10,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: SearchBarClientes(
+                        hint: 'Cliente',
+                        actions: searchBarActions,
+                        inputController: cotizacionVM.clienteController,
+                        setIdCliente: (id) {
+                          cotizacionVM.idCliente = id;
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: 56,
+                        child: SearchButton(
+                          onPressed: () async {
+                            await cotizacionVM.buscarCotizacionesRango();
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (almacenes.isEmpty) {
-            cargarAlmacenes();
-          } else {
-            guardarAlmacenes(almacenes);
+          if (!isLoading) {
+            if (almacenes.isEmpty) {
+              cargarAlmacenes();
+            } else {
+              guardarAlmacenes(almacenes);
+            }
           }
         },
         child: Icon(Icons.storefront),

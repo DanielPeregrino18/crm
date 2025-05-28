@@ -36,6 +36,7 @@ class DrawerBusqueda extends StatelessWidget {
                 style: GoogleFonts.montserrat(
                   fontSize: 20.sp,
                   color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w600
                 ),
               ),
               centerTitle: true,
