@@ -3,6 +3,7 @@ import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/screens/pedidos/widgets/buscar_pedido_movimiento.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
+import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
 import 'package:crm/presentation/widgets/drawer_busqueda.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
@@ -85,6 +86,8 @@ class _PedidosState extends ConsumerState<Pedidos> {
 
     CotizcionesVM cotizacionVM = ref.watch(cotizacionVMProvider);
 
+    PedidosVM pedidosVM = ref.watch(pedidosVMProvider.notifier);
+
     final List<Widget> searchBarActions = [
       IconButton(
         onPressed: () {
@@ -126,7 +129,17 @@ class _PedidosState extends ConsumerState<Pedidos> {
       ),
       body: ListView(
         children: [
-          MenuAlmacenPeriodo(theme: theme),
+          MenuAlmacenPeriodo(
+            idAlmacen: pedidosVM.idAlmacen,
+            nombreAlmacen: pedidosVM.nombreAlmacen,
+            setAlmacen: (int id, String nombre) {
+              setState(() {
+                pedidosVM.seleccionarAlmacen(id, nombre);
+              });
+              print(pedidosVM.idAlmacen);
+              print(pedidosVM.nombreAlmacen);
+            },
+          ),
           Padding(
             padding: const EdgeInsets.all(15),
             child: Column(

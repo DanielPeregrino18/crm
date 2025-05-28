@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CustomMenu extends StatelessWidget {
-  const CustomMenu({super.key, required this.theme, required this.buttons});
-
-  final ColorScheme theme;
-
   final List<TextButton> buttons;
+  const CustomMenu({super.key, required this.buttons});
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.maxFinite,
       color: theme.primary.withAlpha(80),

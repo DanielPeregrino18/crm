@@ -77,7 +77,8 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
                 children: [
                   Expanded(
                       flex: 3,
-                      child: SearchBarClientes(hint: "Cliente", actions: searchBarActions, inputController: cotizacionVM.clienteController, setIdCliente: (id) {
+                      child: SearchBarClientes(hint: "Cliente", actions: searchBarActions, inputController: cotizacionVM.clienteController,
+                        setIdCliente: (id) {
                         cotizacionVM.idCliente = id;
                       },)
                   ),

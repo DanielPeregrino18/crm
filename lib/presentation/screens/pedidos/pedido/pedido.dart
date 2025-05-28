@@ -156,7 +156,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
                     ),
                     onPressed: () {
                       if (pedido == null) {
-                        mostrarMenu(MenuAlmacenes(theme: theme));
+                        // mostrarMenu(MenuAlmacenes());
                       }
                     },
                   ),

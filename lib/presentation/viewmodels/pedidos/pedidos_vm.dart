@@ -46,3 +46,20 @@ class GetPedido extends _$GetPedido {
     }
   }
 }
+
+@riverpod
+class PedidosVM extends _$PedidosVM {
+  int idAlmacen = 0;
+
+  String nombreAlmacen = '';
+
+  @override
+  PedidosVM build() {
+    return PedidosVM();
+  }
+
+  void seleccionarAlmacen(int id, String nombre) {
+    idAlmacen = id;
+    nombreAlmacen = nombre;
+  }
+}

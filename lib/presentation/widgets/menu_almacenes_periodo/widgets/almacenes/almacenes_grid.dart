@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'almacen_card.dart';
 
 class AlmacenesGrid extends ConsumerWidget {
-  const AlmacenesGrid({super.key, required this.theme});
+  const AlmacenesGrid({super.key, required this.setAlmacen});
 
-  final ColorScheme theme;
+  final Function(int id, String nombre) setAlmacen;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +22,10 @@ class AlmacenesGrid extends ConsumerWidget {
         crossAxisSpacing: 5,
       ),
       itemBuilder: (BuildContext context, int index) {
-        return AlmacenCard(theme: theme, almacen: almacenes[index]);
+        return AlmacenCard(
+          almacen: almacenes[index],
+          setAlmacen: setAlmacen,
+        );
       },
     );
   }

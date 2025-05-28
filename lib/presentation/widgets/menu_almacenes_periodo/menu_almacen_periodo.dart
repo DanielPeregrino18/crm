@@ -1,3 +1,4 @@
+import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/viewmodels/fecha_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,22 +8,34 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/menu_alm
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/menu_periodo.dart';
 
 class MenuAlmacenPeriodo extends ConsumerStatefulWidget {
-  const MenuAlmacenPeriodo({super.key, required this.theme});
+  final int idAlmacen;
+  final String nombreAlmacen;
+  final Function(int id, String nombre) setAlmacen;
 
-  final ColorScheme theme;
+  const MenuAlmacenPeriodo({
+    super.key,
+    required this.idAlmacen,
+    required this.nombreAlmacen,
+    required this.setAlmacen,
+  });
 
   @override
   ConsumerState createState() => _MenuAlmacenPeriodoState();
 }
 
 class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
-  late final ColorScheme _theme;
+  late int _idAlmacen;
+  late String _nombreAlmacen;
+
+  late Function(int id, String nombre) _setAlmacen;
 
   @override
   void initState() {
     super.initState();
-    _theme = widget.theme;
     ref.read(almacenesVMProvider).getAllAlmacenesLDB();
+    _idAlmacen = widget.idAlmacen;
+    _nombreAlmacen = widget.nombreAlmacen;
+    _setAlmacen = widget.setAlmacen;
   }
 
   void mostrarMenu(Widget menu) {
@@ -38,9 +51,10 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
 
   @override
   Widget build(BuildContext context) {
-    final almacenSeleccionado = ref.watch(almacenSeleccionadoProvider);
-    final almacenesLDB =
-        ref.watch(almacenesVMProvider.notifier).almacenesFiltrados;
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
+    final List<AlmacenOB> almacenesLDB =
+        ref.watch(almacenesVMProvider).almacenesFiltrados;
 
     final fechaInicial = ref.watch(fechaInicialStringProvider);
     final fechaFinal = ref.watch(fechaFinalStringProvider);
@@ -51,13 +65,9 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
         label: Row(
           children: [
             Text(
-              almacenesLDB
-                      .isEmpty // Hay almacenes en persistencia local?
-                  ? 'Sin almacenes' // No hay almacenes en persistencia local
-                  : almacenSeleccionado.value ==
-                      null // Hay un almacén seleccionado?
-                  ? '${almacenesLDB[0].id_almacen}. ${almacenesLDB[0].nombre}' // No lo hay: muestra el primero de la lista
-                  : '${almacenSeleccionado.value?.id_almacen}. ${almacenSeleccionado.value?.nombre}', // Si hay: Lo muestra
+              almacenesLDB.isEmpty
+                  ? 'Sin almacenes'
+                  : '$_idAlmacen. $_nombreAlmacen',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
@@ -66,10 +76,10 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
             ),
           ],
         ),
-        icon: Icon(Icons.location_on, color: _theme.primary, size: 24),
+        icon: Icon(Icons.location_on, color: theme.primary, size: 24),
         onPressed: () {
           if (almacenesLDB.isNotEmpty) {
-            mostrarMenu(MenuAlmacenes(theme: _theme));
+            mostrarMenu(MenuAlmacenes(setAlmacen: _setAlmacen));
           }
         },
       ),
@@ -96,13 +106,13 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
             ),
           ],
         ),
-        icon: Icon(Icons.date_range, color: _theme.primary, size: 24),
+        icon: Icon(Icons.date_range, color: theme.primary, size: 24),
         onPressed: () {
-          mostrarMenu(MenuPeriodo(theme: _theme));
+          mostrarMenu(MenuPeriodo(theme: theme));
         },
       ),
     ];
 
-    return CustomMenu(theme: _theme, buttons: buttons);
+    return CustomMenu(buttons: buttons);
   }
 }

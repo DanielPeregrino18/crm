@@ -69,7 +69,6 @@ class MenuPeriodo extends StatelessWidget {
     }
 
     return CustomBottomMenu(
-      theme: theme,
       height: 250,
       title: 'Seleccionar Periodo',
       content: content(),

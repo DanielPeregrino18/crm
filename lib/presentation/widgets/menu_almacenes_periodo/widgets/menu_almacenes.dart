@@ -3,17 +3,15 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/almacene
 import 'package:flutter/material.dart';
 
 class MenuAlmacenes extends StatelessWidget {
-  const MenuAlmacenes({super.key, required this.theme});
-
-  final ColorScheme theme;
+  final Function(int id, String nombre) setAlmacen;
+  const MenuAlmacenes({super.key, required this.setAlmacen});
 
   @override
   Widget build(BuildContext context) {
     return CustomBottomMenu(
-      theme: theme,
       height: 220,
       title: 'Seleccionar Almacén',
-      content: AlmacenesGrid(theme: theme),
+      content: AlmacenesGrid(setAlmacen: setAlmacen),
     );
   }
 }
