@@ -31,7 +31,7 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
     final List<Widget> searchBarActions = [
       IconButton(
         onPressed: () {
-          cotizacionVM.clearInputCLiente();
+          cotizacionVM.clearInputCliente();
         },
         icon: Icon(Icons.clear, color: theme.primary),
       ),

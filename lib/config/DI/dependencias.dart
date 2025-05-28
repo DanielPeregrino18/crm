@@ -5,6 +5,7 @@ import 'package:crm/core/services/api_cab_cotizaciones.dart';
 import 'package:crm/data/repositories/almacen_dao_objectbox_impl.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 final dioProvider =  Provider<Dio>((ref) => Dio(),);
 
@@ -24,3 +25,7 @@ final almacenDaoImplProvider = Provider<AlmacenLDBDao>(
 final almacenServicioProvider = Provider<AlmacenServicio>(
       (ref) => AlmacenServicio(ref.read(almacenDaoImplProvider)),
 );
+
+
+final  formatterProvider = Provider<DateFormat>((ref) =>
+    DateFormat('dd/MM/yyyy'),);

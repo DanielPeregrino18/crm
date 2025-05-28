@@ -1,4 +1,5 @@
 import 'package:crm/data/models/cab_cotizacion.dart';
+import 'package:crm/data/models/cab_cotizacion_cliente.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
@@ -24,6 +25,19 @@ abstract class ApiCabCotizaciones {
   Future<CabCotizacion> getCabCotMov(
       @Query('idAlmacen') int idAlmacen,
       @Query('idCotizacion') int idCotizacion,
+      @Query('idSaas') String idSaas,
+      @Query('idCompany') int idCompany,
+      @Query('idSubscription') int idSubscription
+      );
+
+  @GET('/GetCabsCotCliente')
+  Future<List<CabCotizacionCliente>> GetCabsCotCliente(
+      @Query('idAlmacen') int idAlmacen,
+      @Query('idCliente') int idCliente,
+      @Query('fechaInicio') String fechaInicio,
+      @Query('fechaFin') String fechaFin,
+      @Query('idMov') int idMov,
+      @Query('ordenCompra') String ordenCompra,
       @Query('idSaas') String idSaas,
       @Query('idCompany') int idCompany,
       @Query('idSubscription') int idSubscription
