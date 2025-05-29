@@ -1,8 +1,8 @@
-import 'package:crm/data/models/almacen_seleccionado.dart';
 import 'package:flutter/material.dart';
+import 'package:crm/data/models/almacen_seleccionado.dart';
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
-import 'package:crm/presentation/screens/pedidos/widgets/buscar_pedido_movimiento.dart';
+import 'package:crm/presentation/screens/pedidos/widgets/pedidos_widgets.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
@@ -126,7 +126,10 @@ class _PedidosState extends ConsumerState<Pedidos> {
       drawer: CustomDrawer(theme: theme),
       endDrawer: DrawerBusqueda(
         title: 'Buscar pedido',
-        tabBars: {'Por movimiento': BuscarPedidoMovimiento()},
+        tabBars: {
+          'Por movimiento': BuscarPedidoMovimiento(),
+          'Por cliente': BuscarPedidosCliente(),
+        },
       ),
       body: ListView(
         children: [

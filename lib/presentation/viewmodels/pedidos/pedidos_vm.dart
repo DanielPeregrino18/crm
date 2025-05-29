@@ -1,7 +1,9 @@
 import 'package:crm/core/utils/fechas.dart';
 import 'package:crm/data/models/almacen_seleccionado.dart';
-import 'package:crm/data/models/pedido_model.dart';
-import 'package:crm/data/repositories/pedidos_repositorio.dart';
+import 'package:crm/data/models/pedidos/cabs_ped_cliente.dart';
+import 'package:crm/data/models/pedidos/pedido_model.dart';
+import 'package:crm/data/repositories/pedidos/cabs_pedido_cliente_repositorio.dart';
+import 'package:crm/data/repositories/pedidos/pedidos_repositorio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -34,6 +36,55 @@ class GetPedido extends _$GetPedido {
         idSubscription,
       );
       state = AsyncData(pedido);
+      return true;
+    } catch (e) {
+      state = AsyncData(null);
+      debugPrint('Error al obtener los datos del pedido: $e');
+      return false;
+    }
+  }
+}
+
+// Provider para la obtención de los pedidos por cliente
+@riverpod
+class GetCabsPedCliente extends _$GetCabsPedCliente {
+  @override
+  Future<List<CabsPedCliente>?> build() async {
+    return null;
+  }
+
+  final TextEditingController almacenController = TextEditingController();
+  final TextEditingController clienteController = TextEditingController();
+  final TextEditingController ordenesCompraController = TextEditingController();
+  final TextEditingController folioController = TextEditingController();
+  final CabsPedidoClienteRepositorio _cabsPedidoClienteRepositorio =
+      CabsPedidoClienteRepositorio();
+
+  Future<bool> getCabsPedCliente(
+    int idAlmacen,
+    int idCliente,
+    String fechaInicio,
+    String fechaFin,
+    int idMovimiento,
+    String ordenCompra,
+    String idSaas,
+    int idCompany,
+    int idSubscription,
+  ) async {
+    try {
+      final List<CabsPedCliente>? pedidos = await _cabsPedidoClienteRepositorio
+          .getCabsPedCliente(
+            idAlmacen,
+            idCliente,
+            fechaInicio,
+            fechaFin,
+            idMovimiento,
+            ordenCompra,
+            idSaas,
+            idCompany,
+            idSubscription,
+          );
+      state = AsyncData(pedidos);
       return true;
     } catch (e) {
       state = AsyncData(null);

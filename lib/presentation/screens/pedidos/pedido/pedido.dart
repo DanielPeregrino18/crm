@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:crm/data/models/pedido_model.dart';
+import 'package:crm/data/models/pedidos/pedido_model.dart';
 import 'package:crm/presentation/widgets/custom_check_box.dart';
 import 'package:crm/presentation/screens/pedidos/pedido/widgets/confirmation_widget.dart';
 import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
