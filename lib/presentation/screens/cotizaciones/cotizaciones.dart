@@ -8,6 +8,7 @@ import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../widgets/search_button.dart';
@@ -60,7 +61,7 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
           FittedBox(
             child: IconButton(
               onPressed: () {
-                //context.go("/crear");
+                context.go("/vercotizacion");
               },
               icon: Icon(Icons.note_add, color: Colors.white, size: 30.sp),
             ),
