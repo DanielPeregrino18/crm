@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:crm/config/DI/dependencias.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +29,28 @@ class FormCotizacionVM extends ChangeNotifier {
   TextEditingController plazoController = TextEditingController();
   TextEditingController descuentoController = TextEditingController();
   TextEditingController paridadController = TextEditingController(text: '1.0000');
-  
+  DateTime fechaInicioConsigna = DateTime.now();
+  DateTime fechaFinConsigna = DateTime.now();
+  TextEditingController campoAddendaController = TextEditingController();
+  TextEditingController observacionesController = TextEditingController();
+  bool autorizar = false;
+  bool ivaTotalRetenido = false;
+  TextEditingController domicilioController = TextEditingController();
+  TextEditingController coloniaController = TextEditingController();
+  TextEditingController estadoController = TextEditingController();
+  TextEditingController ciudadController = TextEditingController();
+  TextEditingController codigoPController = TextEditingController();
+  TextEditingController entreCallesController = TextEditingController();
+  TextEditingController domicilioAtencionAContoller = TextEditingController();
+  DateTime fechaEntrega = DateTime.now();
+  TimeOfDay horaEntrega = TimeOfDay.now();
+  double subtotal = 0.0;
+  double  descTotal = 0.0;
+  double iepsTotal = 0.0;
+  double importeDescuento = 0.0;
+  double ivaTotal = 0.0;
+  double ivaRetenido = 0.0;
+  double granTotal = 0.0;
   FormCotizacionVM(this.formatter);
   void met(){
 
@@ -38,5 +61,14 @@ class FormCotizacionVM extends ChangeNotifier {
   }
   String getFechaOC(){
     return formatter.format(fechaOrdenCompra);
+  }
+  String getFechaInicioConsigna(){
+    return formatter.format(fechaInicioConsigna);
+  }
+  String getfechaFinConsigna(){
+    return formatter.format(fechaFinConsigna);
+  }
+  String getfechaEntrega(){
+    return formatter.format(fechaEntrega);
   }
 }
