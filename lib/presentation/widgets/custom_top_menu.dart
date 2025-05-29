@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CustomTopMenu extends StatelessWidget {
-  final List<TextButton> buttons;
-  const CustomTopMenu({super.key, required this.buttons});
+  final List<Widget> elements;
+  const CustomTopMenu({super.key, required this.elements});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class CustomTopMenu extends StatelessWidget {
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: buttons.map((TextButton option) => option).toList(),
+          children: elements.map((Widget element) => element).toList(),
         ),
       ),
     );

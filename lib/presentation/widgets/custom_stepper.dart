@@ -49,7 +49,7 @@ class _CustomStepperState extends State<CustomStepper> {
                       ElevatedButton(
                         onPressed: details.onStepContinue,
                         child: Text(
-                          _currentStep == _steps.length
+                          _currentStep == _steps.length - 1
                               ? 'Finalizar'
                               : 'Siguiente',
                         ),
@@ -67,7 +67,7 @@ class _CustomStepperState extends State<CustomStepper> {
       },
       currentStep: _currentStep,
       onStepContinue: () {
-        if (_currentStep != _steps.length-1) {
+        if (_currentStep != _steps.length - 1) {
           setState(() {
             _currentStep += 1;
           });

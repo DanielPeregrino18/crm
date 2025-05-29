@@ -1,44 +1,45 @@
+import 'package:crm/presentation/widgets/custom_date_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:crm/core/utils/fechas.dart';
 
 class FechaButton extends StatefulWidget {
-  final Function(String fechaInicial)? setFechaInicial;
+  final bool? esFechaInicial;
 
-  final Function(String fechaFinal)? setFechaFinal;
+  final Function(String fecha)? setFecha;
 
-  const FechaButton({super.key, this.setFechaInicial, this.setFechaFinal});
+  final String? fechaExistente;
+
+  const FechaButton({
+    super.key,
+    this.esFechaInicial,
+    this.setFecha,
+    this.fechaExistente,
+  });
 
   @override
   State createState() => _FechaState();
 }
 
 class _FechaState extends State<FechaButton> {
-  late bool esPrimeraFecha;
-
-  DateTime? selectedDate;
+  late bool esFechaInicial;
 
   @override
   void initState() {
+    esFechaInicial = widget.esFechaInicial == true ? true : false;
     super.initState();
-    esPrimeraFecha = widget.setFechaInicial != null ? true : false;
   }
 
+  DateTime? selectedDate;
+
   Future<void> _selectDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate:
-          widget.setFechaInicial == null
-              ? Fechas().ayerDateTime
-              : DateTime.now(),
-      firstDate: DateTime(2015),
-      lastDate: DateTime.now(),
+    final DateTime? pickedDate = await customDatePicker(
+      context,
+      initialDate: esFechaInicial ? Fechas().ayerDateTime : DateTime.now(),
     );
 
     setState(() {
       selectedDate = pickedDate;
-      esPrimeraFecha
-          ? widget.setFechaInicial!(Fechas().crearString(selectedDate!))
-          : widget.setFechaFinal!(Fechas().crearString(selectedDate!));
+      widget.setFecha!(Fechas().crearString(selectedDate!));
     });
   }
 
@@ -46,11 +47,18 @@ class _FechaState extends State<FechaButton> {
   Widget build(BuildContext context) {
     return TextButton.icon(
       label: Text(
-        selectedDate != null
-            ? Fechas().crearString(selectedDate!)
-            : esPrimeraFecha
-            ? Fechas().ayerString()
-            : Fechas().hoyString(),
+        selectedDate !=
+                null // Hay alguna fecha seleccionada?
+            ? Fechas().crearString(
+              selectedDate!,
+            ) // Muestra la fecha seleccionada
+            : widget.fechaExistente !=
+                null // Se pasó una fecha existente?
+            ? widget.fechaExistente! // Muestra la fecha existente
+            : esFechaInicial // Es una fecha inicial?
+            ? Fechas()
+                .ayerString() // Fecha del día anterior
+            : Fechas().hoyString(), // Fecha día actual
         style: TextStyle(
           fontSize: 16,
           color: Colors.black,
