@@ -49,7 +49,8 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
                 10,
               );
               if (result) {
-                context.go('/pedidos/pedido');
+                // Navigator.pop(context); // Se puede cerrar el campo de búsqueda por movimiento al encontrar el pedido
+                context.go('/pedidos/pedido', extra: false);
               }
             },
           ),

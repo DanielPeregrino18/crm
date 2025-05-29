@@ -18,20 +18,20 @@ class AlmacenesNotifier extends StateNotifier<List<Almacen>> {
     int idSubscription,
   ) async {
     try {
-      // final List<Almacen> almacenes = await _repositorioAlmacenes.getData(
-      //   idSaas,
-      //   idCompany,
-      //   idSubscription,
-      // );
+      final List<Almacen> almacenes = await _repositorioAlmacenes.getData(
+        idSaas,
+        idCompany,
+        idSubscription,
+      );
 
-      // state = almacenes;
+      state = almacenes;
 
-      final List<Almacen> almacenesSimulados = [
-        Almacen(0, 0, 'TODOS'),
-        Almacen(1, 1, 'REFRI-VICENTE'),
-      ];
+      // final List<Almacen> almacenesSimulados = [
+      //   Almacen(0, 0, 'TODOS'),
+      //   Almacen(1, 1, 'REFRI-VICENTE'),
+      // ];
 
-      state = almacenesSimulados;
+      // state = almacenesSimulados;
 
       debugPrint('Datos de almacenes cargados correctamente');
     } catch (e) {

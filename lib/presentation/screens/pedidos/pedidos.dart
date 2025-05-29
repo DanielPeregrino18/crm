@@ -184,6 +184,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
               ],
             ),
           ),
+          isLoading? CircularProgressIndicator() : Container(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

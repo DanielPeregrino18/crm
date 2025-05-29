@@ -56,8 +56,6 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
     );
   }
 
-  final String alm = 'REFRI-GOMEZ';
-
   final String fechaInicial = '29/05/2023';
 
   void modalButtonSheetFullScreen(Widget menu) {
@@ -99,7 +97,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               'Almacén',
               TextButton(
                 child: Text(
-                  nuevo ? alm : '${pedido?.ID_ALMACEN}',
+                  nuevo ? almacen : '${pedido?.ID_ALMACEN}',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.black,

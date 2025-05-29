@@ -67,7 +67,7 @@ class _CustomStepperState extends State<CustomStepper> {
       },
       currentStep: _currentStep,
       onStepContinue: () {
-        if (_currentStep != _steps.length) {
+        if (_currentStep != _steps.length-1) {
           setState(() {
             _currentStep += 1;
           });
