@@ -1,7 +1,7 @@
-import 'package:crm/domain/entities/almacen_ob.dart';
-import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:flutter/material.dart';
+import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'almacen_card.dart';
 
 class AlmacenesGrid extends ConsumerWidget {
@@ -19,7 +19,6 @@ class AlmacenesGrid extends ConsumerWidget {
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
         mainAxisSpacing: 5,
-        crossAxisSpacing: 5,
       ),
       itemBuilder: (BuildContext context, int index) {
         return AlmacenCard(

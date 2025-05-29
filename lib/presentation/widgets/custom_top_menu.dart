@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class CustomMenu extends StatelessWidget {
+class CustomTopMenu extends StatelessWidget {
   final List<TextButton> buttons;
-  const CustomMenu({super.key, required this.buttons});
+  const CustomTopMenu({super.key, required this.buttons});
 
   @override
   Widget build(BuildContext context) {

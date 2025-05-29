@@ -6,21 +6,6 @@ import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/viewmodels/general_purpose.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'almacenes_vm.g.dart';
-
-@riverpod
-class AlmacenSeleccionado extends _$AlmacenSeleccionado {
-  @override
-  Future<AlmacenOB?> build() async {
-    return null;
-  }
-
-  Future<void> seleccionarAlmacen(AlmacenOB almacenOB) async {
-    state = AsyncData(almacenOB);
-  }
-}
 
 class AlmacenesNotifier extends StateNotifier<List<Almacen>> {
   AlmacenesNotifier() : super([]);
@@ -33,20 +18,20 @@ class AlmacenesNotifier extends StateNotifier<List<Almacen>> {
     int idSubscription,
   ) async {
     try {
-      final List<Almacen> almacenes = await _repositorioAlmacenes.getData(
-        idSaas,
-        idCompany,
-        idSubscription,
-      );
+      // final List<Almacen> almacenes = await _repositorioAlmacenes.getData(
+      //   idSaas,
+      //   idCompany,
+      //   idSubscription,
+      // );
 
-      state = almacenes;
+      // state = almacenes;
 
-      // final List<Almacen> almacenesSimulados = [
-      //   Almacen(0, 0, 'TODOS'),
-      //   Almacen(1, 1, 'REFRI-VICENTE'),
-      // ];
-      //
-      // state = almacenesSimulados;
+      final List<Almacen> almacenesSimulados = [
+        Almacen(0, 0, 'TODOS'),
+        Almacen(1, 1, 'REFRI-VICENTE'),
+      ];
+
+      state = almacenesSimulados;
 
       debugPrint('Datos de almacenes cargados correctamente');
     } catch (e) {

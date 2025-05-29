@@ -1,52 +1,44 @@
-import 'package:crm/presentation/viewmodels/fecha_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:crm/core/utils/fechas.dart';
 
-class FechaButton extends ConsumerStatefulWidget {
-  const FechaButton({super.key, required this.esPrimeraFecha});
+class FechaButton extends StatefulWidget {
+  final Function(String fechaInicial)? setFechaInicial;
 
-  final bool esPrimeraFecha;
+  final Function(String fechaFinal)? setFechaFinal;
+
+  const FechaButton({super.key, this.setFechaInicial, this.setFechaFinal});
 
   @override
-  ConsumerState createState() => _FechaState();
+  State createState() => _FechaState();
 }
 
-class _FechaState extends ConsumerState<FechaButton> {
-  late final bool _esPrimeraFecha;
-
-  late final hoyDateTime = ref.read(fechaFinalDateTimeProvider);
-
-  late final ayerDateTime = ref.read(fechaInicialDateTimeProvider);
-
-  late final hoyString = ref.watch(fechaFinalStringProvider);
-
-  late final ayerString = ref.watch(fechaInicialStringProvider);
+class _FechaState extends State<FechaButton> {
+  late bool esPrimeraFecha;
 
   DateTime? selectedDate;
 
   @override
   void initState() {
-    _esPrimeraFecha = widget.esPrimeraFecha;
     super.initState();
+    esPrimeraFecha = widget.setFechaInicial != null ? true : false;
   }
 
   Future<void> _selectDate() async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: _esPrimeraFecha ? ayerDateTime.value : hoyDateTime.value,
+      initialDate:
+          widget.setFechaInicial == null
+              ? Fechas().ayerDateTime
+              : DateTime.now(),
       firstDate: DateTime(2015),
       lastDate: DateTime.now(),
     );
 
     setState(() {
       selectedDate = pickedDate;
-      _esPrimeraFecha
-          ? ref
-              .read(fechaInicialStringProvider.notifier)
-              .seleccionarFechaInicial(selectedDate!)
-          : ref
-              .read(fechaFinalStringProvider.notifier)
-              .seleccionarFechaFinal(selectedDate!);
+      esPrimeraFecha
+          ? widget.setFechaInicial!(Fechas().crearString(selectedDate!))
+          : widget.setFechaFinal!(Fechas().crearString(selectedDate!));
     });
   }
 
@@ -55,10 +47,10 @@ class _FechaState extends ConsumerState<FechaButton> {
     return TextButton.icon(
       label: Text(
         selectedDate != null
-            ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-            : _esPrimeraFecha
-            ? '${ayerString.value}'
-            : '${hoyString.value}',
+            ? Fechas().crearString(selectedDate!)
+            : esPrimeraFecha
+            ? Fechas().ayerString()
+            : Fechas().hoyString(),
         style: TextStyle(
           fontSize: 16,
           color: Colors.black,

@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 class CustomStepper extends StatefulWidget {
   final List<Step> steps;
 
-  final Widget confirmationWidget;
+  // Se puede agregar una función para mostrar un diálogo de confirmación o alguna otra acción
+  final Function? onLastStepContinue;
 
-  const CustomStepper({super.key, required this.steps, required this.confirmationWidget});
+  const CustomStepper({
+    super.key,
+    required this.steps,
+    this.onLastStepContinue,
+  });
 
   @override
   State<CustomStepper> createState() => _CustomStepperState();
@@ -15,7 +20,6 @@ class _CustomStepperState extends State<CustomStepper> {
   int _currentStep = 0;
 
   late List<Step> _steps;
-
 
   @override
   void initState() {
@@ -69,9 +73,9 @@ class _CustomStepperState extends State<CustomStepper> {
           });
         } else {
           Navigator.pop(context);
-          // if (pedido == null) {
-          //   modalButtonSheetFullScreen(ConfirmationWidget());
-          // }
+          if (widget.onLastStepContinue != null) {
+            widget.onLastStepContinue!();
+          }
         }
       },
       onStepCancel: () {

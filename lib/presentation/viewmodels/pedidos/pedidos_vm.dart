@@ -1,3 +1,5 @@
+import 'package:crm/core/utils/fechas.dart';
+import 'package:crm/data/models/almacen_seleccionado.dart';
 import 'package:crm/data/models/pedido_model.dart';
 import 'package:crm/data/repositories/pedidos_repositorio.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,19 +8,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'pedidos_vm.g.dart';
 
 @riverpod
-class MovimientoController extends _$MovimientoController {
-  @override
-  TextEditingController build() {
-    return TextEditingController();
-  }
-}
-
-@riverpod
 class GetPedido extends _$GetPedido {
   @override
   Future<Pedido?> build() async {
     return null;
   }
+
+  final TextEditingController movimientoController = TextEditingController();
 
   final RepositorioPedidos _repositorioPedidos = RepositorioPedidos();
 
@@ -49,9 +45,16 @@ class GetPedido extends _$GetPedido {
 
 @riverpod
 class PedidosVM extends _$PedidosVM {
-  int idAlmacen = 0;
+  AlmacenSeleccionado almacenSeleccionado = AlmacenSeleccionado(
+    id: 0,
+    nombre: 'TODOS',
+  );
 
-  String nombreAlmacen = '';
+  int tipoFecha = 1;
+
+  String fechaInicial = Fechas().ayerString();
+
+  late String fechaFinal = Fechas().hoyString();
 
   @override
   PedidosVM build() {
@@ -59,7 +62,18 @@ class PedidosVM extends _$PedidosVM {
   }
 
   void seleccionarAlmacen(int id, String nombre) {
-    idAlmacen = id;
-    nombreAlmacen = nombre;
+    almacenSeleccionado = AlmacenSeleccionado(id: id, nombre: nombre);
+  }
+
+  void seleccionarTipoFecha(int tipoF) {
+    tipoFecha = tipoF;
+  }
+
+  void seleccionarFechaInicial(String fechaI) {
+    fechaInicial = fechaI;
+  }
+
+  void seleccionarFechaFinal(String fechaF) {
+    fechaFinal = fechaF;
   }
 }

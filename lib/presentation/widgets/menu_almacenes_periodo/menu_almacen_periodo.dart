@@ -1,6 +1,6 @@
-import 'package:crm/domain/entities/almacen_ob.dart';
-import 'package:crm/presentation/viewmodels/fecha_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:crm/domain/entities/almacen_ob.dart';
+import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/widgets/custom_top_menu.dart';
@@ -8,15 +8,20 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/menu_alm
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/menu_periodo.dart';
 
 class MenuAlmacenPeriodo extends ConsumerStatefulWidget {
-  final int idAlmacen;
-  final String nombreAlmacen;
-  final Function(int id, String nombre) setAlmacen;
+  final Function(int, String)? setAlmacen;
+
+  final Function(int)? setTipoFecha;
+
+  final Function(String)? setFechaInicial;
+
+  final Function(String)? setFechaFinal;
 
   const MenuAlmacenPeriodo({
     super.key,
-    required this.idAlmacen,
-    required this.nombreAlmacen,
-    required this.setAlmacen,
+    this.setAlmacen,
+    this.setTipoFecha,
+    this.setFechaInicial,
+    this.setFechaFinal,
   });
 
   @override
@@ -24,18 +29,46 @@ class MenuAlmacenPeriodo extends ConsumerStatefulWidget {
 }
 
 class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
-  late int _idAlmacen;
-  late String _nombreAlmacen;
-
-  late Function(int id, String nombre) _setAlmacen;
+  late int idAlmacen;
+  late String nombreAlmacen;
+  late int tipoFecha;
+  late String fechaInicial;
+  late String fechaFinal;
 
   @override
   void initState() {
     super.initState();
     ref.read(almacenesVMProvider).getAllAlmacenesLDB();
-    _idAlmacen = widget.idAlmacen;
-    _nombreAlmacen = widget.nombreAlmacen;
-    _setAlmacen = widget.setAlmacen;
+    idAlmacen = 0;
+    nombreAlmacen = 'TODOS';
+    fechaInicial = Fechas().ayerString();
+    fechaFinal = Fechas().hoyString();
+  }
+
+  void actualizarAlmacen(int id, String nombre) {
+    setState(() {
+      idAlmacen = id;
+      nombreAlmacen = nombre;
+    });
+    widget.setAlmacen?.call(id, nombre);
+  }
+
+  void actualizarTipoFecha(int tipoF) {
+    widget.setTipoFecha?.call(tipoF);
+  }
+
+  void actualizarFechaInicial(String fechaI) {
+    setState(() {
+      fechaInicial = fechaI;
+    });
+    widget.setFechaInicial?.call(fechaI);
+  }
+
+  void actualizarFechaFinal(String fechaF) {
+    setState(() {
+      fechaFinal = fechaF;
+    });
+    widget.setFechaFinal?.call(fechaF);
   }
 
   void mostrarMenu(Widget menu) {
@@ -56,18 +89,13 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
     final List<AlmacenOB> almacenesLDB =
         ref.watch(almacenesVMProvider).almacenesFiltrados;
 
-    final fechaInicial = ref.watch(fechaInicialStringProvider);
-    final fechaFinal = ref.watch(fechaFinalStringProvider);
-
     final List<TextButton> buttons = [
       // Almacén
       TextButton.icon(
         label: Row(
           children: [
             Text(
-              almacenesLDB.isEmpty
-                  ? 'Sin almacenes'
-                  : '$_idAlmacen. $_nombreAlmacen',
+              '$idAlmacen. $nombreAlmacen',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
@@ -78,9 +106,11 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
         ),
         icon: Icon(Icons.location_on, color: theme.primary, size: 24),
         onPressed: () {
-          if (almacenesLDB.isNotEmpty) {
-            mostrarMenu(MenuAlmacenes(setAlmacen: _setAlmacen));
-          }
+          almacenesLDB.isEmpty
+              ? debugPrint(
+                'No hay almacenes para mostrar',
+              ) // Se puede agregar un indicador en pantalla
+              : mostrarMenu(MenuAlmacenes(setAlmacen: actualizarAlmacen));
         },
       ),
       // Fecha
@@ -88,7 +118,7 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
         label: Row(
           children: [
             Text(
-              '${fechaInicial.value}',
+              fechaInicial,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
@@ -97,7 +127,7 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
             ),
             Icon(Icons.arrow_right),
             Text(
-              '${fechaFinal.value}',
+              fechaFinal,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
@@ -108,11 +138,18 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
         ),
         icon: Icon(Icons.date_range, color: theme.primary, size: 24),
         onPressed: () {
-          mostrarMenu(MenuPeriodo(theme: theme));
+          mostrarMenu(
+            MenuPeriodo(
+              setTipoFecha: actualizarTipoFecha,
+              setFechaInicial: actualizarFechaInicial,
+              setFechaFinal: actualizarFechaFinal,
+            ),
+          );
         },
       ),
     ];
 
-    return CustomMenu(buttons: buttons);
+    // Menú tipo cintilla
+    return CustomTopMenu(buttons: buttons);
   }
 }
