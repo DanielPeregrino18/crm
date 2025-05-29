@@ -41,7 +41,7 @@ class _CotizacionBusquedaClienteState
             hint: "Cliente",
             actions: searchBarActions,
             inputController: busquedaCotClieVM.clienteController,
-            setIdCliente: (int id) {},
+            setIdCliente: (int id) { print(id); },
           ),
           CustomTextField(
             label: "Ordenes de compra",
