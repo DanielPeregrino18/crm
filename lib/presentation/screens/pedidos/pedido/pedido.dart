@@ -177,7 +177,10 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               'Fecha de registro',
               IgnorePointer(
                 child: FechaButton(
-                  fechaExistente: nuevo ? null : pedido!.FECHA_REGISTRO,
+                  fechaExistente:
+                      nuevo
+                          ? null
+                          : Fechas().crearString(pedido!.FECHA_REGISTRO),
                 ),
               ),
             ),
@@ -186,6 +189,8 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               theme,
               'Fecha orden de compra',
               FechaButton(
+                fechaExistente:
+                    nuevo ? null : Fechas().crearString(pedido!.FECHA_OC),
                 setFecha: (String fecha) {
                   pedidosVM.FECHA_OC = fecha;
                   debugPrint('Fecha O.C: ${pedidosVM.FECHA_OC}');
@@ -263,6 +268,8 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               theme,
               'Fecha inicio consigna',
               FechaButton(
+                fechaExistente:
+                    nuevo ? null : Fechas().crearString(pedido!.FECHA_INICIOC),
                 setFecha: (String fecha) {
                   pedidosVM.FECHA_INICIOC = fecha;
                   debugPrint(
@@ -276,6 +283,8 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               theme,
               'Fecha fin consigna',
               FechaButton(
+                fechaExistente:
+                    nuevo ? null : Fechas().crearString(pedido!.FECHA_FINC),
                 setFecha: (String fecha) {
                   pedidosVM.FECHA_FINC = fecha;
                   debugPrint('Fecha fin consigna: ${pedidosVM.FECHA_FINC}');
@@ -359,7 +368,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               Text(
                 nuevo
                     ? '\$388.90'
-                    : 'hola', // '\$${pedido.IVA_RETENIDO_TOTAL - pedido.DESCUENTO}',
+                    : '\$${pedido!.IVA_RETENIDO_TOTAL - pedido.DESCUENTO}',
               ),
             ),
             // IVA total

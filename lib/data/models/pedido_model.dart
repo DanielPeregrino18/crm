@@ -6,7 +6,7 @@ part 'pedido_model.g.dart';
 class Pedido {
   int ID_ALMACEN;
   int ID_PEDIDO;
-  String FECHA;
+  DateTime FECHA;
   int ID_VENDEDOR;
   int ID_CLIENTE;
   int ID_CTE_FACTURA;
@@ -57,14 +57,14 @@ class Pedido {
   String EntregarEnCalles;
   bool ImprimirSinPrecios;
 
-  String FECHA_REGISTRO;
+  DateTime FECHA_REGISTRO;
   String Nombre;
   int Id_Gravamen;
   String CampoAddenda;
   bool Apartado;
-  String FECHA_INICIOC;
-  String FECHA_FINC;
-  String FECHA_OC;
+  DateTime FECHA_INICIOC;
+  DateTime FECHA_FINC;
+  DateTime FECHA_OC;
   String? FECHAENTREGA;
   double IEPS;
   bool RETIENE_IVA;
