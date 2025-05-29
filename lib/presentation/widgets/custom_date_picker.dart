@@ -33,7 +33,10 @@ Future<TimeOfDay?> customHourPicker(
   );
 }
 
-Future<DateTime?> customDatePicker(BuildContext context) {
+Future<DateTime?> customDatePicker(
+  BuildContext context, {
+  DateTime? initialDate,
+}) {
   return showDatePicker(
     barrierLabel: "Fecha",
     fieldLabelText: "Fecha",
@@ -44,8 +47,9 @@ Future<DateTime?> customDatePicker(BuildContext context) {
     errorFormatText: "Formato invalido",
     locale: const Locale("es", "MX"),
     context: context,
-    firstDate: DateTime(2020),
+    firstDate: DateTime(2015),
     lastDate: DateTime.now(),
+    initialDate: initialDate ?? DateTime.now(),
   );
 }
 

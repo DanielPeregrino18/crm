@@ -1,4 +1,8 @@
+import 'dart:math';
+import 'package:crm/data/models/almacen_seleccionado.dart';
+import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/fecha_button.dart';
 import 'package:flutter/material.dart';
+import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:crm/data/models/pedido_model.dart';
@@ -6,6 +10,7 @@ import 'package:crm/presentation/widgets/custom_check_box.dart';
 import 'package:crm/presentation/screens/pedidos/pedido/widgets/confirmation_widget.dart';
 import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
 import 'package:crm/presentation/widgets/custom_stepper.dart';
+import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/almacenes/almacen_button.dart';
 
 class PedidoScreen extends ConsumerStatefulWidget {
   const PedidoScreen({super.key});
@@ -17,8 +22,16 @@ class PedidoScreen extends ConsumerStatefulWidget {
 class _PedidoScreenState extends ConsumerState<PedidoScreen> {
   late PedidosVM pedidosVM = ref.watch(pedidosVMProvider);
 
-  late String almacen =
-      '${pedidosVM.almacenSeleccionado.id}. ${pedidosVM.almacenSeleccionado.nombre}';
+  bool _isEnabled(Pedido? pedido) =>
+      pedido?.ESTATUS == 'FACTURADO' ? false : true;
+
+  late String fecha;
+
+  @override
+  void initState() {
+    fecha = Fechas().hoyString();
+    super.initState();
+  }
 
   TextFormField _customTextField(
     ColorScheme theme,
@@ -41,7 +54,8 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
 
   Widget _customRow(ColorScheme theme, String left, Widget right) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      height: min(50, 50),
+      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
       decoration: BoxDecoration(
         color: theme.primary.withAlpha(15),
         borderRadius: BorderRadius.circular(8),
@@ -56,8 +70,6 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
     );
   }
 
-  final String fechaInicial = '29/05/2023';
-
   void modalButtonSheetFullScreen(Widget menu) {
     showModalBottomSheet(
       useSafeArea: true,
@@ -69,9 +81,6 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
       },
     );
   }
-
-  bool _isEnabled(Pedido? pedido) =>
-      pedido?.ESTATUS == 'FACTURADO' ? false : true;
 
   @override
   Widget build(BuildContext context) {
@@ -95,21 +104,19 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             _customRow(
               theme,
               'Almacén',
-              TextButton(
-                child: Text(
-                  nuevo ? almacen : '${pedido?.ID_ALMACEN}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                onPressed: () {
-                  if (pedido == null) {
-                    // mostrarMenu(MenuAlmacenes());
-                  }
-                },
-              ),
+              nuevo
+                  ? AlmacenButton(
+                    setAlmacen: (int id, String nombre) {
+                      pedidosVM.almacenSeleccionado = AlmacenSeleccionado(
+                        id: id,
+                        nombre: nombre,
+                      );
+                      debugPrint(
+                        'Id almacén: ${pedidosVM.almacenSeleccionado.id}',
+                      );
+                    },
+                  )
+                  : IgnorePointer(child: AlmacenButton()),
             ),
             // Cliente
             _customTextField(
@@ -168,45 +175,25 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             _customRow(
               theme,
               'Fecha de registro',
-              TextButton(
-                child: Text(
-                  nuevo ? fechaInicial : pedido!.FECHA_REGISTRO,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
+              IgnorePointer(
+                child: FechaButton(
+                  fechaExistente:
+                      nuevo
+                          ? null
+                          : Fechas().crearString(pedido!.FECHA_REGISTRO),
                 ),
-                onPressed: () {
-                  if (pedido == null) {
-                    showDatePicker(
-                      context: context,
-                      firstDate: DateTime(2015),
-                      lastDate: DateTime.now(),
-                    );
-                  }
-                },
               ),
             ),
             // Fecha orden compra (O.C)
             _customRow(
               theme,
               'Fecha orden de compra',
-              TextButton(
-                child: Text(
-                  nuevo ? fechaInicial : fechaInicial,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                onPressed: () {
-                  if (pedido == null) {
-                    showDatePicker(
-                      context: context,
-                      firstDate: DateTime(2015),
-                      lastDate: DateTime.now(),
-                    );
-                  }
+              FechaButton(
+                fechaExistente:
+                    nuevo ? null : Fechas().crearString(pedido!.FECHA_OC),
+                setFecha: (String fecha) {
+                  pedidosVM.FECHA_OC = fecha;
+                  debugPrint('Fecha O.C: ${pedidosVM.FECHA_OC}');
                 },
               ),
             ),
@@ -239,7 +226,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             _customRow(
               theme,
               'Pedido',
-              Text(nuevo ? '15550' : '${pedido?.ID_PEDIDO}'),
+              Text(nuevo ? 'NUEVO' : '${pedido?.ID_PEDIDO}'),
             ),
             // Estatus
             _customRow(
@@ -280,22 +267,14 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             _customRow(
               theme,
               'Fecha inicio consigna',
-              TextButton(
-                child: Text(
-                  nuevo ? fechaInicial : pedido!.FECHA_INICIOC,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                onPressed: () {
-                  if (pedido == null) {
-                    showDatePicker(
-                      context: context,
-                      firstDate: DateTime(2015),
-                      lastDate: DateTime.now(),
-                    );
-                  }
+              FechaButton(
+                fechaExistente:
+                    nuevo ? null : Fechas().crearString(pedido!.FECHA_INICIOC),
+                setFecha: (String fecha) {
+                  pedidosVM.FECHA_INICIOC = fecha;
+                  debugPrint(
+                    'Fecha inicio consigna: ${pedidosVM.FECHA_INICIOC}',
+                  );
                 },
               ),
             ),
@@ -303,22 +282,12 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             _customRow(
               theme,
               'Fecha fin consigna',
-              TextButton(
-                child: Text(
-                  nuevo ? fechaInicial : pedido!.FECHA_FINC,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                onPressed: () {
-                  if (pedido == null) {
-                    showDatePicker(
-                      context: context,
-                      firstDate: DateTime(2015),
-                      lastDate: DateTime.now(),
-                    );
-                  }
+              FechaButton(
+                fechaExistente:
+                    nuevo ? null : Fechas().crearString(pedido!.FECHA_FINC),
+                setFecha: (String fecha) {
+                  pedidosVM.FECHA_FINC = fecha;
+                  debugPrint('Fecha fin consigna: ${pedidosVM.FECHA_FINC}');
                 },
               ),
             ),
@@ -443,7 +412,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
       ),
       body: CustomStepper(
         steps: steps,
-        onLastStepContinue: mostrarConfirmacion(),
+        onLastStepContinue: mostrarConfirmacion,
       ),
     );
   }

@@ -54,7 +54,13 @@ class PedidosVM extends _$PedidosVM {
 
   String fechaInicial = Fechas().ayerString();
 
-  late String fechaFinal = Fechas().hoyString();
+  String fechaFinal = Fechas().hoyString();
+
+  String FECHA_OC = '';
+
+  String FECHA_INICIOC = '';
+
+  String FECHA_FINC = '';
 
   @override
   PedidosVM build() {
@@ -63,17 +69,5 @@ class PedidosVM extends _$PedidosVM {
 
   void seleccionarAlmacen(int id, String nombre) {
     almacenSeleccionado = AlmacenSeleccionado(id: id, nombre: nombre);
-  }
-
-  void seleccionarTipoFecha(int tipoF) {
-    tipoFecha = tipoF;
-  }
-
-  void seleccionarFechaInicial(String fechaI) {
-    fechaInicial = fechaI;
-  }
-
-  void seleccionarFechaFinal(String fechaF) {
-    fechaFinal = fechaF;
   }
 }

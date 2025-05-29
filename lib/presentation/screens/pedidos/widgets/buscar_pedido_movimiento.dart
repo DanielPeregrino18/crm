@@ -1,3 +1,4 @@
+import 'package:crm/data/models/almacen_seleccionado.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
@@ -25,7 +26,10 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
         children: [
           AlmacenesDropDownMenu(
             setAlmacen: (int id, String nombre) {
-              pedidosVM.seleccionarAlmacen(id, nombre);
+              pedidosVM.almacenSeleccionado = AlmacenSeleccionado(
+                id: id,
+                nombre: nombre,
+              );
               debugPrint('Id: Almacén: ${pedidosVM.almacenSeleccionado.id}');
             },
           ),
