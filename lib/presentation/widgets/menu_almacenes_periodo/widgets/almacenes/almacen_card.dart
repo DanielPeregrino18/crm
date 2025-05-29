@@ -1,26 +1,28 @@
-import 'package:crm/domain/entities/almacen_ob.dart';
-import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:crm/domain/entities/almacen_ob.dart';
 
-class AlmacenCard extends ConsumerWidget {
-  const AlmacenCard({super.key, required this.almacen, required this.theme});
-
+class AlmacenCard extends StatelessWidget {
   final AlmacenOB almacen;
 
-  final ColorScheme theme;
+  final Function(int id, String nombre) setAlmacen;
+
+  const AlmacenCard({
+    super.key,
+    required this.almacen,
+    required this.setAlmacen,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     return Card(
       elevation: 4,
       color: theme.primary,
       child: InkWell(
         splashColor: theme.primary.withAlpha(90),
         onTap: () {
-          ref
-              .read(almacenSeleccionadoProvider.notifier)
-              .seleccionarAlmacen(almacen);
+          setAlmacen(almacen.id_almacen, almacen.nombre);
           Navigator.pop(context);
         },
         child: Column(

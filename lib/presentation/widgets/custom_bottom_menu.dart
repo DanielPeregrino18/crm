@@ -3,13 +3,10 @@ import 'package:flutter/material.dart';
 class CustomBottomMenu extends StatelessWidget {
   const CustomBottomMenu({
     super.key,
-    required this.theme,
     required this.height,
     required this.title,
     required this.content,
   });
-
-  final ColorScheme theme;
 
   final double height;
 
@@ -19,6 +16,8 @@ class CustomBottomMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     return SizedBox(
       height: height,
       child: Scaffold(

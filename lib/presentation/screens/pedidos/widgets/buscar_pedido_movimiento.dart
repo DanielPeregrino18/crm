@@ -1,10 +1,9 @@
-import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
 import 'package:crm/presentation/widgets/almacenes_drop_down_menu.dart';
 import 'package:crm/presentation/widgets/custom_button.dart';
 import 'package:crm/presentation/widgets/custom_text_field.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,9 +12,10 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final almSeleccionado = ref.watch(almacenSeleccionadoProvider);
-    final controller = ref.watch(movimientoControllerProvider);
-    final buscarPedMovVM = ref.watch(getPedidoProvider.notifier);
+    PedidosVM pedidosVM = ref.watch(pedidosVMProvider);
+    int idAlmacen = ref.watch(pedidosVMProvider).almacenSeleccionado.id;
+    GetPedido buscarPedMovVM = ref.watch(getPedidoProvider.notifier);
+    TextEditingController controller = buscarPedMovVM.movimientoController;
     late bool result;
 
     return Padding(
@@ -23,7 +23,12 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
       child: Column(
         spacing: 10,
         children: [
-          AlmacenesDropDownMenu(),
+          AlmacenesDropDownMenu(
+            setAlmacen: (int id, String nombre) {
+              pedidosVM.seleccionarAlmacen(id, nombre);
+              debugPrint('Id: Almacén: ${pedidosVM.almacenSeleccionado.id}');
+            },
+          ),
           CustomTextField(
             label: "Movimiento",
             textInputType: TextInputType.number,
@@ -37,15 +42,15 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
             label: "Buscar",
             onPressed: () async {
               result = await buscarPedMovVM.getPedido(
-                almSeleccionado.value == null ? 0 : almSeleccionado.value!.id_almacen,
+                idAlmacen,
                 int.parse(controller.text),
                 "19cf4bcd-c52c-41bf-9fc8-b1f3d91af2df",
                 2,
                 10,
               );
               if (result) {
-                debugPrint('hola');
-                context.go('/pedidos/pedido');
+                // Navigator.pop(context); // Se puede cerrar el campo de búsqueda por movimiento al encontrar el pedido
+                context.go('/pedidos/pedido', extra: false);
               }
             },
           ),

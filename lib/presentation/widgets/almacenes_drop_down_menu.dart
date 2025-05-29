@@ -1,22 +1,36 @@
-import 'package:crm/config/styles/custom_drop_down_menu.dart';
-import 'package:crm/domain/entities/almacen_ob.dart';
-import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:crm/domain/entities/almacen_ob.dart';
+import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
+import 'package:crm/config/styles/custom_drop_down_menu.dart';
 
-class AlmacenesDropDownMenu extends ConsumerWidget {
-  const AlmacenesDropDownMenu({super.key});
+class AlmacenesDropDownMenu extends ConsumerStatefulWidget {
+  final Function(int, String)? setAlmacen;
+
+  const AlmacenesDropDownMenu({super.key, this.setAlmacen});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final styles = CustomDropDownMenuStyle();
+  ConsumerState createState() => _AlmacenesDropDownMenuState();
+}
 
-    final almacenSeleccionado = ref.watch(almacenSeleccionadoProvider);
-    final almacenesLDB =
-        ref.watch(almacenesVMProvider.notifier).almacenesFiltrados;
+class _AlmacenesDropDownMenuState extends ConsumerState<AlmacenesDropDownMenu> {
+  CustomDropDownMenuStyle styles = CustomDropDownMenuStyle();
 
+  late List<AlmacenOB> almacenesLDB;
+
+  late AlmacenOB? almacenSeleccionado;
+
+  @override
+  void didChangeDependencies() {
+    almacenesLDB = ref.watch(almacenesFiltradosProvider);
+    almacenSeleccionado = almacenesLDB.first;
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return DropdownButton<AlmacenOB>(
-      value: almacenSeleccionado.value ?? almacenesLDB.first,
+      value: almacenSeleccionado,
       icon: styles.icon,
       iconEnabledColor: styles.iconEnabledColor,
       elevation: styles.elevation,
@@ -29,9 +43,13 @@ class AlmacenesDropDownMenu extends ConsumerWidget {
             );
           }).toList(),
       onChanged: (AlmacenOB? value) {
-        ref
-            .read(almacenSeleccionadoProvider.notifier)
-            .seleccionarAlmacen(value!);
+        setState(() {
+          almacenSeleccionado = value;
+          widget.setAlmacen!(
+            almacenSeleccionado!.id_almacen,
+            '${almacenSeleccionado?.id_almacen}',
+          );
+        });
       },
     );
   }

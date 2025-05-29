@@ -1,5 +1,6 @@
-import 'package:crm/presentation/viewmodels/fecha_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:crm/domain/entities/almacen_ob.dart';
+import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/widgets/custom_top_menu.dart';
@@ -7,22 +8,67 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/menu_alm
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/menu_periodo.dart';
 
 class MenuAlmacenPeriodo extends ConsumerStatefulWidget {
-  const MenuAlmacenPeriodo({super.key, required this.theme});
+  final Function(int, String)? setAlmacen;
 
-  final ColorScheme theme;
+  final Function(int)? setTipoFecha;
+
+  final Function(String)? setFechaInicial;
+
+  final Function(String)? setFechaFinal;
+
+  const MenuAlmacenPeriodo({
+    super.key,
+    this.setAlmacen,
+    this.setTipoFecha,
+    this.setFechaInicial,
+    this.setFechaFinal,
+  });
 
   @override
   ConsumerState createState() => _MenuAlmacenPeriodoState();
 }
 
 class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
-  late final ColorScheme _theme;
+  late int idAlmacen;
+  late String nombreAlmacen;
+  late int tipoFecha;
+  late String fechaInicial;
+  late String fechaFinal;
 
   @override
   void initState() {
     super.initState();
-    _theme = widget.theme;
     ref.read(almacenesVMProvider).getAllAlmacenesLDB();
+    idAlmacen = 0;
+    nombreAlmacen = 'TODOS';
+    fechaInicial = Fechas().ayerString();
+    fechaFinal = Fechas().hoyString();
+  }
+
+  void actualizarAlmacen(int id, String nombre) {
+    setState(() {
+      idAlmacen = id;
+      nombreAlmacen = nombre;
+    });
+    widget.setAlmacen?.call(id, nombre);
+  }
+
+  void actualizarTipoFecha(int tipoF) {
+    widget.setTipoFecha?.call(tipoF);
+  }
+
+  void actualizarFechaInicial(String fechaI) {
+    setState(() {
+      fechaInicial = fechaI;
+    });
+    widget.setFechaInicial?.call(fechaI);
+  }
+
+  void actualizarFechaFinal(String fechaF) {
+    setState(() {
+      fechaFinal = fechaF;
+    });
+    widget.setFechaFinal?.call(fechaF);
   }
 
   void mostrarMenu(Widget menu) {
@@ -38,12 +84,10 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
 
   @override
   Widget build(BuildContext context) {
-    final almacenSeleccionado = ref.watch(almacenSeleccionadoProvider);
-    final almacenesLDB =
-        ref.watch(almacenesVMProvider.notifier).almacenesFiltrados;
+    final ColorScheme theme = Theme.of(context).colorScheme;
 
-    final fechaInicial = ref.watch(fechaInicialStringProvider);
-    final fechaFinal = ref.watch(fechaFinalStringProvider);
+    final List<AlmacenOB> almacenesLDB =
+        ref.watch(almacenesVMProvider).almacenesFiltrados;
 
     final List<TextButton> buttons = [
       // Almacén
@@ -51,13 +95,7 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
         label: Row(
           children: [
             Text(
-              almacenesLDB
-                      .isEmpty // Hay almacenes en persistencia local?
-                  ? 'Sin almacenes' // No hay almacenes en persistencia local
-                  : almacenSeleccionado.value ==
-                      null // Hay un almacén seleccionado?
-                  ? '${almacenesLDB[0].id_almacen}. ${almacenesLDB[0].nombre}' // No lo hay: muestra el primero de la lista
-                  : '${almacenSeleccionado.value?.id_almacen}. ${almacenSeleccionado.value?.nombre}', // Si hay: Lo muestra
+              '$idAlmacen. $nombreAlmacen',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
@@ -66,11 +104,13 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
             ),
           ],
         ),
-        icon: Icon(Icons.location_on, color: _theme.primary, size: 24),
+        icon: Icon(Icons.location_on, color: theme.primary, size: 24),
         onPressed: () {
-          if (almacenesLDB.isNotEmpty) {
-            mostrarMenu(MenuAlmacenes(theme: _theme));
-          }
+          almacenesLDB.isEmpty
+              ? debugPrint(
+                'No hay almacenes para mostrar',
+              ) // Se puede agregar un indicador en pantalla
+              : mostrarMenu(MenuAlmacenes(setAlmacen: actualizarAlmacen));
         },
       ),
       // Fecha
@@ -78,7 +118,7 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
         label: Row(
           children: [
             Text(
-              '${fechaInicial.value}',
+              fechaInicial,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
@@ -87,7 +127,7 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
             ),
             Icon(Icons.arrow_right),
             Text(
-              '${fechaFinal.value}',
+              fechaFinal,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.black,
@@ -96,13 +136,20 @@ class _MenuAlmacenPeriodoState extends ConsumerState<MenuAlmacenPeriodo> {
             ),
           ],
         ),
-        icon: Icon(Icons.date_range, color: _theme.primary, size: 24),
+        icon: Icon(Icons.date_range, color: theme.primary, size: 24),
         onPressed: () {
-          mostrarMenu(MenuPeriodo(theme: _theme));
+          mostrarMenu(
+            MenuPeriodo(
+              setTipoFecha: actualizarTipoFecha,
+              setFechaInicial: actualizarFechaInicial,
+              setFechaFinal: actualizarFechaFinal,
+            ),
+          );
         },
       ),
     ];
 
-    return CustomMenu(theme: _theme, buttons: buttons);
+    // Menú tipo cintilla
+    return CustomTopMenu(buttons: buttons);
   }
 }

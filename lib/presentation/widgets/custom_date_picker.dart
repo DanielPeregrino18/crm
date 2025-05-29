@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-Future<TimeOfDay?> customHourPicker(BuildContext context, int hora, int minutos, String titulo) {
+Future<TimeOfDay?> customHourPicker(
+  BuildContext context,
+  int hora,
+  int minutos,
+  String titulo,
+) {
   return showTimePicker(
     context: context,
     initialTime: TimeOfDay(hour: hora, minute: minutos),
@@ -19,9 +24,7 @@ Future<TimeOfDay?> customHourPicker(BuildContext context, int hora, int minutos,
         child: Directionality(
           textDirection: TextDirection.rtl,
           child: MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(alwaysUse24HourFormat: true),
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
             child: child!,
           ),
         ),
@@ -46,10 +49,9 @@ Future<DateTime?> customDatePicker(BuildContext context) {
   );
 }
 
-
 /*
   en Material APP
- localizationsDelegates: [
+  localizationsDelegates: [
     GlobalMaterialLocalizations.delegate,
   ],
- */
+*/

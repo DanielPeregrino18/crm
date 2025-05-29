@@ -1,14 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/screens/pedidos/widgets/buscar_pedido_movimiento.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
+import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
 import 'package:crm/presentation/widgets/drawer_busqueda.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:crm/presentation/widgets/search_button.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -83,7 +84,9 @@ class _PedidosState extends ConsumerState<Pedidos> {
     final ColorScheme theme = Theme.of(context).colorScheme;
     List<Almacen> almacenes = ref.watch(almacenesProvider);
 
-    CotizcionesVM cotizacionVM = ref.watch(cotizacionVMProvider);
+    final CotizcionesVM cotizacionVM = ref.watch(cotizacionVMProvider);
+
+    final PedidosVM pedidosViewModel = ref.watch(pedidosVMProvider);
 
     final List<Widget> searchBarActions = [
       IconButton(
@@ -126,7 +129,26 @@ class _PedidosState extends ConsumerState<Pedidos> {
       ),
       body: ListView(
         children: [
-          MenuAlmacenPeriodo(theme: theme),
+          MenuAlmacenPeriodo(
+            setAlmacen: (int id, String nombre) {
+              pedidosViewModel.seleccionarAlmacen(id, nombre);
+              debugPrint(
+                'Id almacén: ${pedidosViewModel.almacenSeleccionado.id}',
+              );
+            },
+            setTipoFecha: (int tipoF) {
+              pedidosViewModel.seleccionarTipoFecha(tipoF);
+              debugPrint('Tipo fecha: ${pedidosViewModel.tipoFecha}');
+            },
+            setFechaInicial: (String fechaI) {
+              pedidosViewModel.seleccionarFechaInicial(fechaI);
+              debugPrint('Fecha inicial: ${pedidosViewModel.fechaInicial}');
+            },
+            setFechaFinal: (String fechaF) {
+              pedidosViewModel.seleccionarFechaFinal(fechaF);
+              debugPrint('Fecha final: ${pedidosViewModel.fechaFinal}');
+            },
+          ),
           Padding(
             padding: const EdgeInsets.all(15),
             child: Column(
@@ -162,6 +184,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
               ],
             ),
           ),
+          isLoading? CircularProgressIndicator() : Container(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

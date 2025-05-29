@@ -1,37 +1,47 @@
-import 'package:crm/config/styles/custom_drop_down_menu.dart';
-import 'package:crm/data/models/tipo_fecha_model.dart';
-import 'package:crm/presentation/viewmodels/fecha_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:crm/data/models/tipo_fecha_model.dart';
+import 'package:crm/config/styles/custom_drop_down_menu.dart';
 
-class TipoFechaDropDownMenu extends ConsumerWidget {
-  const TipoFechaDropDownMenu({super.key, required this.options});
-
+class TipoFechaDropDownMenu extends StatefulWidget {
   final List<TipoFecha> options;
 
+  final Function(int) setTipoFecha;
+
+  const TipoFechaDropDownMenu({
+    super.key,
+    required this.options,
+    required this.setTipoFecha,
+  });
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final styles = CustomDropDownMenuStyle();
+  State<TipoFechaDropDownMenu> createState() => _TipoFechaDropDownMenuState();
+}
 
-    final tipoFechaSeleccionado = ref.watch(tipoFechaSeleccionadoProvider);
+class _TipoFechaDropDownMenuState extends State<TipoFechaDropDownMenu> {
+  final CustomDropDownMenuStyle styles = CustomDropDownMenuStyle();
 
+  late TipoFecha? tipoFechaSeleccionado = widget.options.first;
+
+  @override
+  Widget build(BuildContext context) {
     return DropdownButton<TipoFecha>(
-      value: tipoFechaSeleccionado.value ?? options.first,
+      value: tipoFechaSeleccionado,
       icon: styles.icon,
       iconEnabledColor: styles.iconEnabledColor,
       elevation: styles.elevation,
       style: styles.textStyle,
       items:
-          options.map<DropdownMenuItem<TipoFecha>>((TipoFecha value) {
+          widget.options.map<DropdownMenuItem<TipoFecha>>((TipoFecha value) {
             return DropdownMenuItem<TipoFecha>(
               value: value,
               child: Text(value.NOMBRE_TIPO_FECHA),
             );
           }).toList(),
       onChanged: (TipoFecha? value) {
-        ref
-            .read(tipoFechaSeleccionadoProvider.notifier)
-            .seleccionarTipoFecha(value!);
+        setState(() {
+          tipoFechaSeleccionado = value;
+          widget.setTipoFecha(value!.ID_TIPO_FECHA);
+        });
       },
     );
   }
