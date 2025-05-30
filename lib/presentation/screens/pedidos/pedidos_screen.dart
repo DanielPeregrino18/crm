@@ -5,7 +5,7 @@ import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/screens/pedidos/widgets/pedidos_widgets.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
-import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
+import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
 import 'package:crm/presentation/widgets/drawer_busqueda.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
@@ -87,7 +87,9 @@ class _PedidosState extends ConsumerState<Pedidos> {
 
     final CotizcionesVM cotizacionVM = ref.watch(cotizacionVMProvider);
 
-    final PedidosVM pedidosVM = ref.watch(pedidosVMProvider);
+    final CabsPedRangoVM cabsPedRangoVM = ref.watch(
+      cabsPedRangoVMProvider.notifier,
+    );
 
     final List<Widget> searchBarActions = [
       IconButton(
@@ -135,23 +137,20 @@ class _PedidosState extends ConsumerState<Pedidos> {
         children: [
           MenuAlmacenPeriodo(
             setAlmacen: (int id, String nombre) {
-              pedidosVM.almacenSeleccionado = AlmacenSeleccionado(
-                id: id,
-                nombre: nombre,
-              );
-              debugPrint('Id almacén: ${pedidosVM.almacenSeleccionado.id}');
+              cabsPedRangoVM.pedidosVM.seleccionarAlmacen(id, nombre);
+              debugPrint('Id almacén: ${cabsPedRangoVM.pedidosVM.almacenSeleccionado.id}');
             },
             setTipoFecha: (int tipoF) {
-              pedidosVM.tipoFecha = tipoF;
-              debugPrint('Tipo fecha: ${pedidosVM.tipoFecha}');
+              cabsPedRangoVM.pedidosVM.tipoFecha = tipoF;
+              debugPrint('Tipo fecha: ${cabsPedRangoVM.pedidosVM.tipoFecha}');
             },
             setFechaInicial: (String fechaI) {
-              pedidosVM.fechaInicial = fechaI;
-              debugPrint('Fecha inicial: ${pedidosVM.fechaInicial}');
+              cabsPedRangoVM.pedidosVM.fechaInicio = fechaI;
+              debugPrint('Fecha inicial: ${cabsPedRangoVM.pedidosVM.fechaInicio}');
             },
             setFechaFinal: (String fechaF) {
-              pedidosVM.fechaFinal = fechaF;
-              debugPrint('Fecha final: ${pedidosVM.fechaFinal}');
+              cabsPedRangoVM.pedidosVM.fechaFin = fechaF;
+              debugPrint('Fecha final: ${cabsPedRangoVM.pedidosVM.fechaFin}');
             },
           ),
           Padding(
@@ -178,7 +177,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
                         height: 56,
                         child: SearchButton(
                           onPressed: () async {
-                            await cotizacionVM.buscarCotizacionesRango();
+                            await cabsPedRangoVM.getCabsPedRango();
                             setState(() {});
                           },
                         ),
