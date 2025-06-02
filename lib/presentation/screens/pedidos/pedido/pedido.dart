@@ -1,14 +1,15 @@
-import 'dart:math';
 import 'package:crm/data/models/almacen_seleccionado.dart';
+import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
+import 'package:crm/presentation/widgets/custom_row.dart';
+import 'package:crm/presentation/widgets/custom_text_field.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/fecha_button.dart';
 import 'package:flutter/material.dart';
 import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:crm/data/models/pedido_model.dart';
+import 'package:crm/data/models/pedidos/cab_ped_mov_model.dart';
 import 'package:crm/presentation/widgets/custom_check_box.dart';
 import 'package:crm/presentation/screens/pedidos/pedido/widgets/confirmation_widget.dart';
-import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
 import 'package:crm/presentation/widgets/custom_stepper.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/almacenes/almacen_button.dart';
 
@@ -20,9 +21,9 @@ class PedidoScreen extends ConsumerStatefulWidget {
 }
 
 class _PedidoScreenState extends ConsumerState<PedidoScreen> {
-  late PedidosVM pedidosVM = ref.watch(pedidosVMProvider);
+  late PedidoVM pedidoVM = ref.watch(pedidoVMProvider);
 
-  bool _isEnabled(Pedido? pedido) =>
+  bool _isEnabled(CabPedMovModel? pedido) =>
       pedido?.ESTATUS == 'FACTURADO' ? false : true;
 
   late String fecha;
@@ -33,41 +34,21 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
     super.initState();
   }
 
-  TextFormField _customTextField(
+  Widget _textField(
     ColorScheme theme,
     String label,
     bool isEnabled,
     dynamic initialValue,
   ) {
-    return TextFormField(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        filled: true,
-        fillColor: theme.primary.withAlpha(15),
-        label: Text(label),
-        floatingLabelStyle: TextStyle(fontSize: 20),
-      ),
-      enabled: isEnabled,
-      initialValue: initialValue == null ? null : '$initialValue',
+    return CustomTextField(
+      label: label,
+      isEnabled: isEnabled,
+      initialValue: initialValue,
     );
   }
 
-  Widget _customRow(ColorScheme theme, String left, Widget right) {
-    return Container(
-      height: min(50, 50),
-      padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-      decoration: BoxDecoration(
-        color: theme.primary.withAlpha(15),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(left, style: TextStyle(fontWeight: FontWeight.w600)),
-          right,
-        ],
-      ),
-    );
+  Widget _customRow(String left, Widget right) {
+    return CustomRow(left: left, right: right);
   }
 
   void modalButtonSheetFullScreen(Widget menu) {
@@ -87,7 +68,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
     final ColorScheme theme = Theme.of(context).colorScheme;
 
     final bool nuevo = GoRouterState.of(context).extra == false ? false : true;
-    final Pedido? pedido = ref.read(getPedidoProvider).value;
+    final CabPedMovModel? pedido = ref.read(cabPedMovVMProvider).value;
 
     int currentStep = 0;
 
@@ -102,59 +83,53 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           children: [
             // Almacén
             _customRow(
-              theme,
               'Almacén',
               nuevo
                   ? AlmacenButton(
                     setAlmacen: (int id, String nombre) {
-                      pedidosVM.almacenSeleccionado = AlmacenSeleccionado(
+                      pedidoVM.almacenSeleccionado = AlmacenSeleccionado(
                         id: id,
                         nombre: nombre,
                       );
                       debugPrint(
-                        'Id almacén: ${pedidosVM.almacenSeleccionado.id}',
+                        'Id almacén: ${pedidoVM.almacenSeleccionado.id}',
                       );
                     },
                   )
                   : IgnorePointer(child: AlmacenButton()),
             ),
             // Cliente
-            _customTextField(
+            _textField(
               theme,
               'Cliente',
               _isEnabled(pedido),
               pedido?.ID_CLIENTE,
             ),
             // Vendedor
-            _customTextField(
+            _textField(
               theme,
               'Vendedor',
               nuevo ? true : false,
               pedido?.ID_VENDEDOR,
             ),
             // Sucursal
-            _customTextField(
+            _textField(
               theme,
               'Sucursal',
               nuevo ? true : false,
               pedido?.ID_SUCURSAL_CTE,
             ),
             // Atención a
-            _customTextField(
+            _textField(
               theme,
               'Atención a',
               nuevo ? true : false,
               pedido?.ATENCION,
             ),
             // Dirección
-            _customTextField(
-              theme,
-              'Dirección',
-              _isEnabled(pedido),
-              'Dirección',
-            ),
+            _textField(theme, 'Dirección', _isEnabled(pedido), 'Dirección'),
             // Lista de precios
-            _customTextField(
+            _textField(
               theme,
               'Lista de precios',
               nuevo ? true : false,
@@ -173,7 +148,6 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           children: [
             // Fecha de registro
             _customRow(
-              theme,
               'Fecha de registro',
               IgnorePointer(
                 child: FechaButton(
@@ -186,26 +160,25 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             ),
             // Fecha orden compra (O.C)
             _customRow(
-              theme,
               'Fecha orden de compra',
               FechaButton(
                 fechaExistente:
                     nuevo ? null : Fechas().crearString(pedido!.FECHA_OC),
                 setFecha: (String fecha) {
-                  pedidosVM.FECHA_OC = fecha;
-                  debugPrint('Fecha O.C: ${pedidosVM.FECHA_OC}');
+                  pedidoVM.FECHA_OC = fecha;
+                  debugPrint('Fecha O.C: ${pedidoVM.FECHA_OC}');
                 },
               ),
             ),
             // No. de Serie
-            _customTextField(
+            _textField(
               theme,
               'No. de Serie',
               nuevo ? true : false,
               'No. de Serie',
             ),
             // Orden de compra
-            _customTextField(
+            _textField(
               theme,
               'Orden de compra',
               _isEnabled(pedido),
@@ -224,13 +197,11 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           children: [
             // Número de pedido
             _customRow(
-              theme,
               'Pedido',
               Text(nuevo ? 'NUEVO' : '${pedido?.ID_PEDIDO}'),
             ),
             // Estatus
             _customRow(
-              theme,
               'Estatus',
               Text(
                 nuevo ? 'NUEVO' : pedido!.ESTATUS,
@@ -238,20 +209,15 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               ),
             ),
             // RFC
-            _customTextField(theme, 'RFC', nuevo ? true : false, 'RFC'),
+            _textField(theme, 'RFC', nuevo ? true : false, 'RFC'),
             // Plazo
-            _customTextField(theme, 'Plazo', nuevo ? true : false, 'Plazo'),
+            _textField(theme, 'Plazo', nuevo ? true : false, 'Plazo'),
             // Descuento
-            _customTextField(theme, 'Descuento', false, pedido?.DESCUENTO),
+            _textField(theme, 'Descuento', false, pedido?.DESCUENTO),
             // Moneda
-            _customTextField(theme, 'Moneda', nuevo ? true : false, 'Moneda'),
+            _textField(theme, 'Moneda', nuevo ? true : false, 'Moneda'),
             // Paridad
-            _customTextField(
-              theme,
-              'Paridad',
-              nuevo ? true : false,
-              pedido?.PARIDAD,
-            ),
+            _textField(theme, 'Paridad', nuevo ? true : false, pedido?.PARIDAD),
           ],
         ),
       ),
@@ -265,46 +231,39 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           children: [
             // Fecha inicio consigna
             _customRow(
-              theme,
               'Fecha inicio consigna',
               FechaButton(
                 fechaExistente:
                     nuevo ? null : Fechas().crearString(pedido!.FECHA_INICIOC),
                 setFecha: (String fecha) {
-                  pedidosVM.FECHA_INICIOC = fecha;
+                  pedidoVM.FECHA_INICIOC = fecha;
                   debugPrint(
-                    'Fecha inicio consigna: ${pedidosVM.FECHA_INICIOC}',
+                    'Fecha inicio consigna: ${pedidoVM.FECHA_INICIOC}',
                   );
                 },
               ),
             ),
             // Fecha fin consigna
             _customRow(
-              theme,
               'Fecha fin consigna',
               FechaButton(
                 fechaExistente:
                     nuevo ? null : Fechas().crearString(pedido!.FECHA_FINC),
                 setFecha: (String fecha) {
-                  pedidosVM.FECHA_FINC = fecha;
-                  debugPrint('Fecha fin consigna: ${pedidosVM.FECHA_FINC}');
+                  pedidoVM.FECHA_FINC = fecha;
+                  debugPrint('Fecha fin consigna: ${pedidoVM.FECHA_FINC}');
                 },
               ),
             ),
             // Campo addenda
-            _customTextField(
+            _textField(
               theme,
               'Campo addenda',
               nuevo ? true : false,
               pedido?.CampoAddenda,
             ),
             // Observaciones
-            _customTextField(
-              theme,
-              'Observaciones',
-              true,
-              pedido?.OBSERVACIONES,
-            ),
+            _textField(theme, 'Observaciones', true, pedido?.OBSERVACIONES),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -345,25 +304,21 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           children: [
             // Subtotal
             _customRow(
-              theme,
               'Subtotal',
               Text(nuevo ? '\$388.90' : '\$${pedido?.SUBTOTAL}'),
             ),
             // Descuento total
             _customRow(
-              theme,
               '- Descuento total',
               Text(nuevo ? '\$0.00' : '\$${pedido?.DESCUENTO_GLOBAL}'),
             ),
             // IEPS total
             _customRow(
-              theme,
               '+ IEPS Total',
               Text(nuevo ? '\$0.00' : '\$${pedido?.IEPS}'),
             ),
             // Importe con descuento
             _customRow(
-              theme,
               '+ Importe con descuento',
               Text(
                 nuevo
@@ -373,19 +328,16 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             ),
             // IVA total
             _customRow(
-              theme,
               '+ IVA Total',
               Text(nuevo ? '\$62.23' : '\$${pedido?.IVA}'),
             ),
             // IVA retenido
             _customRow(
-              theme,
               '- IVA retenido',
               Text(nuevo ? '\$0.00' : '\$${pedido?.IVA_RETENIDO_TOTAL}'),
             ),
             // Gran Total
             _customRow(
-              theme,
               '= Gran total',
               Text(nuevo ? '\$451.13' : '\$${pedido?.SUBTOTAL}'),
             ),

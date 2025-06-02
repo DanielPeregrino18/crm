@@ -10,20 +10,24 @@ class CustomTextField extends StatelessWidget {
 
   final bool isEnabled;
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
+
+  final dynamic initialValue;
 
   const CustomTextField({
     super.key,
-    required this.label,
+    this.label = '',
     this.textInputType = TextInputType.text,
     this.textInputFormatters = const [],
-    required this.isEnabled,
-    required this.controller,
+    this.isEnabled = true,
+    this.controller,
+    this.initialValue,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context).colorScheme;
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     return TextFormField(
       keyboardType: textInputType,
       inputFormatters: textInputFormatters,
@@ -36,6 +40,7 @@ class CustomTextField extends StatelessWidget {
         floatingLabelStyle: TextStyle(fontSize: 20),
       ),
       enabled: isEnabled,
+      initialValue: initialValue == null ? null : '$initialValue',
     );
   }
 }

@@ -1,22 +1,21 @@
-import 'package:crm/data/models/almacen_seleccionado.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import 'package:crm/presentation/viewmodels/pedidos/pedidos_vm.dart';
+import 'package:go_router/go_router.dart';
+import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:crm/presentation/widgets/almacenes_drop_down_menu.dart';
 import 'package:crm/presentation/widgets/custom_button.dart';
 import 'package:crm/presentation/widgets/custom_text_field.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class BuscarPedidoMovimiento extends ConsumerWidget {
   const BuscarPedidoMovimiento({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    PedidosVM pedidosVM = ref.watch(pedidosVMProvider);
-    int idAlmacen = ref.watch(pedidosVMProvider).almacenSeleccionado.id;
-    GetPedido buscarPedMovVM = ref.watch(getPedidoProvider.notifier);
-    TextEditingController controller = buscarPedMovVM.movimientoController;
+    CabPedMovVM cabPedMovVM = ref.watch(cabPedMovVMProvider.notifier);
+
+    TextEditingController controller = cabPedMovVM.movimientoController;
+
     late bool result;
 
     return Padding(
@@ -26,11 +25,8 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
         children: [
           AlmacenesDropDownMenu(
             setAlmacen: (int id, String nombre) {
-              pedidosVM.almacenSeleccionado = AlmacenSeleccionado(
-                id: id,
-                nombre: nombre,
-              );
-              debugPrint('Id: Almacén: ${pedidosVM.almacenSeleccionado.id}');
+              cabPedMovVM.pedidosVM.seleccionarAlmacen(id, nombre);
+              debugPrint('Id: Almacén: ${cabPedMovVM.pedidosVM.almacenSeleccionado.id}');
             },
           ),
           CustomTextField(
@@ -45,16 +41,18 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
           CustomButton(
             label: "Buscar",
             onPressed: () async {
-              result = await buscarPedMovVM.getPedido(
-                idAlmacen,
-                int.parse(controller.text),
-                "19cf4bcd-c52c-41bf-9fc8-b1f3d91af2df",
-                2,
-                10,
-              );
-              if (result) {
-                // Navigator.pop(context); // Se puede cerrar el campo de búsqueda por movimiento al encontrar el pedido
-                context.go('/pedidos/pedido', extra: false);
+              if (controller.text.isEmpty) {
+                debugPrint('No se ha ingresado el movimiento');
+                // TODO: Implementar un indicador en pantalla
+              } else {
+                result = await cabPedMovVM.getCabPedMov(
+                  int.parse(controller.text),
+                );
+                if (result) {
+                  // Navigator.pop(context); // Se puede cerrar el campo de búsqueda por movimiento al encontrar el pedido
+                  context.go('/pedidos/pedido', extra: false);
+                }
+                // TODO: Implementar un indicador en pantalla en caso de no encontrar el pedido
               }
             },
           ),

@@ -1,16 +1,16 @@
-import 'package:crm/core/services/api_cab_pedidos.dart';
-import 'package:crm/data/models/pedido_model.dart';
+import 'package:crm/core/services/op_pedido_api.dart';
 import 'package:dio/dio.dart';
+import 'package:crm/data/models/pedidos/cab_ped_mov_model.dart';
 
-class RepositorioPedidos {
-  final ApiCabPedidos _apiCabPedidos;
+class CabPedMovRepository {
+  final OpPedidoApi _opPedidoApi;
 
-  RepositorioPedidos()
-    : _apiCabPedidos = ApiCabPedidos(
+  CabPedMovRepository()
+    : _opPedidoApi = OpPedidoApi(
         Dio(BaseOptions(contentType: "application/json")),
       );
 
-  Future<Pedido?> getCabPedMov(
+  Future<CabPedMovModel?> getCabPedMov(
     int idAlmacen,
     int idPedido,
     String idSaas,
@@ -18,7 +18,7 @@ class RepositorioPedidos {
     int idSubscription,
   ) async {
     try {
-      final Pedido? pedido = await _apiCabPedidos.getCabPedMov(
+      final CabPedMovModel? pedido = await _opPedidoApi.getCabPedMov(
         idAlmacen,
         idPedido,
         idSaas,

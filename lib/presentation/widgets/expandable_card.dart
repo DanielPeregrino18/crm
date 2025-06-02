@@ -2,6 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class ExpandableCard extends StatefulWidget {
   final Widget title;
   final Widget child;
@@ -27,6 +28,8 @@ class _ExpandableCardState extends State<ExpandableCard> {
   ExpandableController controller = ExpandableController();
   @override
   Widget build(BuildContext context) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     return ExpandableNotifier(
       controller: controller,
       child: GestureDetector(
@@ -34,20 +37,21 @@ class _ExpandableCardState extends State<ExpandableCard> {
           widget.onTap();
         },
         child: Card(
-          color: Colors.white,
+          color: theme.onPrimary,
           elevation: 4,
+          shadowColor: theme.primary.withAlpha(60),
           margin: EdgeInsets.all(8),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
-              spacing: 2,
+              spacing: 4,
               children: [
                 widget.title,
-                Divider(height: 4),
+                Divider(height: 8, color: theme.primary.withAlpha(60)),
                 widget.child,
-                Divider(height: 4),
+                Divider(height: 8, color: theme.primary.withAlpha(60)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -55,7 +59,10 @@ class _ExpandableCardState extends State<ExpandableCard> {
                       style: TextButton.styleFrom(
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         minimumSize: Size(50, 30),
-                        padding: EdgeInsets.zero,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 0,
+                          horizontal: 5,
+                        ),
                         alignment: Alignment.centerLeft,
                       ),
                       onPressed: () async {
@@ -69,7 +76,8 @@ class _ExpandableCardState extends State<ExpandableCard> {
                       label: Text(
                         controller.expanded ? "Ocultar detalle" : "Ver detalle",
                         style: GoogleFonts.montserrat(
-                          color: Colors.blue,
+                          color: theme.primary,
+                          fontWeight: FontWeight.w600,
                           fontSize: 15.sp,
                         ),
                       ),
@@ -77,17 +85,14 @@ class _ExpandableCardState extends State<ExpandableCard> {
                         controller.value
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
-                        color: Colors.blue,
+                        color: theme.primary,
                         size: 20.sp,
                       ),
                     ),
-                    widget.estatus
+                    widget.estatus,
                   ],
                 ),
-                Expandable(
-                    collapsed: SizedBox(),
-                    expanded: widget.expanded
-                ),
+                Expandable(collapsed: SizedBox(), expanded: widget.expanded),
               ],
             ),
           ),

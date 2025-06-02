@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'pedido_model.g.dart';
+part 'cab_ped_mov_model.g.dart';
 
 @JsonSerializable()
-class Pedido {
+class CabPedMovModel {
   int ID_ALMACEN;
   int ID_PEDIDO;
   DateTime FECHA;
@@ -79,7 +79,7 @@ class Pedido {
   int ID_MOTIVO_CANC;
   bool IVA_INTERIOR;
 
-  Pedido({
+  CabPedMovModel({
     required this.ID_ALMACEN,
     required this.ID_PEDIDO,
     required this.FECHA,
@@ -153,6 +153,6 @@ class Pedido {
     required this.IVA_INTERIOR,
   });
 
-  factory Pedido.fromJson(Map<String, dynamic> json) => _$PedidoFromJson(json);
-  Map<String, dynamic> toJson() => _$PedidoToJson(this);
+  factory CabPedMovModel.fromJson(Map<String, dynamic> json) => _$CabPedMovModelFromJson(json);
+  Map<String, dynamic> toJson() => _$CabPedMovModelToJson(this);
 }
