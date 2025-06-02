@@ -1,0 +1,144 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'cab_ped_rango_model.g.dart';
+
+@JsonSerializable()
+class CabPedRangoModel {
+  int? RENGLON;
+  String? NOMBRE_ALMACEN;
+  int? ID_ALMACEN;
+  int? ID_PEDIDO;
+  DateTime? FECHA;
+  int? ID_VENDEDOR;
+  String? NOMBRE_VENDEDOR;
+  int? ID_CLIENTE;
+  int? ID_CTE_FACTURA;
+  double? PARIDAD;
+  double? DESCUENTO_GLOBAL;
+  String? ID_TIPO_PEDIDO;
+  bool? ENTREGA_DOMICILIO;
+  String? OBSERVACIONES;
+  String? ESTATUS;
+  int? ID_NUMREFERENCIA;
+  DateTime? FECHA_MOVIMIENTO;
+  int? ID_SUCURSAL_CTE;
+  double? CARGO_FLETE;
+  double? MANEJO_CUENTA;
+  bool? MUESTRA_PUBLICO_GRAL;
+  double? SUBTOTAL;
+  double? IVA;
+  double? DESCUENTO;
+  int? DiasCredito;
+  double? TipoCambio;
+  String? Entrega;
+  String? OrdenCompra;
+  int? NUM_FACTURAS;
+  DateTime? FECHA_CANCELACION;
+  String? ESTATUS_PROCESO;
+  int? SURTIO;
+  DateTime? FECHA_ENTREGA;
+  DateTime? FECHA_ASIGNACION;
+  DateTime? FECHA_SURTIDO;
+  DateTime? FECHA_SALIDA;
+  DateTime? FECHA_CLIENTE;
+  double? IVA_CTA;
+  double? PORIVA_CTA;
+  bool? Autorizada;
+  int? Id_Usuario_Autoriza;
+  bool? Req_Autorizacion;
+  String? ATENCION;
+  int? ID_COTIZACION;
+  int? ID_COTIZACION_ALMACEN;
+  int? PEDIDOWEB;
+  String? MOV_ANT;
+  String? EntregarEnDomicilio;
+  String? EntregarEnColonia;
+  String? EntregarEnCP;
+  String? EntregarEnCiudad;
+  String? EntregarEnEstado;
+  String? EntregarEnCalles;
+  bool? ImprimirSinPrecios;
+  DateTime? FECHA_REGISTRO;
+  String? Nombre;
+  int? Id_Gravamen;
+  String? CampoAddenda;
+  bool? Apartado;
+  DateTime? FECHA_INICIOC;
+  DateTime? FECHA_FINC;
+  DateTime? FECHA_OC;
+  double? IEPS;
+  bool? RETIENE_IVA;
+  double? IVA_RETENIDO_TOTAL;
+
+  CabPedRangoModel({
+    required this.RENGLON,
+    required this.NOMBRE_ALMACEN,
+    required this.ID_ALMACEN,
+    required this.ID_PEDIDO,
+    required this.FECHA,
+    required this.ID_VENDEDOR,
+    required this.NOMBRE_VENDEDOR,
+    required this.ID_CLIENTE,
+    required this.ID_CTE_FACTURA,
+    required this.PARIDAD,
+    required this.DESCUENTO_GLOBAL,
+    required this.ID_TIPO_PEDIDO,
+    required this.ENTREGA_DOMICILIO,
+    required this.OBSERVACIONES,
+    required this.ESTATUS,
+    required this.ID_NUMREFERENCIA,
+    required this.FECHA_MOVIMIENTO,
+    required this.ID_SUCURSAL_CTE,
+    required this.CARGO_FLETE,
+    required this.MANEJO_CUENTA,
+    required this.MUESTRA_PUBLICO_GRAL,
+    required this.SUBTOTAL,
+    required this.IVA,
+    required this.DESCUENTO,
+    required this.DiasCredito,
+    required this.TipoCambio,
+    required this.Entrega,
+    required this.OrdenCompra,
+    required this.NUM_FACTURAS,
+    required this.FECHA_CANCELACION,
+    required this.ESTATUS_PROCESO,
+    required this.SURTIO,
+    required this.FECHA_ENTREGA,
+    required this.FECHA_ASIGNACION,
+    required this.FECHA_SURTIDO,
+    required this.FECHA_SALIDA,
+    required this.FECHA_CLIENTE,
+    required this.IVA_CTA,
+    required this.PORIVA_CTA,
+    required this.Autorizada,
+    required this.Id_Usuario_Autoriza,
+    required this.Req_Autorizacion,
+    required this.ATENCION,
+    required this.ID_COTIZACION,
+    required this.ID_COTIZACION_ALMACEN,
+    required this.PEDIDOWEB,
+    required this.MOV_ANT,
+    required this.EntregarEnDomicilio,
+    required this.EntregarEnColonia,
+    required this.EntregarEnCP,
+    required this.EntregarEnCiudad,
+    required this.EntregarEnEstado,
+    required this.EntregarEnCalles,
+    required this.ImprimirSinPrecios,
+    required this.FECHA_REGISTRO,
+    required this.Nombre,
+    required this.Id_Gravamen,
+    required this.CampoAddenda,
+    required this.Apartado,
+    required this.FECHA_INICIOC,
+    required this.FECHA_FINC,
+    required this.FECHA_OC,
+    required this.IEPS,
+    required this.RETIENE_IVA,
+    required this.IVA_RETENIDO_TOTAL,
+  });
+
+  factory CabPedRangoModel.fromJson(Map<String, dynamic> json) =>
+      _$CabPedRangoModelFromJson(json);
+  Map<String, dynamic> toJson() => _$CabPedRangoModelToJson(this);
+}

@@ -39,7 +39,9 @@ class _FechaState extends State<FechaButton> {
 
     setState(() {
       selectedDate = pickedDate;
-      widget.setFecha!(Fechas().crearString(selectedDate!));
+      if (widget.setFecha != null) {
+        widget.setFecha!(Fechas().crearString(selectedDate!));
+      }
     });
   }
 
