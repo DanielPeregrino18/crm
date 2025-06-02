@@ -3,8 +3,10 @@ import 'package:crm/data/models/cab_cotizacion_cliente.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
+import '../../data/models/cab_cotizacion_mov.dart';
+
 part 'api_cab_cotizaciones.g.dart';
-@RestApi(baseUrl: 'http://192.168.1.222:8080/api/operaciones/POSCotizacion')
+@RestApi(baseUrl: 'http://192.168.1.117:8080/api/operaciones/POSCotizacion')
 abstract class ApiCabCotizaciones {
 
   factory ApiCabCotizaciones(Dio dio) = _ApiCabCotizaciones;
@@ -22,7 +24,7 @@ abstract class ApiCabCotizaciones {
       );
   
   @GET('/GetCabCotMov')
-  Future<CabCotizacion> getCabCotMov(
+  Future<CabCotizacionMov> getCabCotMov(
       @Query('idAlmacen') int idAlmacen,
       @Query('idCotizacion') int idCotizacion,
       @Query('idSaas') String idSaas,

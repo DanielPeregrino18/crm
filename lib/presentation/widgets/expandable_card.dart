@@ -8,13 +8,15 @@ class ExpandableCard extends StatefulWidget {
   final Widget expanded;
   final Widget estatus;
   final Function onTap;
-  const ExpandableCard({
+  Future<void> Function()? onOpenDetalles;
+  ExpandableCard({
     super.key,
     required this.title,
     required this.child,
     required this.expanded,
     required this.estatus,
-    required this.onTap
+    required this.onTap,
+    this.onOpenDetalles
   });
 
   @override
@@ -56,7 +58,10 @@ class _ExpandableCardState extends State<ExpandableCard> {
                         padding: EdgeInsets.zero,
                         alignment: Alignment.centerLeft,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        if(widget.onOpenDetalles != null && !controller.expanded) {
+                          await widget.onOpenDetalles!();
+                        }
                         setState(() {
                           controller.toggle();
                         });

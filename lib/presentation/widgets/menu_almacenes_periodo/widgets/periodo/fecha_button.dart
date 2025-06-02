@@ -36,11 +36,12 @@ class _FechaState extends State<FechaButton> {
       context,
       initialDate: esFechaInicial ? Fechas().ayerDateTime : DateTime.now(),
     );
-
-    setState(() {
-      selectedDate = pickedDate;
-      widget.setFecha!(Fechas().crearString(selectedDate!));
-    });
+    if(pickedDate != null) {
+      setState(() {
+        selectedDate = pickedDate;
+        widget.setFecha!(Fechas().crearString(selectedDate!));
+      });
+    }
   }
 
   @override

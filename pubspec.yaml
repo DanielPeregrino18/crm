@@ -52,6 +52,7 @@ dependencies:
   path_provider: ^2.1.5
   flutter_secure_storage: ^9.2.4
   fluttertoast: ^8.2.12
+  after_layout: ^1.2.0
   flutter_localizations:
     sdk: flutter
 
