@@ -182,11 +182,11 @@ class DetPedMovVM extends _$DetPedMovVM {
 
   final DetPedMovRepository _detPedMovRepository = DetPedMovRepository();
 
-  Future<bool> getDetPedMov() async {
+  Future<bool> getDetPedMov(int idAlmacen, int idPedido) async {
     try {
       final DetPedMovModel? detPedMov = await _detPedMovRepository.getDetPedMov(
-        1,
-        450403,
+        idAlmacen,
+        idPedido,
         pedidosVM.idSaas,
         pedidosVM.idCompany,
         pedidosVM.idSubscription,

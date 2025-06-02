@@ -9,15 +9,15 @@ class ExpandableCard extends StatefulWidget {
   final Widget expanded;
   final Widget estatus;
   final Function onTap;
-  Future<void> Function()? onOpenDetalles;
-  ExpandableCard({
+  final Future<void> Function()? onOpenDetalles;
+  const ExpandableCard({
     super.key,
     required this.title,
     required this.child,
     required this.expanded,
     required this.estatus,
     required this.onTap,
-    this.onOpenDetalles
+    this.onOpenDetalles,
   });
 
   @override
@@ -26,6 +26,9 @@ class ExpandableCard extends StatefulWidget {
 
 class _ExpandableCardState extends State<ExpandableCard> {
   ExpandableController controller = ExpandableController();
+
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
@@ -55,40 +58,51 @@ class _ExpandableCardState extends State<ExpandableCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextButton.icon(
-                      style: TextButton.styleFrom(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        minimumSize: Size(50, 30),
-                        padding: EdgeInsets.symmetric(
-                          vertical: 0,
-                          horizontal: 5,
+                    isLoading
+                        ? CircularProgressIndicator()
+                        : TextButton.icon(
+                          style: TextButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: Size(50, 30),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 0,
+                              horizontal: 5,
+                            ),
+                            alignment: Alignment.centerLeft,
+                          ),
+                          onPressed: () async {
+                            if (widget.onOpenDetalles != null &&
+                                !controller.expanded) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              await widget.onOpenDetalles!();
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                            setState(() {
+                              controller.toggle();
+                            });
+                          },
+                          label: Text(
+                            controller.expanded
+                                ? "Ocultar detalle"
+                                : "Ver detalle",
+                            style: GoogleFonts.montserrat(
+                              color: theme.primary,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                          icon: Icon(
+                            controller.value
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: theme.primary,
+                            size: 20.sp,
+                          ),
                         ),
-                        alignment: Alignment.centerLeft,
-                      ),
-                      onPressed: () async {
-                        if(widget.onOpenDetalles != null && !controller.expanded) {
-                          await widget.onOpenDetalles!();
-                        }
-                        setState(() {
-                          controller.toggle();
-                        });
-                      },
-                      label: Text(
-                        controller.expanded ? "Ocultar detalle" : "Ver detalle",
-                        style: GoogleFonts.montserrat(
-                          color: theme.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15.sp,
-                        ),
-                      ),
-                      icon: Icon(
-                        controller.value
-                            ? Icons.keyboard_arrow_up
-                            : Icons.keyboard_arrow_down,
-                        color: theme.primary,
-                        size: 20.sp,
-                      ),
-                    ),
                     widget.estatus,
                   ],
                 ),

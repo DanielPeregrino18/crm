@@ -1,3 +1,4 @@
+import 'package:crm/data/models/pedidos/det_ped_mov_model.dart';
 import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:crm/presentation/widgets/text_bold_normal.dart';
 import 'package:flutter/material.dart';
@@ -41,11 +42,17 @@ class CardCabPedRango extends ConsumerWidget {
     }
 
     final DetPedMovVM detPedMovVM = ref.watch(detPedMovVMProvider.notifier);
+    final DetPedMovModel? detPedMov = ref.watch(detPedMovVMProvider).value;
 
     return ExpandableCard(
       onTap: () {
         debugPrint('redirección');
-        detPedMovVM.getDetPedMov();
+      },
+      onOpenDetalles: () async {
+        await detPedMovVM.getDetPedMov(
+          cabPedRango.ID_ALMACEN!,
+          cabPedRango.ID_PEDIDO!,
+        );
       },
       title: Column(
         spacing: 10,
@@ -63,7 +70,7 @@ class CardCabPedRango extends ConsumerWidget {
                 normal: right(cabPedRango.FECHA_MOVIMIENTO, true),
               ),
               Text(
-                '${numeroResultado}',
+                '$numeroResultado',
                 style: GoogleFonts.montserrat(
                   fontSize: 15.sp,
                   color: theme.primary,
@@ -81,7 +88,24 @@ class CardCabPedRango extends ConsumerWidget {
           Text('${cabPedRango.ESTATUS}', style: TextStyle(color: estatusColor)),
         ],
       ),
-      expanded: Text('Consulta endpoint'),
+      expanded: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Código: ${detPedMov?.ID_ARTICULO}'),
+          Text('Cantidad: ${detPedMov?.CANTIDAD}'),
+          Text('Importe: \$${detPedMov?.IMPORTE}'),
+          Text('Descuento: \$${detPedMov?.DESCUENTO}'),
+          Text('IVA: \$${detPedMov?.IVA}'),
+          Text('Cantidad facturada: ${detPedMov?.CANTIDAD_FACTURADA}'),
+          Text('Precio: \$${detPedMov?.Precio}'),
+          Text('ID lista: ${detPedMov?.ID_LISTA}'),
+          Text('Precio de lista: \$${detPedMov?.PRECIOLISTA}'),
+          Text(
+            'Fecha requerido: ${formatter.format(detPedMov!.Fecha_Requerido!)}',
+          ),
+          Text('Es paquete: ${detPedMov.ES_PAQUETE! == true ? 'Si' : 'No'}'),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 5,
