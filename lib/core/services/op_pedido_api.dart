@@ -41,4 +41,13 @@ abstract class OpPedidoApi {
     @Query('idCompany') int idCompany,
     @Query('idSubscription') int idSubscription,
   );
+
+  @GET('/GetDetPedMov')
+  Future<DetPedMovModel?> getDetPedMov(
+    @Query('idAlmacen') int idAlmacen,
+    @Query('idPedido') int idPedido,
+    @Query('idSaas') String idSaas,
+    @Query('idCompany') int idCompany,
+    @Query('idSubscription') int idSubscription,
+  );
 }

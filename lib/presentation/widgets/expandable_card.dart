@@ -40,7 +40,7 @@ class _ExpandableCardState extends State<ExpandableCard> {
           color: theme.onPrimary,
           elevation: 4,
           shadowColor: theme.primary.withAlpha(60),
-          margin: EdgeInsets.all(8),
+          margin: EdgeInsets.only(bottom: 10),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:crm/data/models/pedidos/cab_ped_cliente.dart';
 import 'package:crm/presentation/widgets/expandable_card.dart';
@@ -12,6 +13,13 @@ class CardCabPedCliente extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
+    Color estatusColor =
+        cabPedCliente.estatus == "CANCELADO"
+            ? Colors.red.shade800
+            : cabPedCliente.estatus == "FACTURADO"
+            ? Colors.green.shade600
+            : Colors.amber.shade600;
+
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
 
     return ExpandableCard(
@@ -28,23 +36,12 @@ class CardCabPedCliente extends StatelessWidget {
           ),
         ],
       ),
-      estatus: Text.rich(
-        TextSpan(
-          text: "Estatus: ",
-          children: [
-            TextSpan(
-              text: cabPedCliente.estatus,
-              style: TextStyle(
-                color:
-                    cabPedCliente.estatus == "CANCELADO"
-                        ? Colors.red.shade800
-                        : cabPedCliente.estatus == "FACTURADO"
-                        ? Colors.green.shade600
-                        : Colors.amber.shade600,
-              ),
-            ),
-          ],
-        ),
+      estatus: Row(
+        spacing: 5,
+        children: [
+          Icon(Icons.info_outline, size: 15.sp, color: estatusColor),
+          Text('${cabPedCliente.estatus}', style: TextStyle(color: estatusColor)),
+        ],
       ),
       expanded: Container(
         width: double.maxFinite,
