@@ -19,13 +19,16 @@ class CabsPedClienteResults extends ConsumerWidget {
         title: Text('Resultados', style: TextStyle(color: theme.primary)),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: cabsPedidoClienteVM.value?.length,
-        itemBuilder: (BuildContext context, int index) {
-          return CardCabPedCliente(
-            cabPedCliente: cabsPedidoClienteVM.value![index],
-          );
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(15),
+        child: ListView.builder(
+          itemCount: cabsPedidoClienteVM.value?.length,
+          itemBuilder: (BuildContext context, int index) {
+            return CardCabPedCliente(
+              cabPedCliente: cabsPedidoClienteVM.value![index],
+            );
+          },
+        ),
       ),
     );
   }

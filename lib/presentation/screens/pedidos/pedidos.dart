@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:crm/data/models/almacen_seleccionado.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/screens/pedidos/widgets/pedidos_widgets.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
-import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
 import 'package:crm/presentation/widgets/drawer_busqueda.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:crm/presentation/widgets/search_button.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:crm/data/models/pedidos/cab_ped_rango_model.dart';
+import 'package:crm/presentation/screens/pedidos/widgets/cabs_ped_rango/card_cab_ped_rango.dart';
 
 class Pedidos extends ConsumerStatefulWidget {
   const Pedidos({super.key});
@@ -26,11 +26,6 @@ class _PedidosState extends ConsumerState<Pedidos> {
   bool isLoading = false;
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void stopLoading() {
     Future.delayed(const Duration(seconds: 2), () {
@@ -85,20 +80,24 @@ class _PedidosState extends ConsumerState<Pedidos> {
     final ColorScheme theme = Theme.of(context).colorScheme;
     List<Almacen> almacenes = ref.watch(almacenesProvider);
 
-    final CotizcionesVM cotizacionVM = ref.watch(cotizacionVMProvider);
-
     final CabsPedRangoVM cabsPedRangoVM = ref.watch(
       cabsPedRangoVMProvider.notifier,
     );
 
+    final SearchController clienteSearchController =
+        cabsPedRangoVM.pedidosVM.clienteSearchController;
+
     final List<Widget> searchBarActions = [
       IconButton(
         onPressed: () {
-          cotizacionVM.clearInputCLiente();
+          clienteSearchController.clear();
         },
         icon: Icon(Icons.clear, color: theme.primary),
       ),
     ];
+
+    final List<CabPedRangoModel>? cabsPedRango =
+        ref.watch(cabsPedRangoVMProvider).value;
 
     return Scaffold(
       key: scaffoldKey,
@@ -138,7 +137,9 @@ class _PedidosState extends ConsumerState<Pedidos> {
           MenuAlmacenPeriodo(
             setAlmacen: (int id, String nombre) {
               cabsPedRangoVM.pedidosVM.seleccionarAlmacen(id, nombre);
-              debugPrint('Id almacén: ${cabsPedRangoVM.pedidosVM.almacenSeleccionado.id}');
+              debugPrint(
+                'Id almacén: ${cabsPedRangoVM.pedidosVM.almacenSeleccionado.id}',
+              );
             },
             setTipoFecha: (int tipoF) {
               cabsPedRangoVM.pedidosVM.tipoFecha = tipoF;
@@ -146,7 +147,9 @@ class _PedidosState extends ConsumerState<Pedidos> {
             },
             setFechaInicial: (String fechaI) {
               cabsPedRangoVM.pedidosVM.fechaInicio = fechaI;
-              debugPrint('Fecha inicial: ${cabsPedRangoVM.pedidosVM.fechaInicio}');
+              debugPrint(
+                'Fecha inicial: ${cabsPedRangoVM.pedidosVM.fechaInicio}',
+              );
             },
             setFechaFinal: (String fechaF) {
               cabsPedRangoVM.pedidosVM.fechaFin = fechaF;
@@ -156,6 +159,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
           Padding(
             padding: const EdgeInsets.all(15),
             child: Column(
+              spacing: 10,
               children: [
                 Row(
                   spacing: 10,
@@ -165,9 +169,9 @@ class _PedidosState extends ConsumerState<Pedidos> {
                       child: SearchBarClientes(
                         hint: 'Cliente',
                         actions: searchBarActions,
-                        inputController: cotizacionVM.clienteController,
+                        inputController: clienteSearchController,
                         setIdCliente: (id) {
-                          cotizacionVM.idCliente = id;
+                          cabsPedRangoVM.pedidosVM.idCliente = id;
                         },
                       ),
                     ),
@@ -177,32 +181,81 @@ class _PedidosState extends ConsumerState<Pedidos> {
                         height: 56,
                         child: SearchButton(
                           onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
                             await cabsPedRangoVM.getCabsPedRango();
-                            setState(() {});
+                            setState(() {
+                              stopLoading();
+                            });
                           },
                         ),
                       ),
                     ),
                   ],
                 ),
+                isLoading
+                    ? CircularProgressIndicator()
+                    : cabsPedRango == null
+                    ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.refresh,
+                            color: theme.primary,
+                            size: 30,
+                          ),
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await cabsPedRangoVM.getCabsPedRango();
+                            setState(() {
+                              stopLoading();
+                            });
+                          },
+                        ),
+                        Text('Sin resultados para mostrar'),
+                      ],
+                    )
+                    : Column(
+                      spacing: 10,
+                      children: [
+                        Text(
+                          '${cabsPedRango.length} resultados',
+                          style: TextStyle(color: theme.primary),
+                        ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemCount: cabsPedRango.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return CardCabPedRango(
+                              cabPedRango: cabsPedRango[index],
+                              numeroResultado: ++index,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
               ],
             ),
           ),
-          isLoading ? CircularProgressIndicator() : Container(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (!isLoading) {
-            if (almacenes.isEmpty) {
-              cargarAlmacenes();
-            } else {
-              guardarAlmacenes(almacenes);
-            }
-          }
-        },
-        child: Icon(Icons.storefront),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     if (!isLoading) {
+      //       if (almacenes.isEmpty) {
+      //         cargarAlmacenes();
+      //       } else {
+      //         guardarAlmacenes(almacenes);
+      //       }
+      //     }
+      //   },
+      //   child: Icon(Icons.storefront),
+      // ),
     );
   }
 }

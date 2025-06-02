@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:crm/core/utils/fechas.dart';
@@ -31,6 +31,8 @@ class PedidoVM extends _$PedidoVM {
 
   String fechaFin = Fechas().hoyString();
 
+  int idCliente = 0;
+
   String FECHA_OC = '';
 
   String FECHA_INICIOC = '';
@@ -45,7 +47,7 @@ class PedidoVM extends _$PedidoVM {
     almacenSeleccionado = AlmacenSeleccionado(id: id, nombre: nombre);
   }
 
-  final TextEditingController clienteController = TextEditingController();
+  final SearchController clienteSearchController = SearchController();
 }
 
 // Provider para la obtención de un pedido por número de movimiento
@@ -143,7 +145,7 @@ class CabsPedRangoVM extends _$CabsPedRangoVM {
             pedidosVM.tipoFecha,
             pedidosVM.fechaInicio,
             pedidosVM.fechaFin,
-            0,
+            pedidosVM.idCliente,
             pedidosVM.idSaas,
             pedidosVM.idCompany,
             pedidosVM.idSubscription,
@@ -160,6 +162,37 @@ class CabsPedRangoVM extends _$CabsPedRangoVM {
       // );
       state = AsyncData(cabsPedRango);
       debugPrint('Número de resultados: ${state.value?.length}');
+      return true;
+    } catch (e) {
+      state = AsyncData(null);
+      debugPrint('$e');
+      return false;
+    }
+  }
+}
+
+@riverpod
+class DetPedMovVM extends _$DetPedMovVM {
+  @override
+  FutureOr<DetPedMovModel?> build() async {
+    return null;
+  }
+
+  late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
+
+  final DetPedMovRepository _detPedMovRepository = DetPedMovRepository();
+
+  Future<bool> getDetPedMov() async {
+    try {
+      final DetPedMovModel? detPedMov = await _detPedMovRepository.getDetPedMov(
+        1,
+        450403,
+        pedidosVM.idSaas,
+        pedidosVM.idCompany,
+        pedidosVM.idSubscription,
+      );
+      state = AsyncData(detPedMov);
+      debugPrint('true');
       return true;
     } catch (e) {
       state = AsyncData(null);

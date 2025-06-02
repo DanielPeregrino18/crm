@@ -7,14 +7,21 @@ class CustomRow extends StatelessWidget {
 
   final Widget right;
 
-  const CustomRow({super.key, required this.left, required this.right});
+  final double? height;
+
+  const CustomRow({
+    super.key,
+    required this.left,
+    required this.right,
+    this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
 
     return Container(
-      height: min(50, 50),
+      height: height == null? min(50, 50) : height!,
       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
       decoration: BoxDecoration(
         color: theme.primary.withAlpha(15),
