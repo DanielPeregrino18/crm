@@ -268,14 +268,14 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 CustomCheckBox(
-                  theme: theme,
                   text: 'Autorizar',
                   value: pedido?.Autorizada,
+                  onChange: (val){},
                 ),
                 CustomCheckBox(
-                  theme: theme,
                   text: 'IVA Total Retenido',
                   value: pedido?.RETIENE_IVA,
+                  onChange: (val){},
                 ),
               ],
             ),

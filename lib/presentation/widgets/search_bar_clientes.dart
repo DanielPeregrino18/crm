@@ -1,27 +1,43 @@
+import 'dart:async';
+
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SearchBarClientes extends StatelessWidget {
-  const SearchBarClientes({
+class SearchBarClientes extends StatefulWidget {
+  SearchBarClientes({
     super.key,
     required this.hint,
     required this.actions,
     required this.inputController,
     required this.setIdCliente,
+    this.initialValue
   });
 
   final String hint;
+  String? initialValue;
 
   final List<Widget> actions;
 
   final SearchController inputController;
 
   final Function(int id) setIdCliente;
+
+  @override
+  State<SearchBarClientes> createState() => _SearchBarClientesState();
+}
+
+class _SearchBarClientesState extends State<SearchBarClientes> with AfterLayoutMixin<SearchBarClientes> {
+  @override
+  void initState() {
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
 
+    var theme = Theme.of(context).colorScheme;
     return SizedBox(
       child: SearchAnchor.bar(
         isFullScreen: false,
@@ -31,9 +47,9 @@ class SearchBarClientes extends StatelessWidget {
         barElevation: WidgetStatePropertyAll(4),
         barBackgroundColor: WidgetStatePropertyAll(theme.onPrimary),
         barLeading: Icon(Icons.search, color: theme.primary),
-        barTrailing: actions.map((Widget widget) => widget).toList(),
-        barHintText: hint,
-        searchController: inputController,
+        barTrailing: widget.actions.map((Widget widget) => widget).toList(),
+        barHintText: widget.hint,
+        searchController: widget.inputController,
         viewShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -44,7 +60,7 @@ class SearchBarClientes extends StatelessWidget {
             ListTile(
               onTap: () {
                 controller.closeView("1. VISA CFSA");
-                setIdCliente(1);
+                widget.setIdCliente(1);
               },
               title: Text(
                 "1. VISA CFSA",
@@ -69,7 +85,7 @@ class SearchBarClientes extends StatelessWidget {
             ),
             ListTile(
               onTap: () {
-                setIdCliente(2);
+                widget.setIdCliente(2);
               },
               title: Text(
                 "1. VISA CFSA",
@@ -94,7 +110,7 @@ class SearchBarClientes extends StatelessWidget {
             ),
             ListTile(
               onTap: () {
-                setIdCliente(3);
+                widget.setIdCliente(3);
               },
               title: Text(
                 "1. VISA CFSA",
@@ -121,5 +137,13 @@ class SearchBarClientes extends StatelessWidget {
         },
       ),
     );
+  }
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    if(widget.initialValue != null) {
+      widget.inputController.openView();
+      widget.inputController.closeView(widget.initialValue);
+    }
   }
 }

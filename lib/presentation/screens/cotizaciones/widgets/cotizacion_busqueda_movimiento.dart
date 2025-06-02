@@ -1,9 +1,9 @@
 import 'package:crm/presentation/viewmodels/cotizaciones/busqueda_cot_mov_vm.dart';
-import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:crm/presentation/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import '../../../widgets/custom_text_field.dart';
 
 class CotizacionBusquedaMovimiento extends ConsumerWidget {
@@ -23,8 +23,21 @@ class CotizacionBusquedaMovimiento extends ConsumerWidget {
             isEnabled: true,
             controller: busquedaCotMov.movimientoController,
           ),
-          CustomButton(onPressed: (){
-            busquedaCotMov.buscarCotizacionMov();
+          CustomButton(onPressed: () async {
+            bool seEncontroCot = await busquedaCotMov.buscarCotizacionMov();
+            if(seEncontroCot){
+              busquedaCotMov.movimientoController.clear();
+              context.go("/vercotizacion");
+            }else{
+              Fluttertoast.showToast(
+                  msg: "No se encontro la Cotización ingresada.",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 3,
+                  textColor: Colors.white,
+                  fontSize: 18.0
+              );
+            }
           }, label: "Buscar")
         ],
       ),
