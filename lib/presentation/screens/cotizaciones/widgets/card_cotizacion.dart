@@ -1,21 +1,28 @@
 import 'package:crm/data/models/cab_cotizacion.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
+import '../../../viewmodels/cotizaciones/busqueda_cot_mov_vm.dart';
 import '../../../widgets/expandable_card.dart';
 import '../../../widgets/text_bold_normal.dart';
 
-class CardCotizacion extends StatelessWidget {
+class CardCotizacion extends ConsumerWidget {
   final CabCotizacion cotizacion;
 
   final DateFormat formatter = DateFormat('dd/MM/yyyy');
   CardCotizacion({Key? key, required this.cotizacion}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ExpandableCard(
+      onOpenDetalles: ()async{
+        print("object");
+        await Future.delayed(const Duration(seconds: 2));
+        },
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -29,7 +36,10 @@ class CardCotizacion extends StatelessWidget {
           ),
           Text(
             "Fecha: ${formatter.format(cotizacion.FECHA!)}",
-            style: GoogleFonts.montserrat(fontSize: 15.sp, fontWeight: FontWeight.bold),
+            style: GoogleFonts.montserrat(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -43,10 +53,7 @@ class CardCotizacion extends StatelessWidget {
               runSpacing: 10.h,
               children: [
                 TextBoldNormal(bold: "Código", normal: "43"),
-                TextBoldNormal(
-                  bold: "Artículo",
-                  normal: "Creditos",
-                ),
+                TextBoldNormal(bold: "Artículo", normal: "Creditos"),
                 TextBoldNormal(bold: "Unidad", normal: "PZA"),
                 TextBoldNormal(bold: "Marca", normal: "SIN MARCA"),
               ],
@@ -64,8 +71,7 @@ class CardCotizacion extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Cant:",
@@ -76,9 +82,7 @@ class CardCotizacion extends StatelessWidget {
                             ),
                             Text(
                               "1,000.0",
-                              style: GoogleFonts.montserrat(
-                                fontSize: 15.sp,
-                              ),
+                              style: GoogleFonts.montserrat(fontSize: 15.sp),
                             ),
                           ],
                         ),
@@ -86,8 +90,7 @@ class CardCotizacion extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Desc:",
@@ -98,9 +101,7 @@ class CardCotizacion extends StatelessWidget {
                             ),
                             Text(
                               "0.00",
-                              style: GoogleFonts.montserrat(
-                                fontSize: 15.sp,
-                              ),
+                              style: GoogleFonts.montserrat(fontSize: 15.sp),
                             ),
                           ],
                         ),
@@ -112,8 +113,7 @@ class CardCotizacion extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Importe:",
@@ -124,9 +124,7 @@ class CardCotizacion extends StatelessWidget {
                             ),
                             Text(
                               "7,520.00",
-                              style: GoogleFonts.montserrat(
-                                fontSize: 15.sp,
-                              ),
+                              style: GoogleFonts.montserrat(fontSize: 15.sp),
                             ),
                           ],
                         ),
@@ -134,8 +132,7 @@ class CardCotizacion extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "%IVA:",
@@ -146,9 +143,7 @@ class CardCotizacion extends StatelessWidget {
                             ),
                             Text(
                               "16.0",
-                              style: GoogleFonts.montserrat(
-                                fontSize: 15.sp,
-                              ),
+                              style: GoogleFonts.montserrat(fontSize: 15.sp),
                             ),
                           ],
                         ),
@@ -171,30 +166,58 @@ class CardCotizacion extends StatelessWidget {
           children: [
             TextSpan(
               text: cotizacion.ESTATUS,
-              style: TextStyle(color: cotizacion.ESTATUS == "CANCELADO"? Colors.red : cotizacion.ESTATUS == "FACTURADO" ? Colors.green: Colors.amber),
+              style: TextStyle(
+                color:
+                    cotizacion.ESTATUS == "CANCELADO"
+                        ? Colors.red
+                        : cotizacion.ESTATUS == "FACTURADO"
+                        ? Colors.green
+                        : Colors.amber,
+              ),
             ),
           ],
         ),
       ),
-      onTap: (){
-        //context.go("/ver");
+      onTap: () async {
+        bool seEncontroCot = await ref
+            .read(busquedaCotMovVMProvider)
+            .buscarCotizacionMov(idMov: cotizacion.ID_COTIZACION);
+        if (seEncontroCot) {
+          context.go("/vercotizacion");
+        } else {
+          Fluttertoast.showToast(
+            msg: "No se pudo obtener la cotización.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            textColor: Colors.white,
+            fontSize: 18.0,
+          );
+        }
       },
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextBoldNormal(bold: "Almacén", normal: cotizacion.NOMBRE_ALMACEN??""),
-            TextBoldNormal(
-              bold: "Vendedor",
-              normal: cotizacion.NOMBRE_VENDEDOR??"",
-            ),
-            TextBoldNormal(bold: "Cliente", normal: cotizacion.CLIENTE??""),
-            TextBoldNormal(bold: "Paridad", normal: "${cotizacion.PARIDAD}"),
-            TextBoldNormal(
-              bold: "Fecha de cancelacion",
-              normal: cotizacion.FECHA_CANCELACION == null ? "":formatter.format(cotizacion.FECHA_CANCELACION!),
-            ),
-            TextBoldNormal(bold: "Total", normal: "${cotizacion.TOTAL}"),
-          ]),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextBoldNormal(
+            bold: "Almacén",
+            normal: cotizacion.NOMBRE_ALMACEN ?? "",
+          ),
+          TextBoldNormal(
+            bold: "Vendedor",
+            normal: cotizacion.NOMBRE_VENDEDOR ?? "",
+          ),
+          TextBoldNormal(bold: "Cliente", normal: cotizacion.CLIENTE ?? ""),
+          TextBoldNormal(bold: "Paridad", normal: "${cotizacion.PARIDAD}"),
+          TextBoldNormal(
+            bold: "Fecha de cancelacion",
+            normal:
+                cotizacion.FECHA_CANCELACION == null
+                    ? ""
+                    : formatter.format(cotizacion.FECHA_CANCELACION!),
+          ),
+          TextBoldNormal(bold: "Total", normal: "${cotizacion.TOTAL}"),
+        ],
+      ),
     );
   }
 }

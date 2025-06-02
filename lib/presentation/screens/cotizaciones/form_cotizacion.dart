@@ -1,13 +1,10 @@
-import 'package:crm/config/DI/dependencias.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/form_cotizacion_vm.dart';
-import 'package:crm/presentation/widgets/custom_button.dart';
 import 'package:crm/presentation/widgets/custom_date_picker.dart';
-import 'package:crm/presentation/widgets/custom_stepper.dart';
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../widgets/custom_check_box.dart';
-import '../../widgets/menu_almacenes_periodo/widgets/menu_almacenes.dart';
+import '../../widgets/menu_almacenes_periodo/widgets/almacenes/menu_almacenes.dart';
 
 class FormCotizacion extends ConsumerStatefulWidget {
   const FormCotizacion({Key? key}) : super(key: key);
@@ -67,19 +64,28 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
     );
   }
 
-  bool _isEnabled() => true;
+  List<Map<String, dynamic>> listaPrecios = [
+    {"nombre": "PR. AL PUBLICO", "id": 1},
+    {"nombre": "Prueba", "id": 2},
+  ];
+  List<Map<String, dynamic>> listaMonedas = [
+    {"nombre": "MXN", "id": 1},
+    {"nombre": "USD", "id": 2},
+  ];
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
     final formCotizacionVM = ref.watch(formCotizacionVMProvider);
+    String estatus = formCotizacionVM.estatusLabel;
+    bool isEnabled = estatus == "NUEVO" || estatus == "COTIZADO";
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.primary,
         iconTheme: IconThemeData(color: theme.onPrimary),
         title: Text(
-          true ? 'Nueva Cotización' : 'Detalles Cotización',
+          estatus == "NUEVO" ? 'Nueva Cotización' : 'Detalles Cotización',
           style: TextStyle(color: theme.onPrimary),
         ),
       ),
@@ -131,8 +137,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       ),
                     ),
                     onPressed: () {
-                      if (true) {
-                        //todo solamente cuando sea nuevo se puede seleccionar
+                      if (isEnabled) {
                         mostrarMenu(
                           MenuAlmacenes(setAlmacen: (int id, String nombre) {}),
                           false,
@@ -141,13 +146,13 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     },
                   ),
                 ),
-                //_customTextField(theme, 'Cliente', _isEnabled(), "", ),
-                //_customTextField(theme, 'Vendedor', true, ""),
+                //todo colocar el vendedor aqui
                 SearchBarClientes(
-                  hint: "",
+                  hint: "Cliente",
                   actions: [],
                   inputController: formCotizacionVM.clienteController,
                   setIdCliente: (id) {},
+                  initialValue: formCotizacionVM.nombre,
                 ),
                 _customTextField(
                   theme,
@@ -157,25 +162,51 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                 ),
                 _customTextField(
                   theme,
-                  'Atención a',
-                  true,
-                  formCotizacionVM.atencionAController,
-                ),
-                // Dirección
-                _customTextField(
-                  theme,
                   'Dirección',
-                  _isEnabled(),
+                  false,
                   formCotizacionVM.direccionController,
                 ),
-                // Lista de precios
-                //_customTextField(theme, 'Lista de precios', true,  formCotizacionVM.listaPreciosController), todo cambiarlo a dropown
-                CustomButton(
-                  onPressed: () {
-                    formCotizacionVM.met();
-                    setState(() {});
-                  },
-                  label: "prueba",
+                _customRow(
+                  theme,
+                  'Lista de Precios',
+                  estatus == "NUEVO" ? DropdownButton(
+                    value: formCotizacionVM.idListaPrecios,
+                    items:
+                        listaPrecios
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e['id'],
+                                child: Text('${e['nombre']}'),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        formCotizacionVM.idListaPrecios = value as int;
+                      });
+                    },
+                  ) : Text('${listaPrecios.firstWhere((element) => element['id'] == formCotizacionVM.idListaPrecios,)['nombre']}'),
+                ),
+                _customRow(
+                  theme,
+                  'Fecha vigencia',
+                  TextButton(
+                    child: Text(
+                      formCotizacionVM.getfechaVigencia(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    onPressed: () async {
+                      var date = await customDatePicker(context);
+                      if (date != null) {
+                        setState(() {
+                          formCotizacionVM.fechaVigencia = date;
+                        });
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
@@ -213,11 +244,13 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       ),
                     ),
                     onPressed: () async {
-                      var date = await customDatePicker(context);
-                      if (date != null) {
-                        setState(() {
-                          formCotizacionVM.fechaOrdenCompra = date;
-                        });
+                      if (isEnabled) {
+                        var date = await customDatePicker(context);
+                        if (date != null) {
+                          setState(() {
+                            formCotizacionVM.fechaOrdenCompra = date;
+                          });
+                        }
                       }
                     },
                   ),
@@ -225,14 +258,20 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                 _customTextField(
                   theme,
                   'No. de Serie',
-                  true,
+                  isEnabled,
                   formCotizacionVM.noSerieController,
                 ),
                 _customTextField(
                   theme,
                   'Orden de compra',
-                  _isEnabled(),
+                  isEnabled,
                   formCotizacionVM.ordenCompraController,
+                ),
+                _customTextField(
+                  theme,
+                  'Procesado',
+                  false,
+                  formCotizacionVM.procesadoController,
                 ),
               ],
             ),
@@ -244,7 +283,11 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             content: Column(
               spacing: 15,
               children: [
-                _customRow(theme, 'Pedido', Text(formCotizacionVM.pedidoLabel)),
+                _customRow(
+                  theme,
+                  'Cotización',
+                  Text(formCotizacionVM.cotizacionLabel),
+                ),
                 _customRow(
                   theme,
                   'Estatus',
@@ -256,26 +299,47 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                 _customTextField(
                   theme,
                   'RFC',
-                  true,
+                  false,
                   formCotizacionVM.rfcController,
                 ),
                 _customTextField(
                   theme,
                   'Plazo',
-                  true,
+                  false,
                   formCotizacionVM.plazoController,
                 ),
                 _customTextField(
                   theme,
                   'Descuento',
-                  false,
+                  isEnabled,
                   formCotizacionVM.descuentoController,
                 ),
                 //_customTextField(theme, 'Moneda', true, ), todo cambiarlo a dropdown
+                _customRow(
+                  theme,
+                  'Moneda',
+                  estatus == "NUEVO" ? DropdownButton(
+                    value: formCotizacionVM.idMoneda,
+                    items:
+                    listaMonedas
+                        .map(
+                          (e) => DropdownMenuItem(
+                        value: e['id'],
+                        child: Text('${e['nombre']}'),
+                      ),
+                    )
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        formCotizacionVM.idMoneda = value as int;
+                      });
+                    },
+                  ) : Text('${listaMonedas.firstWhere((element) => element['id'] == formCotizacionVM.idMoneda,)['nombre']}'),
+                ),
                 _customTextField(
                   theme,
                   'Paridad',
-                  true,
+                  false,
                   formCotizacionVM.paridadController,
                 ),
               ],
@@ -300,17 +364,20 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       ),
                     ),
                     onPressed: () async {
-                      var fechaInicioConsigna = await customDatePicker(context);
-                      if (fechaInicioConsigna != null) {
-                        setState(() {
-                          formCotizacionVM.fechaInicioConsigna =
-                              fechaInicioConsigna;
-                        });
+                      if (isEnabled) {
+                        var fechaInicioConsigna = await customDatePicker(
+                          context,
+                        );
+                        if (fechaInicioConsigna != null) {
+                          setState(() {
+                            formCotizacionVM.fechaInicioConsigna =
+                                fechaInicioConsigna;
+                          });
+                        }
                       }
                     },
                   ),
                 ),
-                // Fecha fin consigna
                 _customRow(
                   theme,
                   'Fecha fin consigna',
@@ -323,11 +390,14 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       ),
                     ),
                     onPressed: () async {
-                      var fechaFinConsigna = await customDatePicker(context);
-                      if (fechaFinConsigna != null) {
-                        setState(() {
-                          formCotizacionVM.fechaFinConsigna = fechaFinConsigna;
-                        });
+                      if (isEnabled) {
+                        var fechaFinConsigna = await customDatePicker(context);
+                        if (fechaFinConsigna != null) {
+                          setState(() {
+                            formCotizacionVM.fechaFinConsigna =
+                                fechaFinConsigna;
+                          });
+                        }
                       }
                     },
                   ),
@@ -335,14 +405,14 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                 _customTextField(
                   theme,
                   'Campo addenda',
-                  true,
+                  isEnabled,
                   formCotizacionVM.campoAddendaController,
                 ),
                 // Observaciones
                 _customTextField(
                   theme,
                   'Observaciones',
-                  true,
+                  isEnabled,
                   formCotizacionVM.observacionesController,
                 ),
                 Row(
@@ -352,17 +422,23 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       text: 'Autorizar',
                       value: formCotizacionVM.autorizar,
                       onChange: (val) {
-                        setState(() {
-                          formCotizacionVM.autorizar = val;
-                        });
+                        if (isEnabled) {
+                          setState(() {
+                            formCotizacionVM.autorizar = val;
+                          });
+                        }
                       },
                     ),
                     CustomCheckBox(
                       text: 'IVA Total Retenido',
                       value: formCotizacionVM.ivaTotalRetenido,
-                      onChange: (val){ setState(() {
-                        formCotizacionVM.ivaTotalRetenido = val;
-                      });},
+                      onChange: (val) {
+                        if (isEnabled) {
+                          setState(() {
+                            formCotizacionVM.ivaTotalRetenido = val;
+                          });
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -408,8 +484,8 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                 _customTextField(
                   theme,
                   'Atención a',
-                  true,
-                  formCotizacionVM.domicilioAtencionAContoller,
+                  isEnabled,
+                  formCotizacionVM.atencionAContoller,
                 ),
                 _customRow(
                   theme,
@@ -479,13 +555,43 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             content: Column(
               spacing: 10,
               children: [
-                _customRow(theme, 'Subtotal', Text('\$${formCotizacionVM.subtotal.toStringAsFixed(2)}')),
-                _customRow(theme, '- Descuento total', Text('\$${formCotizacionVM.descTotal.toStringAsFixed(2)}')),
-                _customRow(theme, '+ IEPS Total', Text('\$${formCotizacionVM.iepsTotal.toStringAsFixed(2)}')),
-                _customRow(theme, '+ Importe con descuento', Text('\$${formCotizacionVM.importeDescuento.toStringAsFixed(2)}')),
-                _customRow(theme, '+ IVA Total', Text('\$${formCotizacionVM.ivaTotal.toStringAsFixed(2)}')),
-                _customRow(theme, '- IVA retenido', Text('\$${formCotizacionVM.ivaRetenido.toStringAsFixed(2)}')),
-                _customRow(theme, '= Gran total', Text('\$${formCotizacionVM.granTotal.toStringAsFixed(2)}')),
+                _customRow(
+                  theme,
+                  'Subtotal',
+                  Text('\$${formCotizacionVM.subtotal.toStringAsFixed(2)}'),
+                ),
+                _customRow(
+                  theme,
+                  '- Descuento total',
+                  Text('\$${formCotizacionVM.descTotal.toStringAsFixed(2)}'),
+                ),
+                _customRow(
+                  theme,
+                  '+ IEPS Total',
+                  Text('\$${formCotizacionVM.iepsTotal.toStringAsFixed(2)}'),
+                ),
+                _customRow(
+                  theme,
+                  '+ Importe con descuento',
+                  Text(
+                    '\$${formCotizacionVM.importeDescuento.toStringAsFixed(2)}',
+                  ),
+                ),
+                _customRow(
+                  theme,
+                  '+ IVA Total',
+                  Text('\$${formCotizacionVM.ivaTotal.toStringAsFixed(2)}'),
+                ),
+                _customRow(
+                  theme,
+                  '- IVA retenido',
+                  Text('\$${formCotizacionVM.ivaRetenido.toStringAsFixed(2)}'),
+                ),
+                _customRow(
+                  theme,
+                  '= Gran total',
+                  Text('\$${formCotizacionVM.granTotal.toStringAsFixed(2)}'),
+                ),
               ],
             ),
           ),
