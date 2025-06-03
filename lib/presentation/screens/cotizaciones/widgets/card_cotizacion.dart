@@ -20,8 +20,8 @@ class CardCotizacion extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ExpandableCard(
       onOpenDetalles: ()async{
-        print("object");
-        await Future.delayed(const Duration(seconds: 2));
+        //print("object");
+        //await Future.delayed(const Duration(seconds: 2));
         },
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
