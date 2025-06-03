@@ -270,12 +270,12 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
                 CustomCheckBox(
                   text: 'Autorizar',
                   value: pedido?.Autorizada,
-                  onChange: (val){},
+                  onChange: (val) {},
                 ),
                 CustomCheckBox(
                   text: 'IVA Total Retenido',
                   value: pedido?.RETIENE_IVA,
-                  onChange: (val){},
+                  onChange: (val) {},
                 ),
               ],
             ),
@@ -361,6 +361,11 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           nuevo ? 'Nuevo Pedido' : 'Detalles Pedido',
           style: TextStyle(color: theme.onPrimary),
         ),
+        actions: [
+          Text('hola'),
+          TextButton(onPressed: () {}, child: Text('Total')),
+          IconButton(onPressed: () {}, icon: Icon(Icons.attach_money)),
+        ],
       ),
       body: CustomStepper(
         steps: steps,
