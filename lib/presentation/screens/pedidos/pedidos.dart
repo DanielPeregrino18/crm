@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
 import 'package:crm/presentation/screens/pedidos/widgets/pedidos_widgets.dart';
@@ -223,7 +223,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
                       spacing: 10,
                       children: [
                         Text(
-                          '${cabsPedRango.length} resultados',
+                          'Resultados: ${cabsPedRango.length}',
                           style: TextStyle(color: theme.primary),
                         ),
                         ListView.builder(

@@ -1,13 +1,12 @@
-import 'package:crm/data/models/pedidos/det_ped_mov_model.dart';
-import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
-import 'package:crm/presentation/widgets/text_bold_normal.dart';
 import 'package:flutter/material.dart';
-import 'package:crm/presentation/widgets/expandable_card.dart';
-import 'package:crm/data/models/pedidos/cab_ped_rango_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:crm/presentation/widgets/text_bold_normal.dart';
+import 'package:crm/presentation/widgets/expandable_card.dart';
+import 'package:crm/data/models/pedidos/cab_ped_rango_model.dart';
+import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 
 class CardCabPedRango extends ConsumerWidget {
   final CabPedRangoModel cabPedRango;
@@ -34,25 +33,45 @@ class CardCabPedRango extends ConsumerWidget {
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
 
     String right(dynamic right, bool isDate) {
-      return right == null
+      return right == null || right == ""
           ? 'Sin datos'
           : isDate
           ? formatter.format(right)
           : '$right';
     }
 
+    // final List<DetPedMovModel>? detPedMov = ref.watch(detPedMovVMProvider).value;
+
     final DetPedMovVM detPedMovVM = ref.watch(detPedMovVMProvider.notifier);
-    final DetPedMovModel? detPedMov = ref.watch(detPedMovVMProvider).value;
+    final detPedMovList = ref.watch(detPedMovVMProvider).value;
+    final detPedMov = detPedMovList?[cabPedRango.ID_PEDIDO];
+
+    final NumberFormat numberFormat = NumberFormat(",##0.##");
+
+    String granTotal(
+      double cantidad,
+      double importe,
+      double descuento,
+      double ieps,
+      double iva,
+      double ivaRetenido,
+    ) {
+      double subtotal = cantidad * importe;
+      double granTotal = subtotal - descuento + ieps + iva - ivaRetenido;
+      return numberFormat.format(granTotal);
+    }
 
     return ExpandableCard(
       onTap: () {
         debugPrint('redirección');
       },
       onOpenDetalles: () async {
-        await detPedMovVM.getDetPedMov(
-          cabPedRango.ID_ALMACEN!,
-          cabPedRango.ID_PEDIDO!,
-        );
+        if (cabPedRango.ID_ALMACEN != null && cabPedRango.ID_PEDIDO != null) {
+          await detPedMovVM.getDetPedMov(
+            cabPedRango.ID_ALMACEN!,
+            cabPedRango.ID_PEDIDO!,
+          );
+        }
       },
       title: Column(
         spacing: 10,
@@ -85,42 +104,73 @@ class CardCabPedRango extends ConsumerWidget {
         spacing: 5,
         children: [
           Icon(Icons.info_outline, size: 15.sp, color: estatusColor),
-          Text('${cabPedRango.ESTATUS}', style: TextStyle(color: estatusColor)),
-        ],
-      ),
-      expanded: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Código: ${detPedMov?.ID_ARTICULO}'),
-          Text('Cantidad: ${detPedMov?.CANTIDAD}'),
-          Text('Importe: \$${detPedMov?.IMPORTE}'),
-          Text('Descuento: \$${detPedMov?.DESCUENTO}'),
-          Text('IVA: \$${detPedMov?.IVA}'),
-          Text('Cantidad facturada: ${detPedMov?.CANTIDAD_FACTURADA}'),
-          Text('Precio: \$${detPedMov?.Precio}'),
-          Text('ID lista: ${detPedMov?.ID_LISTA}'),
-          Text('Precio de lista: \$${detPedMov?.PRECIOLISTA}'),
           Text(
-            'Fecha requerido: ${right(detPedMov?.Fecha_Requerido, true)}',
+            right(cabPedRango.ESTATUS, false),
+            style: TextStyle(color: estatusColor),
           ),
-          Text('Es paquete: ${right(detPedMov?.ES_PAQUETE, false)}'),
         ],
       ),
+      expanded:
+          detPedMov == null
+              ? Text('Sin datos')
+              : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: ScrollPhysics(),
+                child: DataTable(
+                  columnSpacing: 10,
+                  columns: [
+                    DataColumn(
+                      label: Text('Código'),
+                      numeric: true,
+                      headingRowAlignment: MainAxisAlignment.center,
+                    ),
+                    DataColumn(
+                      label: Text('Nombre'),
+                      headingRowAlignment: MainAxisAlignment.center,
+                    ),
+                    DataColumn(
+                      label: Text('Cantidad'),
+                      numeric: true,
+                      headingRowAlignment: MainAxisAlignment.center,
+                    ),
+                    DataColumn(
+                      label: Text('Total'),
+                      numeric: true,
+                      headingRowAlignment: MainAxisAlignment.center,
+                    ),
+                  ],
+                  rows:
+                      detPedMov.map((articulo) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(right(articulo.ID_ARTICULO, false))),
+                            DataCell(Text(right(articulo.NOMBRE, false))),
+                            DataCell(Text(right(articulo.CANTIDAD, false))),
+                            DataCell(
+                              Text(
+                                '\$${granTotal(articulo.CANTIDAD!, articulo.IMPORTE!, articulo.DESCUENTO!, articulo.IEPS!, articulo.IVA!, articulo.IVA_RETENIDO!)}',
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                ),
+              ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 5,
         children: [
           TextBoldNormal(
             bold: 'Cliente',
-            normal: right(cabPedRango.ID_CLIENTE, false),
+            normal: right(cabPedRango.Nombre, false),
           ),
           TextBoldNormal(
             bold: 'Vendedor',
-            normal: right(cabPedRango.ID_VENDEDOR, false),
+            normal: right(cabPedRango.NOMBRE_VENDEDOR, false),
           ),
           TextBoldNormal(
             bold: 'Almacén',
-            normal: right(cabPedRango.ID_ALMACEN, false),
+            normal: right(cabPedRango.NOMBRE_ALMACEN, false),
           ),
           TextBoldNormal(
             bold: 'Paridad',

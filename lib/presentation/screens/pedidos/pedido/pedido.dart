@@ -26,14 +26,6 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
   bool _isEnabled(CabPedMovModel? pedido) =>
       pedido?.ESTATUS == 'FACTURADO' ? false : true;
 
-  late String fecha;
-
-  @override
-  void initState() {
-    fecha = Fechas().hoyString();
-    super.initState();
-  }
-
   Widget _textField(
     ColorScheme theme,
     String label,
@@ -267,16 +259,16 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                CustomCheckBox(
-                  text: 'Autorizar',
-                  value: pedido?.Autorizada,
-                  onChange: (val) {},
-                ),
-                CustomCheckBox(
-                  text: 'IVA Total Retenido',
-                  value: pedido?.RETIENE_IVA,
-                  onChange: (val) {},
-                ),
+                // CustomCheckBox(
+                //   text: 'Autorizar',
+                //   value: pedido?.Autorizada,
+                //   onChange: (val) {},
+                // ),
+                // CustomCheckBox(
+                //   text: 'IVA Total Retenido',
+                //   value: pedido?.RETIENE_IVA,
+                //   onChange: (val) {},
+                // ),
               ],
             ),
           ],
@@ -353,6 +345,9 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
       return null;
     }
 
+    final GlobalKey<CustomStepperState> _customStepperKey =
+        GlobalKey<CustomStepperState>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.primary,
@@ -362,12 +357,33 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           style: TextStyle(color: theme.onPrimary),
         ),
         actions: [
-          Text('hola'),
-          TextButton(onPressed: () {}, child: Text('Total')),
-          IconButton(onPressed: () {}, icon: Icon(Icons.attach_money)),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextButton(
+              style: ButtonStyle(
+                minimumSize: WidgetStatePropertyAll(Size.zero),
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                ),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                alignment: Alignment.centerLeft,
+                backgroundColor: WidgetStatePropertyAll(
+                  theme.onPrimary.withAlpha(60),
+                ),
+              ),
+              onPressed: () {
+                _customStepperKey.currentState?.goToLastStep();
+              },
+              child: Text(
+                'Total: \$900,000,000',
+                style: TextStyle(color: theme.onPrimary),
+              ),
+            ),
+          ),
         ],
       ),
       body: CustomStepper(
+        key: _customStepperKey,
         steps: steps,
         onLastStepContinue: mostrarConfirmacion,
       ),
