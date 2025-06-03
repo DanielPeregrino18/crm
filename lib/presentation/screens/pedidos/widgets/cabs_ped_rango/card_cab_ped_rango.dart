@@ -101,9 +101,9 @@ class CardCabPedRango extends ConsumerWidget {
           Text('ID lista: ${detPedMov?.ID_LISTA}'),
           Text('Precio de lista: \$${detPedMov?.PRECIOLISTA}'),
           Text(
-            'Fecha requerido: ${formatter.format(detPedMov!.Fecha_Requerido!)}',
+            'Fecha requerido: ${right(detPedMov?.Fecha_Requerido, true)}',
           ),
-          Text('Es paquete: ${detPedMov.ES_PAQUETE! == true ? 'Si' : 'No'}'),
+          Text('Es paquete: ${right(detPedMov?.ES_PAQUETE, false)}'),
         ],
       ),
       child: Column(

@@ -186,7 +186,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
                             });
                             await cabsPedRangoVM.getCabsPedRango();
                             setState(() {
-                              stopLoading();
+                              isLoading = false;
                             });
                           },
                         ),
@@ -212,7 +212,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
                             });
                             await cabsPedRangoVM.getCabsPedRango();
                             setState(() {
-                              stopLoading();
+                              isLoading = false;
                             });
                           },
                         ),

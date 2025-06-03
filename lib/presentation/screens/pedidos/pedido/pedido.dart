@@ -361,9 +361,11 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           nuevo ? 'Nuevo Pedido' : 'Detalles Pedido',
           style: TextStyle(color: theme.onPrimary),
         ),
-        actions: [IconButton(onPressed: () {
-
-        }, icon: Icon(Icons.attach_money))],
+        actions: [
+          Text('hola'),
+          TextButton(onPressed: () {}, child: Text('Total')),
+          IconButton(onPressed: () {}, icon: Icon(Icons.attach_money)),
+        ],
       ),
       body: CustomStepper(
         steps: steps,
