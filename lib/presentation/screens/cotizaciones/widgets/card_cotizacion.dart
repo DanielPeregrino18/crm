@@ -1,4 +1,5 @@
-import 'package:crm/data/models/cab_cotizacion.dart';
+import 'package:crm/data/models/cotizaciones/cab_cotizacion.dart';
+import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,24 +11,32 @@ import '../../../viewmodels/cotizaciones/busqueda_cot_mov_vm.dart';
 import '../../../widgets/expandable_card.dart';
 import '../../../widgets/text_bold_normal.dart';
 
-class CardCotizacion extends ConsumerWidget {
+class CardCotizacion extends ConsumerStatefulWidget {
   final CabCotizacion cotizacion;
 
-  final DateFormat formatter = DateFormat('dd/MM/yyyy');
+
   CardCotizacion({Key? key, required this.cotizacion}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CardCotizacion> createState() => _CardCotizacionState();
+}
+
+class _CardCotizacionState extends ConsumerState<CardCotizacion> {
+  final DateFormat formatter = DateFormat('dd/MM/yyyy');
+
+  @override
+  Widget build(BuildContext context) {
+    var detCotizacion = ref.watch(cotizacionVMProvider).detallesCotizacion;
     return ExpandableCard(
-      onOpenDetalles: ()async{
-        //print("object");
-        //await Future.delayed(const Duration(seconds: 2));
+      onOpenDetalles: () async {
+         await ref.read(cotizacionVMProvider).buscarDetalleCotizacion(widget.cotizacion.ID_COTIZACION!, widget.cotizacion.ID_ALMACEN!);
+         setState(() {});
         },
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Cotización: ${cotizacion.ID_COTIZACION}",
+            "Cotización: ${widget.cotizacion.ID_COTIZACION}",
             style: GoogleFonts.montserrat(
               fontSize: 16.sp,
               color: Theme.of(context).colorScheme.primary,
@@ -35,7 +44,7 @@ class CardCotizacion extends ConsumerWidget {
             ),
           ),
           Text(
-            "Fecha: ${formatter.format(cotizacion.FECHA!)}",
+            "Fecha: ${formatter.format(widget.cotizacion.FECHA!)}",
             style: GoogleFonts.montserrat(
               fontSize: 15.sp,
               fontWeight: FontWeight.bold,
@@ -43,7 +52,96 @@ class CardCotizacion extends ConsumerWidget {
           ),
         ],
       ),
-      expanded: Container(
+      expanded: Table(
+        border: TableBorder.all(),
+        children: [
+          TableRow(
+            children: [
+              Text("Articulo", textAlign: TextAlign.center,),
+              Text("Cantidad", textAlign: TextAlign.center,),
+              Text("Importe", textAlign: TextAlign.center,)
+            ]
+          ),
+          ...detCotizacion.map((e) => 
+              TableRow(
+                children: [
+                  Text("${e.ID_ARTICULO}.-${e.NOMBRE}", textAlign: TextAlign.center),
+                  Text(e.CANTIDAD!.toStringAsFixed(2), textAlign: TextAlign.center),
+                  Text(e.IMPORTE!.toStringAsFixed(2), textAlign: TextAlign.center)
+                ]
+              ),
+          )
+        ],
+      ),
+      estatus: Text.rich(
+        TextSpan(
+          text: "Estatus: ",
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.bold,
+            fontSize: 15.sp,
+          ),
+          children: [
+            TextSpan(
+              text: widget.cotizacion.ESTATUS,
+              style: TextStyle(
+                color:
+                    widget.cotizacion.ESTATUS == "CANCELADO"
+                        ? Colors.red
+                        : widget.cotizacion.ESTATUS == "FACTURADO"
+                        ? Colors.green
+                        : Colors.amber,
+              ),
+            ),
+          ],
+        ),
+      ),
+      onTap: () async {
+        bool seEncontroCot = await ref
+            .read(busquedaCotMovVMProvider)
+            .buscarCotizacionMov(idMov: widget.cotizacion.ID_COTIZACION, idAlm: widget.cotizacion.ID_ALMACEN);
+        if (seEncontroCot) {
+          context.go("/vercotizacion");
+        } else {
+          Fluttertoast.showToast(
+            msg: "No se pudo obtener la cotización.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            textColor: Colors.white,
+            fontSize: 18.0,
+          );
+        }
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextBoldNormal(
+            bold: "Almacén",
+            normal: widget.cotizacion.NOMBRE_ALMACEN ?? "",
+          ),
+          TextBoldNormal(
+            bold: "Vendedor",
+            normal: widget.cotizacion.NOMBRE_VENDEDOR ?? "",
+          ),
+          TextBoldNormal(bold: "Cliente", normal: widget.cotizacion.CLIENTE ?? ""),
+          TextBoldNormal(bold: "Paridad", normal: "${widget.cotizacion.PARIDAD}"),
+          TextBoldNormal(
+            bold: "Fecha de cancelacion",
+            normal:
+                widget.cotizacion.FECHA_CANCELACION == null
+                    ? ""
+                    : formatter.format(widget.cotizacion.FECHA_CANCELACION!),
+          ),
+          TextBoldNormal(bold: "Total", normal: "${widget.cotizacion.TOTAL}"),
+        ],
+      ),
+    );
+  }
+}
+
+
+/*
+Container(
         color: Colors.white,
         padding: EdgeInsets.all(2),
         child: Column(
@@ -155,69 +253,48 @@ class CardCotizacion extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-      estatus: Text.rich(
-        TextSpan(
-          text: "Estatus: ",
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.bold,
-            fontSize: 15.sp,
-          ),
-          children: [
-            TextSpan(
-              text: cotizacion.ESTATUS,
-              style: TextStyle(
-                color:
-                    cotizacion.ESTATUS == "CANCELADO"
-                        ? Colors.red
-                        : cotizacion.ESTATUS == "FACTURADO"
-                        ? Colors.green
-                        : Colors.amber,
-              ),
-            ),
-          ],
-        ),
-      ),
-      onTap: () async {
-        bool seEncontroCot = await ref
-            .read(busquedaCotMovVMProvider)
-            .buscarCotizacionMov(idMov: cotizacion.ID_COTIZACION);
-        if (seEncontroCot) {
-          context.go("/vercotizacion");
-        } else {
-          Fluttertoast.showToast(
-            msg: "No se pudo obtener la cotización.",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 3,
-            textColor: Colors.white,
-            fontSize: 18.0,
-          );
-        }
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      )
+
+
+
+
+
+
+
+      Row(
         children: [
-          TextBoldNormal(
-            bold: "Almacén",
-            normal: cotizacion.NOMBRE_ALMACEN ?? "",
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Nombre", textAlign: TextAlign.center,),
+            ...detCotizacion.map((e) =>
+                    Text("${e.ID_ARTICULO}.- Nombre"),
+                )
+              ]
+            ),
           ),
-          TextBoldNormal(
-            bold: "Vendedor",
-            normal: cotizacion.NOMBRE_VENDEDOR ?? "",
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Cantidad"),
+              ...detCotizacion.map((e) =>
+                  Text(e.CANTIDAD!.toStringAsFixed(2)),
+              )
+            ]
+            ),
           ),
-          TextBoldNormal(bold: "Cliente", normal: cotizacion.CLIENTE ?? ""),
-          TextBoldNormal(bold: "Paridad", normal: "${cotizacion.PARIDAD}"),
-          TextBoldNormal(
-            bold: "Fecha de cancelacion",
-            normal:
-                cotizacion.FECHA_CANCELACION == null
-                    ? ""
-                    : formatter.format(cotizacion.FECHA_CANCELACION!),
+          Expanded(
+            child: Column( crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Importe", textAlign: TextAlign.center,),
+              ...detCotizacion.map((e) =>
+                  Text(e.IMPORTE!.toStringAsFixed(2)),
+              )
+            ]
+            ),
           ),
-          TextBoldNormal(bold: "Total", normal: "${cotizacion.TOTAL}"),
         ],
-      ),
-    );
-  }
-}
+      )
+*/

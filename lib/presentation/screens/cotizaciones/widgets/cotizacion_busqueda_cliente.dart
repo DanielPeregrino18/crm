@@ -1,8 +1,10 @@
 import 'package:crm/presentation/viewmodels/cotizaciones/busqueda_cot_clie_vm.dart';
+import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../config/DI/dependencias.dart';
+import '../../../widgets/almacenes_drop_down_menu.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_date_picker.dart';
 import '../../../widgets/custom_text_field.dart';
@@ -21,7 +23,7 @@ class _CotizacionBusquedaClienteState
     extends ConsumerState<CotizacionBusquedaCliente> {
   @override
   Widget build(BuildContext context) {
-    var busquedaCotClieVM = ref.watch(busquedaCotClieVMProvider.notifier).state;
+    var busquedaCotClieVM = ref.watch(busquedaCotClieVMProvider);
     var theme = Theme.of(context).colorScheme;
 
     final List<Widget> searchBarActions = [
@@ -37,6 +39,11 @@ class _CotizacionBusquedaClienteState
       child: Column(
         spacing: 15,
         children: [
+          AlmacenesDropDownMenu(
+            setAlmacen: (int id, String nombre) {
+              busquedaCotClieVM.idAlmacen = id;
+            },
+          ),
           SearchBarClientes(
             hint: "Cliente",
             actions: searchBarActions,
@@ -54,11 +61,7 @@ class _CotizacionBusquedaClienteState
               Text("Fecha Inicial"),
               TextButton(
                 onPressed: () async {
-                  var fechaInicio = await customDatePicker(context);
-                  if (fechaInicio != null) {
-                    busquedaCotClieVM.fechaInicial = fechaInicio;
-                    setState(() {});
-                  }
+                  busquedaCotClieVM.setFechaInicial(await customDatePicker(context, initialDate: busquedaCotClieVM.fechaInicial));
                 },
                 child: Text(
                   ref
@@ -74,11 +77,7 @@ class _CotizacionBusquedaClienteState
               Text("Fecha Fin"),
               TextButton(
                 onPressed: () async {
-                  var fechaFin = await customDatePicker(context);
-                  if (fechaFin != null) {
-                    busquedaCotClieVM.fechaFin = fechaFin;
-                    setState(() {});
-                  }
+                  busquedaCotClieVM.setFechaFin(await customDatePicker(context, initialDate: busquedaCotClieVM.fechaFin));
                 },
                 child: Text(
                   ref
