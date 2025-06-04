@@ -1,4 +1,3 @@
-import 'package:crm/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -27,8 +26,6 @@ class _PedidoState extends ConsumerState<Pedido> {
   bool isLoading = false;
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-  late List<Almacen> almacenes = ref.watch(almacenesProvider);
 
   void guardarAlmacenes(List<Almacen> almacenes) async {
     if (almacenes.isNotEmpty) {
@@ -75,6 +72,8 @@ class _PedidoState extends ConsumerState<Pedido> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
+
+    List<Almacen> almacenes = ref.watch(almacenesProvider);
 
     final CabsPedRangoVM cabsPedRangoVM = ref.watch(
       cabsPedRangoVMProvider.notifier,

@@ -4,8 +4,9 @@ import 'package:retrofit/retrofit.dart';
 
 part 'op_pedido_api.g.dart';
 
-@RestApi(baseUrl: 'http://192.168.1.117:8080/api/operaciones/POSopPedido')
+@RestApi(baseUrl: 'http://192.168.1.222:8080/api/operaciones/POSopPedido')
 abstract class OpPedidoApi {
+
   factory OpPedidoApi(Dio dio) = _OpPedidoApi;
 
   @GET('/GetCabPedMov')

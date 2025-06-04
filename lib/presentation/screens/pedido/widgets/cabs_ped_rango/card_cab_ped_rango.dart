@@ -47,8 +47,6 @@ class CardCabPedRango extends ConsumerWidget {
         ref.watch(detPedMovVMProvider).value?[cabPedRango.ID_PEDIDO];
     final CabPedMovVM cabPedMovVM = ref.watch(cabPedMovVMProvider.notifier);
 
-    final NumberFormat numberFormat = NumberFormat(",##0.##");
-
     String granTotal(
       double cantidad,
       double importe,
@@ -59,7 +57,7 @@ class CardCabPedRango extends ConsumerWidget {
     ) {
       double subtotal = cantidad * importe;
       double granTotal = subtotal - descuento + ieps + iva - ivaRetenido;
-      return numberFormat.format(granTotal);
+      return granTotal.toStringAsFixed(2);
     }
 
     return ExpandableCard(
@@ -129,12 +127,7 @@ class CardCabPedRango extends ConsumerWidget {
                   columnSpacing: 10,
                   columns: [
                     DataColumn(
-                      label: Text('Código'),
-                      numeric: true,
-                      headingRowAlignment: MainAxisAlignment.center,
-                    ),
-                    DataColumn(
-                      label: Text('Nombre'),
+                      label: Text('Artículo'),
                       headingRowAlignment: MainAxisAlignment.center,
                     ),
                     DataColumn(
@@ -152,8 +145,14 @@ class CardCabPedRango extends ConsumerWidget {
                       detPedMov.map((articulo) {
                         return DataRow(
                           cells: [
-                            DataCell(Text(right(articulo.ID_ARTICULO, false))),
-                            DataCell(Text(right(articulo.NOMBRE, false))),
+                            DataCell(
+                              Text(
+                                right(
+                                  '${articulo.ID_ARTICULO}. ${articulo.NOMBRE}',
+                                  false,
+                                ),
+                              ),
+                            ),
                             DataCell(Text(right(articulo.CANTIDAD, false))),
                             DataCell(
                               Text(
