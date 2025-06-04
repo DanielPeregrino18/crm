@@ -1,4 +1,4 @@
-import 'package:crm/data/models/cab_cotizacion.dart';
+import 'package:crm/data/models/cotizaciones/cab_cotizacion.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'cab_cotizacion_mov.g.dart';

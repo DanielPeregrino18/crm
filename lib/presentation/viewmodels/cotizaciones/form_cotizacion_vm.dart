@@ -1,19 +1,21 @@
-import 'dart:ffi';
-
 import 'package:crm/config/DI/dependencias.dart';
-import 'package:crm/data/models/cab_cotizacion.dart';
-import 'package:crm/data/models/cab_cotizacion_mov.dart';
+import 'package:crm/data/models/cotizaciones/cab_cotizacion.dart';
+import 'package:crm/data/models/cotizaciones/cab_cotizacion_mov.dart';
+import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-final formCotizacionVMProvider = StateProvider<FormCotizacionVM>(
-  (ref) => FormCotizacionVM(ref.read(formatterProvider)),
+final formCotizacionVMProvider = ChangeNotifierProvider<FormCotizacionVM>(
+  (ref) => FormCotizacionVM(ref.read(formatterProvider),
+                                                                        ref.read(almacenesVMProvider)),
 );
 
 class FormCotizacionVM extends ChangeNotifier {
   DateFormat formatter;
+  AlmacenesViewModel almacenesVM;
   int idAlmacen = 0;
+  String almacenLabel = "0";
   int idClienteController = 0;
   SearchController clienteController = SearchController();
   String nombre = "";
@@ -57,7 +59,7 @@ class FormCotizacionVM extends ChangeNotifier {
   double ivaTotal = 0.0;
   double ivaRetenido = 0.0;
   double granTotal = 0.0;
-  FormCotizacionVM(this.formatter);
+  FormCotizacionVM(this.formatter, this.almacenesVM);
   void met() {}
 
   String getFechaRegistro() {
@@ -84,18 +86,64 @@ class FormCotizacionVM extends ChangeNotifier {
     return formatter.format(fechaVigencia);
   }
 
+  void setAlmacenLabel(String alm){
+    almacenLabel = alm;
+    notifyListeners();
+  }
+
+  void setFechaVigencia(DateTime? date){
+    fechaVigencia = date ?? fechaVigencia;
+    notifyListeners();
+  }
+
+  void setFechaOrdenCompra(DateTime? date){
+    fechaOrdenCompra = date ?? fechaOrdenCompra;
+    notifyListeners();
+  }
+  void setFechaInicioConsigna(DateTime? date){
+    fechaInicioConsigna = date ?? fechaInicioConsigna;
+    notifyListeners();
+  }
+  void setFechaFinConsigna(DateTime? date){
+    fechaFinConsigna = date ?? fechaFinConsigna;
+    notifyListeners();
+  }
+  void setFechaEntrega(DateTime? date){
+    fechaEntrega = date ?? fechaEntrega;
+    notifyListeners();
+  }
+  void setHoraEntrega(TimeOfDay? hora){
+    horaEntrega = hora ?? horaEntrega;
+    notifyListeners();
+  }
+  void setMoneda(int idMon){
+    if(idMoneda != idMon){
+      idMoneda = idMon;
+      notifyListeners();
+    }
+  }
+  void setAutorizar(bool valor){
+    autorizar = valor;
+    notifyListeners();
+  }
+  void setIvaTRetenido(bool valor){
+    ivaTotalRetenido = valor;
+    notifyListeners();
+  }
+  void setIdListaPrecios(int id){
+    idListaPrecios = id;
+    notifyListeners();
+  }
+
   void setCabCotizacion(CabCotizacionMov cabCotizacionMov) {
     if(cabCotizacionMov.cabCotizacion!=null) {
       CabCotizacion cabCotizacion = cabCotizacionMov.cabCotizacion!;
       idAlmacen = cabCotizacion.ID_ALMACEN ?? idAlmacen;
+      almacenLabel = almacenesVM.almacenes[idAlmacen].nombre;
       //todo asignar cliente al search bar
       nombre = cabCotizacion.Nombre??"";
-      sucursalController = TextEditingController(
-        text: '${cabCotizacion.ID_SUCURSAL_CTE}',
-      );
-      direccionController = TextEditingController(
-        text: '${cabCotizacion.EntregarEnDomicilio}',
-      );
+      sucursalController = TextEditingController(text: '${cabCotizacion.ID_SUCURSAL_CTE}',);
+      direccionController = TextEditingController(text: '${cabCotizacion.EntregarEnDomicilio}',);
       idListaPrecios = cabCotizacionMov.idListaPrecio!;
       fechaVigencia = cabCotizacion.VIGENCIA ?? fechaVigencia;
       fechaRegistro = cabCotizacion.FECHA ?? fechaRegistro;
@@ -116,16 +164,11 @@ class FormCotizacionVM extends ChangeNotifier {
       observacionesController = TextEditingController(text: cabCotizacion.OBSERVACIONES);
       autorizar = cabCotizacion.Req_Autorizacion ?? false;
       ivaTotalRetenido = cabCotizacion.RETIENE_IVA ?? false;
-      domicilioController =
-          TextEditingController(text: cabCotizacion.EntregarEnDomicilio);
-      coloniaController =
-          TextEditingController(text: cabCotizacion.EntregarEnColonia);
-      estadoController =
-          TextEditingController(text: cabCotizacion.EntregarEnEstado);
-      ciudadController =
-          TextEditingController(text: cabCotizacion.EntregarEnCiudad);
-      entreCallesController =
-          TextEditingController(text: cabCotizacion.EntregarEnCalles);
+      domicilioController = TextEditingController(text: cabCotizacion.EntregarEnDomicilio);
+      coloniaController = TextEditingController(text: cabCotizacion.EntregarEnColonia);
+      estadoController = TextEditingController(text: cabCotizacion.EntregarEnEstado);
+      ciudadController = TextEditingController(text: cabCotizacion.EntregarEnCiudad);
+      entreCallesController = TextEditingController(text: cabCotizacion.EntregarEnCalles);
       atencionAContoller = TextEditingController(text: cabCotizacion.ATENCION);
       fechaEntrega = cabCotizacion.FECHAENTREGA ?? fechaEntrega;
       horaEntrega = TimeOfDay.fromDateTime(fechaEntrega);

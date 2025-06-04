@@ -29,7 +29,6 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
   Widget build(BuildContext context) {
     var cotizacionVM = ref.watch(cotizacionVMProvider);
     var theme = Theme.of(context).colorScheme;
-
     final List<Widget> searchBarActions = [
       IconButton(
         onPressed: () {
