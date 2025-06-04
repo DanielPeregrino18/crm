@@ -60,8 +60,6 @@ class CabPedMovVM extends _$CabPedMovVM {
 
   int idAlmacen = 0;
 
-  final TextEditingController movimientoController = TextEditingController();
-
   late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
 
   final CabPedMovRepository _cabPedMovRepository = CabPedMovRepository();

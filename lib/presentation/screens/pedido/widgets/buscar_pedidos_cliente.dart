@@ -96,8 +96,20 @@ class BuscarPedidosCliente extends ConsumerWidget {
           CustomButton(
             label: 'Buscar',
             onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: theme.primary,
+                      backgroundColor: theme.primary.withAlpha(95),
+                    ),
+                  );
+                },
+              );
               bool result = await getCabsPedClienteVM.getCabsPedCliente();
               if (result) {
+                Navigator.of(context).pop();
                 mostrarResultados();
               }
             },

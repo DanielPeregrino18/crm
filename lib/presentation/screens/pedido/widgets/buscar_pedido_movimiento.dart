@@ -12,6 +12,8 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     CabPedMovVM cabPedMovVM = ref.watch(cabPedMovVMProvider.notifier);
 
     TextEditingController controller = TextEditingController();
@@ -43,12 +45,23 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
                 debugPrint('No se ha ingresado el movimiento');
                 // TODO: Implementar un indicador en pantalla
               } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: theme.primary,
+                        backgroundColor: theme.primary.withAlpha(95),
+                      ),
+                    );
+                  },
+                );
                 bool result = await cabPedMovVM.getCabPedMov(
                   cabPedMovVM.idAlmacen,
                   int.parse(controller.text),
                 );
                 if (result) {
-                  // Navigator.pop(context); // Se puede cerrar el campo de búsqueda por movimiento al encontrar el pedido
+                  Navigator.pop(context);
                   context.go('/pedido/nuevo_detalle_pedido');
                 }
                 // TODO: Implementar un indicador en pantalla en caso de no encontrar el pedido

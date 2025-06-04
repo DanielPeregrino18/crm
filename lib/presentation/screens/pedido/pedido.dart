@@ -27,6 +27,8 @@ class _PedidoState extends ConsumerState<Pedido> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
+  late List<Almacen> almacenes = ref.watch(almacenesProvider);
+
   void guardarAlmacenes(List<Almacen> almacenes) async {
     if (almacenes.isNotEmpty) {
       int i = 1;
@@ -72,7 +74,6 @@ class _PedidoState extends ConsumerState<Pedido> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
-    List<Almacen> almacenes = ref.watch(almacenesProvider);
 
     final CabsPedRangoVM cabsPedRangoVM = ref.watch(
       cabsPedRangoVMProvider.notifier,
@@ -80,6 +81,9 @@ class _PedidoState extends ConsumerState<Pedido> {
 
     final SearchController clienteSearchController =
         cabsPedRangoVM.pedidosVM.clienteSearchController;
+
+    final List<CabPedRangoModel>? cabsPedRango =
+        ref.watch(cabsPedRangoVMProvider).value;
 
     final List<Widget> searchBarActions = [
       IconButton(
@@ -89,9 +93,6 @@ class _PedidoState extends ConsumerState<Pedido> {
         icon: Icon(Icons.clear, color: theme.primary),
       ),
     ];
-
-    final List<CabPedRangoModel>? cabsPedRango =
-        ref.watch(cabsPedRangoVMProvider).value;
 
     return Scaffold(
       key: scaffoldKey,
@@ -164,7 +165,7 @@ class _PedidoState extends ConsumerState<Pedido> {
                         hint: 'Cliente',
                         actions: searchBarActions,
                         inputController: clienteSearchController,
-                        setIdCliente: (id) {
+                        setIdCliente: (int id) {
                           cabsPedRangoVM.pedidosVM.idCliente = id;
                         },
                       ),
@@ -188,30 +189,53 @@ class _PedidoState extends ConsumerState<Pedido> {
                     ),
                   ],
                 ),
-                isLoading
-                    ? CircularProgressIndicator()
-                    : cabsPedRango == null
-                    ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.refresh,
-                            color: theme.primary,
-                            size: 30,
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            await cabsPedRangoVM.getCabsPedRango();
-                            setState(() {
-                              isLoading = false;
-                            });
-                          },
-                        ),
-                        Text('Sin resultados para mostrar'),
-                      ],
+                cabsPedRango == null
+                    ? SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child:
+                          isLoading
+                              ? Column(
+                                spacing: 15,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    backgroundColor: theme.primary.withAlpha(
+                                      95,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Buscando pedidos...',
+                                    style: TextStyle(fontSize: 16.sp),
+                                  ),
+                                ],
+                              )
+                              : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.refresh,
+                                      color: theme.primary.withAlpha(95),
+                                      size: 60,
+                                    ),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      await cabsPedRangoVM.getCabsPedRango();
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    },
+                                  ),
+                                  Text(
+                                    'Sin pedidos para mostrar',
+                                    style: TextStyle(fontSize: 16.sp),
+                                  ),
+                                ],
+                              ),
                     )
                     : Column(
                       spacing: 10,

@@ -1,22 +1,21 @@
 import 'dart:async';
-
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SearchBarClientes extends StatefulWidget {
-  SearchBarClientes({
+  const SearchBarClientes({
     super.key,
     required this.hint,
     required this.actions,
     required this.inputController,
     required this.setIdCliente,
-    this.initialValue
+    this.initialValue,
   });
 
   final String hint;
-  String? initialValue;
+  final String? initialValue;
 
   final List<Widget> actions;
 
@@ -28,16 +27,12 @@ class SearchBarClientes extends StatefulWidget {
   State<SearchBarClientes> createState() => _SearchBarClientesState();
 }
 
-class _SearchBarClientesState extends State<SearchBarClientes> with AfterLayoutMixin<SearchBarClientes> {
-  @override
-  void initState() {
-    super.initState();
-
-  }
+class _SearchBarClientesState extends State<SearchBarClientes>
+    with AfterLayoutMixin<SearchBarClientes> {
   @override
   Widget build(BuildContext context) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
 
-    var theme = Theme.of(context).colorScheme;
     return SizedBox(
       child: SearchAnchor.bar(
         isFullScreen: false,
@@ -54,7 +49,6 @@ class _SearchBarClientesState extends State<SearchBarClientes> with AfterLayoutM
           borderRadius: BorderRadius.circular(8),
         ),
         viewBackgroundColor: theme.onPrimary,
-
         suggestionsBuilder: (context, controller) {
           return [
             ListTile(
@@ -141,7 +135,7 @@ class _SearchBarClientesState extends State<SearchBarClientes> with AfterLayoutM
 
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
-    if(widget.initialValue != null) {
+    if (widget.initialValue != null) {
       widget.inputController.openView();
       widget.inputController.closeView(widget.initialValue);
     }
