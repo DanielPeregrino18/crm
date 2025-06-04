@@ -384,7 +384,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
                 _customStepperKey.currentState?.goToLastStep();
               },
               child: Text(
-                'Total: \$${cabPedido?.SUBTOTAL!}',
+                'Total: \$${cabPedido?.SUBTOTAL?? 0}',
                 style: TextStyle(color: theme.onPrimary),
               ),
             ),
