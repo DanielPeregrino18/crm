@@ -1,3 +1,4 @@
+import 'package:crm/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -189,53 +190,53 @@ class _PedidoState extends ConsumerState<Pedido> {
                     ),
                   ],
                 ),
-                cabsPedRango == null
+                isLoading
                     ? SizedBox(
                       height: MediaQuery.of(context).size.height / 2,
-                      child:
-                          isLoading
-                              ? Column(
-                                spacing: 15,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(
-                                    backgroundColor: theme.primary.withAlpha(
-                                      95,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Buscando pedidos...',
-                                    style: TextStyle(fontSize: 16.sp),
-                                  ),
-                                ],
-                              )
-                              : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.refresh,
-                                      color: theme.primary.withAlpha(95),
-                                      size: 60,
-                                    ),
-                                    onPressed: () async {
-                                      setState(() {
-                                        isLoading = true;
-                                      });
-                                      await cabsPedRangoVM.getCabsPedRango();
-                                      setState(() {
-                                        isLoading = false;
-                                      });
-                                    },
-                                  ),
-                                  Text(
-                                    'Sin pedidos para mostrar',
-                                    style: TextStyle(fontSize: 16.sp),
-                                  ),
-                                ],
-                              ),
+                      child: Column(
+                        spacing: 15,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            backgroundColor: theme.primary.withAlpha(95),
+                          ),
+                          Text(
+                            'Buscando pedidos...',
+                            style: TextStyle(fontSize: 16.sp),
+                          ),
+                        ],
+                      ),
+                    )
+                    : cabsPedRango == null
+                    ? SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.refresh,
+                              color: theme.primary.withAlpha(95),
+                              size: 60,
+                            ),
+                            onPressed: () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              await cabsPedRangoVM.getCabsPedRango();
+                              setState(() {
+                                isLoading = false;
+                              });
+                            },
+                          ),
+                          Text(
+                            'Sin pedidos para mostrar',
+                            style: TextStyle(fontSize: 16.sp),
+                          ),
+                        ],
+                      ),
                     )
                     : Column(
                       spacing: 10,
