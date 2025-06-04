@@ -66,6 +66,10 @@ class _PeriodoButtonState extends State<PeriodoButton> {
     final ColorScheme theme = Theme.of(context).colorScheme;
 
     return TextButton.icon(
+      style: ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.all(5)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
       label: Row(
         children: [
           Text(
