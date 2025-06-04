@@ -66,7 +66,10 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
 
   List<Map<String, dynamic>> listaPrecios = [
     {"nombre": "PR. AL PUBLICO", "id": 1},
-    {"nombre": "Prueba", "id": 2},
+    {"nombre": "Prueba2", "id": 2},
+    {"nombre": "Prueba3", "id": 3},
+    {"nombre": "Prueba4", "id": 4},
+    {"nombre": "Prueba5", "id": 5},
   ];
   List<Map<String, dynamic>> listaMonedas = [
     {"nombre": "MXN", "id": 1},
@@ -88,6 +91,13 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
           estatus == "NUEVO" ? 'Nueva Cotización' : 'Detalles Cotización',
           style: TextStyle(color: theme.onPrimary),
         ),
+        actions: [
+          TextButton(onPressed: () {
+            setState(() {
+              _currentStep = 6;
+            });
+          }, child: Text("Total: \$4852", style: TextStyle(color: Colors.white),))
+        ],
       ),
       body: Stepper(
         controlsBuilder: (BuildContext context, ControlsDetails details) {
@@ -118,7 +128,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
         },
         steps: [
           Step(
-            isActive: _currentStep == 0,
+            isActive: true,
             title: Text('Datos de la cotización'),
             subtitle: Text('1/4'),
             content: Column(
@@ -129,7 +139,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                   'Almacén',
                   TextButton(
                     child: Text(
-                      "almacen",
+                      ref.watch(formCotizacionVMProvider).almacenLabel,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.black,
@@ -139,7 +149,10 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     onPressed: () {
                       if (isEnabled) {
                         mostrarMenu(
-                          MenuAlmacenes(setAlmacen: (int id, String nombre) {}),
+                          MenuAlmacenes(setAlmacen: (int id, String nombre) {
+                            formCotizacionVM.setAlmacenLabel(nombre);
+                            formCotizacionVM.idAlmacen = id;
+                          }),
                           false,
                         );
                       }
@@ -181,9 +194,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                             )
                             .toList(),
                     onChanged: (value) {
-                      setState(() {
-                        formCotizacionVM.idListaPrecios = value as int;
-                      });
+                      formCotizacionVM.setIdListaPrecios(value as int);
                     },
                   ) : Text('${listaPrecios.firstWhere((element) => element['id'] == formCotizacionVM.idListaPrecios,)['nombre']}'),
                 ),
@@ -199,12 +210,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       ),
                     ),
                     onPressed: () async {
-                      var date = await customDatePicker(context);
-                      if (date != null) {
-                        setState(() {
-                          formCotizacionVM.fechaVigencia = date;
-                        });
-                      }
+                      formCotizacionVM.setFechaVigencia(await customDatePicker(context, initialDate: formCotizacionVM.fechaVigencia));
                     },
                   ),
                 ),
@@ -212,7 +218,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             ),
           ),
           Step(
-            isActive: _currentStep == 1,
+            isActive: _currentStep >= 1,
             title: Text('Datos de la cotización'),
             subtitle: Text('2/4'),
             content: Column(
@@ -245,12 +251,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     ),
                     onPressed: () async {
                       if (isEnabled) {
-                        var date = await customDatePicker(context);
-                        if (date != null) {
-                          setState(() {
-                            formCotizacionVM.fechaOrdenCompra = date;
-                          });
-                        }
+                       formCotizacionVM.setFechaOrdenCompra(await customDatePicker(context, initialDate: formCotizacionVM.fechaOrdenCompra));
                       }
                     },
                   ),
@@ -277,7 +278,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             ),
           ),
           Step(
-            isActive: _currentStep == 2,
+            isActive: _currentStep >= 2,
             title: Text('Datos de la cotización'),
             subtitle: Text('3/4'),
             content: Column(
@@ -330,9 +331,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     )
                         .toList(),
                     onChanged: (value) {
-                      setState(() {
-                        formCotizacionVM.idMoneda = value as int;
-                      });
+                        formCotizacionVM.setMoneda(value as int);
                     },
                   ) : Text('${listaMonedas.firstWhere((element) => element['id'] == formCotizacionVM.idMoneda,)['nombre']}'),
                 ),
@@ -346,7 +345,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             ),
           ),
           Step(
-            isActive: _currentStep == 3,
+            isActive: _currentStep >= 3,
             title: Text('Datos de la cotización'),
             subtitle: Text('4/4'),
             content: Column(
@@ -365,15 +364,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     ),
                     onPressed: () async {
                       if (isEnabled) {
-                        var fechaInicioConsigna = await customDatePicker(
-                          context,
-                        );
-                        if (fechaInicioConsigna != null) {
-                          setState(() {
-                            formCotizacionVM.fechaInicioConsigna =
-                                fechaInicioConsigna;
-                          });
-                        }
+                        formCotizacionVM.setFechaInicioConsigna(await customDatePicker(context, initialDate: formCotizacionVM.fechaInicioConsigna));
                       }
                     },
                   ),
@@ -391,13 +382,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     ),
                     onPressed: () async {
                       if (isEnabled) {
-                        var fechaFinConsigna = await customDatePicker(context);
-                        if (fechaFinConsigna != null) {
-                          setState(() {
-                            formCotizacionVM.fechaFinConsigna =
-                                fechaFinConsigna;
-                          });
-                        }
+                        formCotizacionVM.setFechaFinConsigna(await customDatePicker(context, initialDate: formCotizacionVM.fechaFinConsigna));
                       }
                     },
                   ),
@@ -408,7 +393,6 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                   isEnabled,
                   formCotizacionVM.campoAddendaController,
                 ),
-                // Observaciones
                 _customTextField(
                   theme,
                   'Observaciones',
@@ -423,9 +407,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       value: formCotizacionVM.autorizar,
                       onChange: (val) {
                         if (isEnabled) {
-                          setState(() {
-                            formCotizacionVM.autorizar = val;
-                          });
+                            formCotizacionVM.setAutorizar(val);
                         }
                       },
                     ),
@@ -434,9 +416,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       value: formCotizacionVM.ivaTotalRetenido,
                       onChange: (val) {
                         if (isEnabled) {
-                          setState(() {
-                            formCotizacionVM.ivaTotalRetenido = val;
-                          });
+                          formCotizacionVM.setIvaTRetenido(val);
                         }
                       },
                     ),
@@ -446,7 +426,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             ),
           ),
           Step(
-            isActive: _currentStep == 4,
+            isActive: _currentStep >= 4,
             title: Text('Domicilio'),
             content: Column(
               spacing: 15,
@@ -499,12 +479,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       ),
                     ),
                     onPressed: () async {
-                      var fechaEntrega = await customDatePicker(context);
-                      if (fechaEntrega != null) {
-                        setState(() {
-                          formCotizacionVM.fechaEntrega = fechaEntrega;
-                        });
-                      }
+                      formCotizacionVM.setFechaEntrega(await customDatePicker(context));
                     },
                   ),
                 ),
@@ -520,17 +495,14 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       ),
                     ),
                     onPressed: () async {
-                      var horaEntrega = await customHourPicker(
-                        context,
-                        formCotizacionVM.horaEntrega.hour,
-                        formCotizacionVM.horaEntrega.minute,
-                        "Hora de entrega",
+                      formCotizacionVM.setHoraEntrega(
+                          await customHourPicker(
+                            context,
+                            formCotizacionVM.horaEntrega.hour,
+                            formCotizacionVM.horaEntrega.minute,
+                            "Hora de entrega",
+                          )
                       );
-                      if (horaEntrega != null) {
-                        setState(() {
-                          formCotizacionVM.horaEntrega = horaEntrega;
-                        });
-                      }
                     },
                   ),
                 ),
@@ -538,7 +510,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             ),
           ),
           Step(
-            isActive: _currentStep == 4,
+            isActive: _currentStep >= 5,
             title: Text('Artículos'),
             subtitle: Text('Capturar Artículos'),
             content: Column(
@@ -550,7 +522,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
             ),
           ),
           Step(
-            isActive: _currentStep == 5,
+            isActive: _currentStep == 6,
             title: Text('Totales'),
             content: Column(
               spacing: 10,

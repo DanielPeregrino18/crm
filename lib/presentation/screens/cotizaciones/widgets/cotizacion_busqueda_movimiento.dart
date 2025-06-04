@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import '../../../widgets/almacenes_drop_down_menu.dart';
 import '../../../widgets/custom_text_field.dart';
 
 class CotizacionBusquedaMovimiento extends ConsumerWidget {
@@ -18,6 +19,11 @@ class CotizacionBusquedaMovimiento extends ConsumerWidget {
       padding: EdgeInsets.all(10),
       child: Column(
         children: [
+          AlmacenesDropDownMenu(
+            setAlmacen: (int id, String nombre) {
+              busquedaCotMov.idAlmacen = id;
+            },
+          ),
           CustomTextField(
             label: "Movimiento",
             isEnabled: true,
@@ -26,7 +32,6 @@ class CotizacionBusquedaMovimiento extends ConsumerWidget {
           CustomButton(onPressed: () async {
             bool seEncontroCot = await busquedaCotMov.buscarCotizacionMov();
             if(seEncontroCot){
-              busquedaCotMov.movimientoController.clear();
               context.go("/vercotizacion");
             }else{
               Fluttertoast.showToast(

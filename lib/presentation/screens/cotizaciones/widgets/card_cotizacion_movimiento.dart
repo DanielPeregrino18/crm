@@ -1,5 +1,6 @@
 import 'package:crm/config/DI/dependencias.dart';
-import 'package:crm/data/models/cab_cotizacion_cliente.dart';
+import 'package:crm/data/models/cotizaciones/cab_cotizacion_cliente.dart';
+import 'package:crm/presentation/viewmodels/cotizaciones/busqueda_cot_clie_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/busqueda_cot_mov_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,7 +53,7 @@ class CardCotizacionMovimiento extends ConsumerWidget {
         try {
           int idMov = int.parse(cotCliente.Clave!.split("-")[1]);
           bool seEncontroCot = await ref
-              .read(busquedaCotMovVMProvider)
+              .read(busquedaCotClieVMProvider)
               .buscarCotizacionMov(idMov: idMov);
           if (seEncontroCot) {
             context.go("/vercotizacion");
