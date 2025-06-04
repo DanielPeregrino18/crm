@@ -32,7 +32,6 @@ class _SearchBarClientesState extends State<SearchBarClientes>
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
-    FocusScope.of(context).unfocus();
     
     return SizedBox(
       child: SearchAnchor.bar(
