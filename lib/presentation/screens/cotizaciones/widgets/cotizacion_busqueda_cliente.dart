@@ -40,7 +40,7 @@ class _CotizacionBusquedaClienteState
         spacing: 15,
         children: [
           AlmacenesDropDownMenu(
-            setAlmacen: (int id, String nombre) {
+            setAlmacen: (int id) {
               busquedaCotClieVM.idAlmacen = id;
             },
           ),
