@@ -20,7 +20,7 @@ class CotizacionBusquedaMovimiento extends ConsumerWidget {
       child: Column(
         children: [
           AlmacenesDropDownMenu(
-            setAlmacen: (int id, String nombre) {
+            setAlmacen: (int id) {
               busquedaCotMov.idAlmacen = id;
             },
           ),
