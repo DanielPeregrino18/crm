@@ -1,3 +1,4 @@
+import 'package:crm/data/models/pedidos/det_ped_mov_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -40,11 +41,9 @@ class CardCabPedRango extends ConsumerWidget {
           : '$right';
     }
 
-    // final List<DetPedMovModel>? detPedMov = ref.watch(detPedMovVMProvider).value;
-
     final DetPedMovVM detPedMovVM = ref.watch(detPedMovVMProvider.notifier);
-    final detPedMovList = ref.watch(detPedMovVMProvider).value;
-    final detPedMov = detPedMovList?[cabPedRango.ID_PEDIDO];
+    final List<DetPedMovModel>? detPedMov =
+        ref.watch(detPedMovVMProvider).value?[cabPedRango.ID_PEDIDO];
 
     final NumberFormat numberFormat = NumberFormat(",##0.##");
 

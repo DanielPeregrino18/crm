@@ -1,6 +1,6 @@
 import 'package:crm/core/services/op_pedido_api.dart';
 import 'package:dio/dio.dart';
-import 'package:crm/data/models/pedidos/cab_ped_mov_model.dart';
+import 'package:crm/data/models/pedidos/cab_ped_mov_models/cab_ped_mov_model.dart';
 
 class CabPedMovRepository {
   final OpPedidoApi _opPedidoApi;

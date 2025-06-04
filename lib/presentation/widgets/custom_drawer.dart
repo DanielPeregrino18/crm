@@ -48,7 +48,7 @@ class CustomDrawer extends ConsumerWidget {
               title: Text('Pedidos'),
               iconColor: theme.primary,
               onTap: () {
-                context.go("/pedidos");
+                context.go("/pedido");
               },
             ),
             Divider(color: theme.primary),

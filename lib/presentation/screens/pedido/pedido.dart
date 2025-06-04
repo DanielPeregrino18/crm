@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
-import 'package:crm/presentation/screens/pedidos/widgets/pedidos_widgets.dart';
+import 'package:crm/presentation/screens/pedido/widgets/pedidos_widgets.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
@@ -13,16 +13,16 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_per
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:crm/presentation/widgets/search_button.dart';
 import 'package:crm/data/models/pedidos/cab_ped_rango_model.dart';
-import 'package:crm/presentation/screens/pedidos/widgets/cabs_ped_rango/card_cab_ped_rango.dart';
+import 'package:crm/presentation/screens/pedido/widgets/cabs_ped_rango/card_cab_ped_rango.dart';
 
-class Pedidos extends ConsumerStatefulWidget {
-  const Pedidos({super.key});
+class Pedido extends ConsumerStatefulWidget {
+  const Pedido({super.key});
 
   @override
-  ConsumerState<Pedidos> createState() => _PedidosState();
+  ConsumerState<Pedido> createState() => _PedidoState();
 }
 
-class _PedidosState extends ConsumerState<Pedidos> {
+class _PedidoState extends ConsumerState<Pedido> {
   bool isLoading = false;
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
@@ -119,7 +119,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
             tooltip: 'Nuevo pedido',
             icon: Icon(Icons.add),
             onPressed: () {
-              context.go('/pedidos/pedido', extra: true);
+              context.go('/pedido/nuevo_detalle_pedido', extra: true);
             },
           ),
         ],

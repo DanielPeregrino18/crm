@@ -182,45 +182,13 @@ class DetPedMovVM extends _$DetPedMovVM {
             pedidosVM.idCompany,
             pedidosVM.idSubscription,
           );
-      state.value?[idPedido] = detPedMov;
+      state = AsyncData({...?state.value, idPedido: detPedMov});
       debugPrint('Detalles del pedido cargados correctamente');
       return true;
     } catch (e) {
       debugPrint('$e');
-      state.value?[idPedido] = null;
+      state = AsyncData({...?state.value, idPedido: null});
       return false;
     }
   }
 }
-
-// @riverpod
-// class DetPedMovVM extends _$DetPedMovVM {
-//   @override
-//   FutureOr<List<DetPedMovModel>?> build() async {
-//     return null;
-//   }
-//
-//   late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
-//
-//   final DetPedMovRepository _detPedMovRepository = DetPedMovRepository();
-//
-//   Future<bool> getDetPedMov(int idAlmacen, int idPedido) async {
-//     try {
-//       final List<DetPedMovModel>? detPedMov = await _detPedMovRepository
-//           .getDetPedMov(
-//             idAlmacen,
-//             idPedido,
-//             pedidosVM.idSaas,
-//             pedidosVM.idCompany,
-//             pedidosVM.idSubscription,
-//           );
-//       state = AsyncData(detPedMov);
-//       debugPrint('Detalles del pedido cargados correctamente');
-//       return true;
-//     } catch (e) {
-//       state = AsyncData(null);
-//       debugPrint('$e');
-//       return false;
-//     }
-//   }
-// }
