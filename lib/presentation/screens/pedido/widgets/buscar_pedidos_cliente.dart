@@ -19,11 +19,9 @@ class BuscarPedidosCliente extends ConsumerWidget {
       fontWeight: FontWeight.w600,
     );
 
-    CabsPedClienteVM getCabsPedClienteVM = ref.watch(
+    final CabsPedClienteVM getCabsPedClienteVM = ref.watch(
       cabsPedClienteVMProvider.notifier,
     );
-
-    late bool result;
 
     void mostrarResultados() {
       showModalBottomSheet(
@@ -43,9 +41,9 @@ class BuscarPedidosCliente extends ConsumerWidget {
         spacing: 10,
         children: [
           AlmacenesDropDownMenu(
-            setAlmacen: (int id, String nombre) {
-              getCabsPedClienteVM.pedidosVM.seleccionarAlmacen(id, nombre);
-              debugPrint('Id: Almacén: ${getCabsPedClienteVM.pedidosVM.almacenSeleccionado.id}');
+            setAlmacen: (int id) {
+              getCabsPedClienteVM.idAlmacen = id;
+              debugPrint('Id: Almacén: ${getCabsPedClienteVM.idAlmacen}');
             },
           ),
           Row(
@@ -56,7 +54,9 @@ class BuscarPedidosCliente extends ConsumerWidget {
                 esFechaInicial: true,
                 setFecha: (String fechaI) {
                   getCabsPedClienteVM.pedidosVM.fechaInicio = fechaI;
-                  debugPrint('Fecha inicial: ${getCabsPedClienteVM.pedidosVM.fechaInicio}');
+                  debugPrint(
+                    'Fecha inicial: ${getCabsPedClienteVM.pedidosVM.fechaInicio}',
+                  );
                 },
               ),
             ],
@@ -68,7 +68,9 @@ class BuscarPedidosCliente extends ConsumerWidget {
               FechaButton(
                 setFecha: (String fechaF) {
                   getCabsPedClienteVM.pedidosVM.fechaFin = fechaF;
-                  debugPrint('Fecha final: ${getCabsPedClienteVM.pedidosVM.fechaFin}');
+                  debugPrint(
+                    'Fecha final: ${getCabsPedClienteVM.pedidosVM.fechaFin}',
+                  );
                 },
               ),
             ],
@@ -86,14 +88,15 @@ class BuscarPedidosCliente extends ConsumerWidget {
           CustomTextField(
             label: 'Folio',
             textInputType: TextInputType.number,
-            textInputFormatters: getCabsPedClienteVM.pedidosVM.numberTextInputFormatter,
+            textInputFormatters:
+                getCabsPedClienteVM.pedidosVM.numberTextInputFormatter,
             isEnabled: true,
             controller: getCabsPedClienteVM.folioController,
           ),
           CustomButton(
             label: 'Buscar',
             onPressed: () async {
-              result = await getCabsPedClienteVM.getCabsPedCliente();
+              bool result = await getCabsPedClienteVM.getCabsPedCliente();
               if (result) {
                 mostrarResultados();
               }

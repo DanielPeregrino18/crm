@@ -1,6 +1,7 @@
 import 'package:crm/data/models/pedidos/det_ped_mov_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,6 +45,7 @@ class CardCabPedRango extends ConsumerWidget {
     final DetPedMovVM detPedMovVM = ref.watch(detPedMovVMProvider.notifier);
     final List<DetPedMovModel>? detPedMov =
         ref.watch(detPedMovVMProvider).value?[cabPedRango.ID_PEDIDO];
+    final CabPedMovVM cabPedMovVM = ref.watch(cabPedMovVMProvider.notifier);
 
     final NumberFormat numberFormat = NumberFormat(",##0.##");
 
@@ -61,11 +63,19 @@ class CardCabPedRango extends ConsumerWidget {
     }
 
     return ExpandableCard(
-      onTap: () {
-        debugPrint('redirección');
+      onTap: () async {
+        if (cabPedRango.ID_ALMACEN != null && cabPedRango.ID_PEDIDO != null) {
+          bool result = await cabPedMovVM.getCabPedMov(
+            cabPedRango.ID_ALMACEN!,
+            cabPedRango.ID_PEDIDO!,
+          );
+          if (result) context.go('/pedido/nuevo_detalle_pedido');
+        }
       },
       onOpenDetalles: () async {
-        if (cabPedRango.ID_ALMACEN != null && cabPedRango.ID_PEDIDO != null) {
+        if (detPedMov == null &&
+            cabPedRango.ID_ALMACEN != null &&
+            cabPedRango.ID_PEDIDO != null) {
           await detPedMovVM.getDetPedMov(
             cabPedRango.ID_ALMACEN!,
             cabPedRango.ID_PEDIDO!,

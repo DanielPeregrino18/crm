@@ -7,7 +7,6 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/
 import 'package:flutter/material.dart';
 import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:crm/data/models/pedidos/cab_ped_mov_models/cab_ped_mov_model.dart';
 import 'package:crm/presentation/widgets/custom_check_box.dart';
 import 'package:crm/presentation/screens/pedido/nuevo_detalle_pedido/widgets/confirmation_widget.dart';
@@ -61,9 +60,9 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
 
-    final bool nuevo = GoRouterState.of(context).extra == false ? false : true;
-    final CabPedMovModel? cabPedMovModel = ref.read(cabPedMovVMProvider).value;
-    final CabPedidoModel? cabPedido = cabPedMovModel?.cabPedido;
+    final CabPedMovModel? cabPedMov = ref.read(cabPedMovVMProvider).value;
+    final CabPedidoModel? cabPedido = cabPedMov?.cabPedido;
+    final bool nuevo = cabPedMov == null? true : false;
 
     int currentStep = 0;
 

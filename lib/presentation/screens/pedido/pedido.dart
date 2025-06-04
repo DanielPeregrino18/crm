@@ -27,14 +27,6 @@ class _PedidoState extends ConsumerState<Pedido> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void stopLoading() {
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
-
   void guardarAlmacenes(List<Almacen> almacenes) async {
     if (almacenes.isNotEmpty) {
       int i = 1;
@@ -72,7 +64,9 @@ class _PedidoState extends ConsumerState<Pedido> {
         .read(almacenesProvider.notifier)
         .fetchAlmacenes('19cf4bcd-c52c-41bf-9fc8-b1f3d91af2df', 2, 10);
 
-    stopLoading();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override

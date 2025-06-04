@@ -58,16 +58,18 @@ class CabPedMovVM extends _$CabPedMovVM {
     return null;
   }
 
-  late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
+  int idAlmacen = 0;
 
   final TextEditingController movimientoController = TextEditingController();
 
+  late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
+
   final CabPedMovRepository _cabPedMovRepository = CabPedMovRepository();
 
-  Future<bool> getCabPedMov(int idPedido) async {
+  Future<bool> getCabPedMov(int idAlmacen, int idPedido) async {
     try {
       final CabPedMovModel? pedido = await _cabPedMovRepository.getCabPedMov(
-        pedidosVM.almacenSeleccionado.id,
+        idAlmacen,
         idPedido,
         pedidosVM.idSaas,
         pedidosVM.idCompany,
@@ -91,6 +93,8 @@ class CabsPedClienteVM extends _$CabsPedClienteVM {
     return null;
   }
 
+  int? idAlmacen;
+
   late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
 
   final TextEditingController clienteController = TextEditingController();
@@ -104,7 +108,7 @@ class CabsPedClienteVM extends _$CabsPedClienteVM {
     try {
       final List<CabPedCliente>? cabsPedCliente =
           await _cabsPedidoClienteRepository.getCabsPedCliente(
-            pedidosVM.almacenSeleccionado.id,
+            idAlmacen ?? 0,
             int.parse(clienteController.text),
             pedidosVM.fechaInicio,
             pedidosVM.fechaFin,
