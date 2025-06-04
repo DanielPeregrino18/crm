@@ -1,19 +1,23 @@
+import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:crm/data/models/pedidos/cab_ped_cliente.dart';
 import 'package:crm/presentation/widgets/expandable_card.dart';
 import 'package:crm/presentation/widgets/text_bold_normal.dart';
 
-class CardCabPedCliente extends StatelessWidget {
+class CardCabPedCliente extends ConsumerWidget {
   final CabPedCliente cabPedCliente;
 
   const CardCabPedCliente({super.key, required this.cabPedCliente});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final ColorScheme theme = Theme.of(context).colorScheme;
-    Color estatusColor =
+
+    final Color estatusColor =
         cabPedCliente.estatus == "CANCELADO"
             ? Colors.red.shade800
             : cabPedCliente.estatus == "FACTURADO"
@@ -22,9 +26,17 @@ class CardCabPedCliente extends StatelessWidget {
 
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
 
+    final CabPedMovVM cabPedMovVM = ref.watch(cabPedMovVMProvider.notifier);
+
     return ExpandableCard(
-      onTap: () {
-        debugPrint('redirección');
+      onTap: () async {
+        if (cabPedCliente.Clave != null) {
+          bool result = await cabPedMovVM.getCabPedMov(
+            int.parse(cabPedCliente.Clave!.split('-')[0]),
+            int.parse(cabPedCliente.Clave!.split('-')[1]),
+          );
+          if (result) context.go('/pedido/nuevo_detalle_pedido');
+        }
       },
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,7 +52,10 @@ class CardCabPedCliente extends StatelessWidget {
         spacing: 5,
         children: [
           Icon(Icons.info_outline, size: 15.sp, color: estatusColor),
-          Text('${cabPedCliente.estatus}', style: TextStyle(color: estatusColor)),
+          Text(
+            '${cabPedCliente.estatus}',
+            style: TextStyle(color: estatusColor),
+          ),
         ],
       ),
       expanded: Container(

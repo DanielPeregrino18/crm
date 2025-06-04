@@ -1,4 +1,5 @@
 import 'package:crm/data/models/almacen_seleccionado.dart';
+import 'package:crm/data/models/pedidos/cab_ped_mov_models/cab_pedido_model.dart';
 import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:crm/presentation/widgets/custom_row.dart';
 import 'package:crm/presentation/widgets/custom_text_field.dart';
@@ -6,33 +7,25 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/
 import 'package:flutter/material.dart';
 import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:crm/data/models/pedidos/cab_ped_mov_model.dart';
+import 'package:crm/data/models/pedidos/cab_ped_mov_models/cab_ped_mov_model.dart';
 import 'package:crm/presentation/widgets/custom_check_box.dart';
-import 'package:crm/presentation/screens/pedidos/pedido/widgets/confirmation_widget.dart';
+import 'package:crm/presentation/screens/pedido/nuevo_detalle_pedido/widgets/confirmation_widget.dart';
 import 'package:crm/presentation/widgets/custom_stepper.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/almacenes/almacen_button.dart';
 
-class PedidoScreen extends ConsumerStatefulWidget {
-  const PedidoScreen({super.key});
+class NuevoDetallePedido extends ConsumerStatefulWidget {
+  const NuevoDetallePedido({super.key});
 
   @override
-  ConsumerState<PedidoScreen> createState() => _PedidoScreenState();
+  ConsumerState<NuevoDetallePedido> createState() =>
+      _NuevoDetallePedidoState();
 }
 
-class _PedidoScreenState extends ConsumerState<PedidoScreen> {
+class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
   late PedidoVM pedidoVM = ref.watch(pedidoVMProvider);
 
-  bool _isEnabled(CabPedMovModel? pedido) =>
-      pedido?.ESTATUS == 'FACTURADO' ? false : true;
-
-  late String fecha;
-
-  @override
-  void initState() {
-    fecha = Fechas().hoyString();
-    super.initState();
-  }
+  bool _isEnabled(CabPedidoModel? cabPedido) =>
+      cabPedido?.ESTATUS == 'FACTURADO' ? false : true;
 
   Widget _textField(
     ColorScheme theme,
@@ -67,8 +60,9 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
 
-    final bool nuevo = GoRouterState.of(context).extra == false ? false : true;
-    final CabPedMovModel? pedido = ref.read(cabPedMovVMProvider).value;
+    final CabPedMovModel? cabPedMov = ref.read(cabPedMovVMProvider).value;
+    final CabPedidoModel? cabPedido = cabPedMov?.cabPedido;
+    final bool nuevo = cabPedMov == null? true : false;
 
     int currentStep = 0;
 
@@ -102,32 +96,32 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             _textField(
               theme,
               'Cliente',
-              _isEnabled(pedido),
-              pedido?.ID_CLIENTE,
+              _isEnabled(cabPedido),
+              cabPedido?.ID_CLIENTE,
             ),
             // Vendedor
             _textField(
               theme,
               'Vendedor',
               nuevo ? true : false,
-              pedido?.ID_VENDEDOR,
+              cabPedido?.ID_VENDEDOR,
             ),
             // Sucursal
             _textField(
               theme,
               'Sucursal',
               nuevo ? true : false,
-              pedido?.ID_SUCURSAL_CTE,
+              cabPedido?.ID_SUCURSAL_CTE,
             ),
             // Atención a
             _textField(
               theme,
               'Atención a',
               nuevo ? true : false,
-              pedido?.ATENCION,
+              cabPedido?.ATENCION,
             ),
             // Dirección
-            _textField(theme, 'Dirección', _isEnabled(pedido), 'Dirección'),
+            _textField(theme, 'Dirección', _isEnabled(cabPedido), 'Dirección'),
             // Lista de precios
             _textField(
               theme,
@@ -154,7 +148,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
                   fechaExistente:
                       nuevo
                           ? null
-                          : Fechas().crearString(pedido!.FECHA_REGISTRO),
+                          : Fechas().crearString(cabPedido!.FECHA_REGISTRO!),
                 ),
               ),
             ),
@@ -163,7 +157,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               'Fecha orden de compra',
               FechaButton(
                 fechaExistente:
-                    nuevo ? null : Fechas().crearString(pedido!.FECHA_OC),
+                    nuevo ? null : Fechas().crearString(cabPedido!.FECHA_OC!),
                 setFecha: (String fecha) {
                   pedidoVM.FECHA_OC = fecha;
                   debugPrint('Fecha O.C: ${pedidoVM.FECHA_OC}');
@@ -181,8 +175,8 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             _textField(
               theme,
               'Orden de compra',
-              _isEnabled(pedido),
-              pedido?.OrdenCompra,
+              _isEnabled(cabPedido),
+              cabPedido?.OrdenCompra,
             ),
           ],
         ),
@@ -198,13 +192,13 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             // Número de pedido
             _customRow(
               'Pedido',
-              Text(nuevo ? 'NUEVO' : '${pedido?.ID_PEDIDO}'),
+              Text(nuevo ? 'NUEVO' : '${cabPedido?.ID_PEDIDO!}'),
             ),
             // Estatus
             _customRow(
               'Estatus',
               Text(
-                nuevo ? 'NUEVO' : pedido!.ESTATUS,
+                nuevo ? 'NUEVO' : cabPedido!.ESTATUS!,
                 style: TextStyle(color: Colors.red),
               ),
             ),
@@ -213,11 +207,16 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             // Plazo
             _textField(theme, 'Plazo', nuevo ? true : false, 'Plazo'),
             // Descuento
-            _textField(theme, 'Descuento', false, pedido?.DESCUENTO),
+            _textField(theme, 'Descuento', false, cabPedido?.DESCUENTO),
             // Moneda
             _textField(theme, 'Moneda', nuevo ? true : false, 'Moneda'),
             // Paridad
-            _textField(theme, 'Paridad', nuevo ? true : false, pedido?.PARIDAD),
+            _textField(
+              theme,
+              'Paridad',
+              nuevo ? true : false,
+              cabPedido?.PARIDAD,
+            ),
           ],
         ),
       ),
@@ -234,7 +233,9 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               'Fecha inicio consigna',
               FechaButton(
                 fechaExistente:
-                    nuevo ? null : Fechas().crearString(pedido!.FECHA_INICIOC),
+                    nuevo
+                        ? null
+                        : Fechas().crearString(cabPedido!.FECHA_INICIOC!),
                 setFecha: (String fecha) {
                   pedidoVM.FECHA_INICIOC = fecha;
                   debugPrint(
@@ -248,7 +249,7 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               'Fecha fin consigna',
               FechaButton(
                 fechaExistente:
-                    nuevo ? null : Fechas().crearString(pedido!.FECHA_FINC),
+                    nuevo ? null : Fechas().crearString(cabPedido!.FECHA_FINC!),
                 setFecha: (String fecha) {
                   pedidoVM.FECHA_FINC = fecha;
                   debugPrint('Fecha fin consigna: ${pedidoVM.FECHA_FINC}');
@@ -260,23 +261,23 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               theme,
               'Campo addenda',
               nuevo ? true : false,
-              pedido?.CampoAddenda,
+              cabPedido?.CampoAddenda,
             ),
             // Observaciones
-            _textField(theme, 'Observaciones', true, pedido?.OBSERVACIONES),
+            _textField(theme, 'Observaciones', true, cabPedido?.OBSERVACIONES),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                CustomCheckBox(
-                  text: 'Autorizar',
-                  value: pedido?.Autorizada,
-                  onChange: (val) {},
-                ),
-                CustomCheckBox(
-                  text: 'IVA Total Retenido',
-                  value: pedido?.RETIENE_IVA,
-                  onChange: (val) {},
-                ),
+                // CustomCheckBox(
+                //   text: 'Autorizar',
+                //   value: pedido?.Autorizada,
+                //   onChange: (val) {},
+                // ),
+                // CustomCheckBox(
+                //   text: 'IVA Total Retenido',
+                //   value: pedido?.RETIENE_IVA,
+                //   onChange: (val) {},
+                // ),
               ],
             ),
           ],
@@ -305,17 +306,17 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
             // Subtotal
             _customRow(
               'Subtotal',
-              Text(nuevo ? '\$388.90' : '\$${pedido?.SUBTOTAL}'),
+              Text(nuevo ? '\$388.90' : '\$${cabPedido?.SUBTOTAL}'),
             ),
             // Descuento total
             _customRow(
               '- Descuento total',
-              Text(nuevo ? '\$0.00' : '\$${pedido?.DESCUENTO_GLOBAL}'),
+              Text(nuevo ? '\$0.00' : '\$${cabPedido?.DESCUENTO_GLOBAL}'),
             ),
             // IEPS total
             _customRow(
               '+ IEPS Total',
-              Text(nuevo ? '\$0.00' : '\$${pedido?.IEPS}'),
+              Text(nuevo ? '\$0.00' : '\$${cabPedido?.IEPS}'),
             ),
             // Importe con descuento
             _customRow(
@@ -323,23 +324,23 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
               Text(
                 nuevo
                     ? '\$388.90'
-                    : '\$${pedido!.IVA_RETENIDO_TOTAL - pedido.DESCUENTO}',
+                    : '\$${cabPedido!.IVA_RETENIDO_TOTAL! - cabPedido.DESCUENTO!}',
               ),
             ),
             // IVA total
             _customRow(
               '+ IVA Total',
-              Text(nuevo ? '\$62.23' : '\$${pedido?.IVA}'),
+              Text(nuevo ? '\$62.23' : '\$${cabPedido?.IVA}'),
             ),
             // IVA retenido
             _customRow(
               '- IVA retenido',
-              Text(nuevo ? '\$0.00' : '\$${pedido?.IVA_RETENIDO_TOTAL}'),
+              Text(nuevo ? '\$0.00' : '\$${cabPedido?.IVA_RETENIDO_TOTAL}'),
             ),
             // Gran Total
             _customRow(
               '= Gran total',
-              Text(nuevo ? '\$451.13' : '\$${pedido?.SUBTOTAL}'),
+              Text(nuevo ? '\$451.13' : '\$${cabPedido?.SUBTOTAL}'),
             ),
           ],
         ),
@@ -347,11 +348,14 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
     ];
 
     Function? mostrarConfirmacion() {
-      if (pedido == null) {
+      if (cabPedido == null) {
         modalButtonSheetFullScreen(ConfirmationWidget());
       }
       return null;
     }
+
+    final GlobalKey<CustomStepperState> _customStepperKey =
+        GlobalKey<CustomStepperState>();
 
     return Scaffold(
       appBar: AppBar(
@@ -362,12 +366,33 @@ class _PedidoScreenState extends ConsumerState<PedidoScreen> {
           style: TextStyle(color: theme.onPrimary),
         ),
         actions: [
-          Text('hola'),
-          TextButton(onPressed: () {}, child: Text('Total')),
-          IconButton(onPressed: () {}, icon: Icon(Icons.attach_money)),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextButton(
+              style: ButtonStyle(
+                minimumSize: WidgetStatePropertyAll(Size.zero),
+                padding: WidgetStatePropertyAll(
+                  EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                ),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                alignment: Alignment.centerLeft,
+                backgroundColor: WidgetStatePropertyAll(
+                  theme.onPrimary.withAlpha(60),
+                ),
+              ),
+              onPressed: () {
+                _customStepperKey.currentState?.goToLastStep();
+              },
+              child: Text(
+                'Total: \$${cabPedido?.SUBTOTAL!}',
+                style: TextStyle(color: theme.onPrimary),
+              ),
+            ),
+          ),
         ],
       ),
       body: CustomStepper(
+        key: _customStepperKey,
         steps: steps,
         onLastStepContinue: mostrarConfirmacion,
       ),

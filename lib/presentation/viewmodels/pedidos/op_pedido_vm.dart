@@ -16,9 +16,9 @@ class PedidoVM extends _$PedidoVM {
     return PedidoVM();
   }
 
-  String idSaas = '19cf4bcd-c52c-41bf-9fc8-b1f3d91af2df';
+  String idSaas = '6378459f-59c3-4d81-9fa1-4b07d7bf95a6';
   int idCompany = 2;
-  int idSubscription = 10;
+  int idSubscription = 97;
 
   AlmacenSeleccionado almacenSeleccionado = AlmacenSeleccionado(
     id: 0,
@@ -58,16 +58,16 @@ class CabPedMovVM extends _$CabPedMovVM {
     return null;
   }
 
-  late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
+  int idAlmacen = 0;
 
-  final TextEditingController movimientoController = TextEditingController();
+  late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
 
   final CabPedMovRepository _cabPedMovRepository = CabPedMovRepository();
 
-  Future<bool> getCabPedMov(int idPedido) async {
+  Future<bool> getCabPedMov(int idAlmacen, int idPedido) async {
     try {
       final CabPedMovModel? pedido = await _cabPedMovRepository.getCabPedMov(
-        pedidosVM.almacenSeleccionado.id,
+        idAlmacen,
         idPedido,
         pedidosVM.idSaas,
         pedidosVM.idCompany,
@@ -91,6 +91,8 @@ class CabsPedClienteVM extends _$CabsPedClienteVM {
     return null;
   }
 
+  int? idAlmacen;
+
   late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
 
   final TextEditingController clienteController = TextEditingController();
@@ -104,7 +106,7 @@ class CabsPedClienteVM extends _$CabsPedClienteVM {
     try {
       final List<CabPedCliente>? cabsPedCliente =
           await _cabsPedidoClienteRepository.getCabsPedCliente(
-            pedidosVM.almacenSeleccionado.id,
+            idAlmacen ?? 0,
             int.parse(clienteController.text),
             pedidosVM.fechaInicio,
             pedidosVM.fechaFin,
@@ -150,16 +152,6 @@ class CabsPedRangoVM extends _$CabsPedRangoVM {
             pedidosVM.idCompany,
             pedidosVM.idSubscription,
           );
-      // await _cabsPedidoRangoRepository.getCabsPedRango(
-      //   1,
-      //   1,
-      //   '01/01/2025',
-      //   '30/05/2025',
-      //   0,
-      //   pedidosVM.idSaas,
-      //   pedidosVM.idCompany,
-      //   pedidosVM.idSubscription,
-      // );
       state = AsyncData(cabsPedRango);
       debugPrint('Número de resultados: ${state.value?.length}');
       return true;
@@ -174,8 +166,8 @@ class CabsPedRangoVM extends _$CabsPedRangoVM {
 @riverpod
 class DetPedMovVM extends _$DetPedMovVM {
   @override
-  FutureOr<DetPedMovModel?> build() async {
-    return null;
+  FutureOr<Map<int, List<DetPedMovModel>?>> build() async {
+    return {};
   }
 
   late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
@@ -184,19 +176,20 @@ class DetPedMovVM extends _$DetPedMovVM {
 
   Future<bool> getDetPedMov(int idAlmacen, int idPedido) async {
     try {
-      final DetPedMovModel? detPedMov = await _detPedMovRepository.getDetPedMov(
-        idAlmacen,
-        idPedido,
-        pedidosVM.idSaas,
-        pedidosVM.idCompany,
-        pedidosVM.idSubscription,
-      );
-      state = AsyncData(detPedMov);
-      debugPrint('true');
+      final List<DetPedMovModel>? detPedMov = await _detPedMovRepository
+          .getDetPedMov(
+            idAlmacen,
+            idPedido,
+            pedidosVM.idSaas,
+            pedidosVM.idCompany,
+            pedidosVM.idSubscription,
+          );
+      state = AsyncData({...?state.value, idPedido: detPedMov});
+      debugPrint('Detalles del pedido cargados correctamente');
       return true;
     } catch (e) {
-      state = AsyncData(null);
       debugPrint('$e');
+      state = AsyncData({...?state.value, idPedido: null});
       return false;
     }
   }

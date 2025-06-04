@@ -4,5 +4,5 @@
 
 
 // Pedidos
-export 'pedidos/pedidos.dart'; // Pantalla inicial
-export 'pedidos/pedido/pedido.dart'; // Detalle de un pedido/Nuevo pedido
+export 'pedido/pedido.dart'; // Pantalla inicial
+export 'pedido/nuevo_detalle_pedido/nuevo_detalle_pedido.dart'; // Creación de nuevo pedido/Visualización detalles pedido

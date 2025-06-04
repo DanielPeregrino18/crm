@@ -5,7 +5,7 @@ import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/config/styles/custom_drop_down_menu.dart';
 
 class AlmacenesDropDownMenu extends ConsumerStatefulWidget {
-  final Function(int, String)? setAlmacen;
+  final Function(int)? setAlmacen;
 
   const AlmacenesDropDownMenu({super.key, this.setAlmacen});
 
@@ -47,7 +47,6 @@ class _AlmacenesDropDownMenuState extends ConsumerState<AlmacenesDropDownMenu> {
           almacenSeleccionado = value;
           widget.setAlmacen!(
             almacenSeleccionado!.id_almacen,
-            '${almacenSeleccionado?.id_almacen}',
           );
         });
       },

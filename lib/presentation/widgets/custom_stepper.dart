@@ -13,10 +13,10 @@ class CustomStepper extends StatefulWidget {
   });
 
   @override
-  State<CustomStepper> createState() => _CustomStepperState();
+  State<CustomStepper> createState() => CustomStepperState();
 }
 
-class _CustomStepperState extends State<CustomStepper> {
+class CustomStepperState extends State<CustomStepper> {
   int _currentStep = 0;
 
   late List<Step> _steps;
@@ -25,6 +25,12 @@ class _CustomStepperState extends State<CustomStepper> {
   void initState() {
     _steps = widget.steps;
     super.initState();
+  }
+
+  void goToLastStep() {
+    setState(() {
+      _currentStep = _steps.length - 1;
+    });
   }
 
   @override

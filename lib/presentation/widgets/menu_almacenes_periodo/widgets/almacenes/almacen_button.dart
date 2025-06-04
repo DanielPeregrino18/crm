@@ -52,6 +52,10 @@ class _AlmacenButtonState extends ConsumerState<AlmacenButton> {
         ref.watch(almacenesVMProvider).almacenesFiltrados;
 
     return TextButton.icon(
+      style: ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.all(5)),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
       label: Row(
         children: [
           Text(

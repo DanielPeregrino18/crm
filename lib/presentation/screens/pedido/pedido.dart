@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:crm/data/models/almacen_model.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
-import 'package:crm/presentation/screens/pedidos/widgets/pedidos_widgets.dart';
+import 'package:crm/presentation/screens/pedido/widgets/pedidos_widgets.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
 import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
@@ -13,27 +13,21 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/menu_almacen_per
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:crm/presentation/widgets/search_button.dart';
 import 'package:crm/data/models/pedidos/cab_ped_rango_model.dart';
-import 'package:crm/presentation/screens/pedidos/widgets/cabs_ped_rango/card_cab_ped_rango.dart';
+import 'package:crm/presentation/screens/pedido/widgets/cabs_ped_rango/card_cab_ped_rango.dart';
 
-class Pedidos extends ConsumerStatefulWidget {
-  const Pedidos({super.key});
+class Pedido extends ConsumerStatefulWidget {
+  const Pedido({super.key});
 
   @override
-  ConsumerState<Pedidos> createState() => _PedidosState();
+  ConsumerState<Pedido> createState() => _PedidoState();
 }
 
-class _PedidosState extends ConsumerState<Pedidos> {
+class _PedidoState extends ConsumerState<Pedido> {
   bool isLoading = false;
 
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void stopLoading() {
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
+  late List<Almacen> almacenes = ref.watch(almacenesProvider);
 
   void guardarAlmacenes(List<Almacen> almacenes) async {
     if (almacenes.isNotEmpty) {
@@ -72,13 +66,14 @@ class _PedidosState extends ConsumerState<Pedidos> {
         .read(almacenesProvider.notifier)
         .fetchAlmacenes('19cf4bcd-c52c-41bf-9fc8-b1f3d91af2df', 2, 10);
 
-    stopLoading();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
-    List<Almacen> almacenes = ref.watch(almacenesProvider);
 
     final CabsPedRangoVM cabsPedRangoVM = ref.watch(
       cabsPedRangoVMProvider.notifier,
@@ -86,6 +81,9 @@ class _PedidosState extends ConsumerState<Pedidos> {
 
     final SearchController clienteSearchController =
         cabsPedRangoVM.pedidosVM.clienteSearchController;
+
+    final List<CabPedRangoModel>? cabsPedRango =
+        ref.watch(cabsPedRangoVMProvider).value;
 
     final List<Widget> searchBarActions = [
       IconButton(
@@ -95,9 +93,6 @@ class _PedidosState extends ConsumerState<Pedidos> {
         icon: Icon(Icons.clear, color: theme.primary),
       ),
     ];
-
-    final List<CabPedRangoModel>? cabsPedRango =
-        ref.watch(cabsPedRangoVMProvider).value;
 
     return Scaffold(
       key: scaffoldKey,
@@ -119,7 +114,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
             tooltip: 'Nuevo pedido',
             icon: Icon(Icons.add),
             onPressed: () {
-              context.go('/pedidos/pedido', extra: true);
+              context.go('/pedido/nuevo_detalle_pedido', extra: true);
             },
           ),
         ],
@@ -170,7 +165,7 @@ class _PedidosState extends ConsumerState<Pedidos> {
                         hint: 'Cliente',
                         actions: searchBarActions,
                         inputController: clienteSearchController,
-                        setIdCliente: (id) {
+                        setIdCliente: (int id) {
                           cabsPedRangoVM.pedidosVM.idCliente = id;
                         },
                       ),
@@ -194,36 +189,59 @@ class _PedidosState extends ConsumerState<Pedidos> {
                     ),
                   ],
                 ),
-                isLoading
-                    ? CircularProgressIndicator()
-                    : cabsPedRango == null
-                    ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.refresh,
-                            color: theme.primary,
-                            size: 30,
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            await cabsPedRangoVM.getCabsPedRango();
-                            setState(() {
-                              isLoading = false;
-                            });
-                          },
-                        ),
-                        Text('Sin resultados para mostrar'),
-                      ],
+                cabsPedRango == null
+                    ? SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child:
+                          isLoading
+                              ? Column(
+                                spacing: 15,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    backgroundColor: theme.primary.withAlpha(
+                                      95,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Buscando pedidos...',
+                                    style: TextStyle(fontSize: 16.sp),
+                                  ),
+                                ],
+                              )
+                              : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.refresh,
+                                      color: theme.primary.withAlpha(95),
+                                      size: 60,
+                                    ),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      await cabsPedRangoVM.getCabsPedRango();
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    },
+                                  ),
+                                  Text(
+                                    'Sin pedidos para mostrar',
+                                    style: TextStyle(fontSize: 16.sp),
+                                  ),
+                                ],
+                              ),
                     )
                     : Column(
                       spacing: 10,
                       children: [
                         Text(
-                          '${cabsPedRango.length} resultados',
+                          'Resultados: ${cabsPedRango.length}',
                           style: TextStyle(color: theme.primary),
                         ),
                         ListView.builder(

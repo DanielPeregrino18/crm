@@ -2,8 +2,7 @@ import 'package:crm/presentation/screens/cotizaciones/cotizaciones.dart';
 import 'package:crm/presentation/screens/cotizaciones/form_cotizacion.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../presentation/screens/pedidos/pedido/pedido.dart';
-import '../presentation/screens/pedidos/pedidos.dart';
+import 'package:crm/presentation/screens/screens.dart';
 
 final routerProvider = Provider<GoRouter>(
   (ref) => GoRouter(
@@ -21,14 +20,14 @@ final routerProvider = Provider<GoRouter>(
         ],
       ),
       GoRoute(
-        path: '/pedidos',
+        path: '/pedido',
         builder: (context, state) {
-          return Pedidos();
+          return Pedido();
         },
         routes: <RouteBase>[
           GoRoute(
-            path: 'pedido',
-            builder: (context, state) => const PedidoScreen(),
+            path: 'nuevo_detalle_pedido',
+            builder: (context, state) => NuevoDetallePedido(),
           ),
         ],
       ),

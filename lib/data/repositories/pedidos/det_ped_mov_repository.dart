@@ -10,7 +10,7 @@ class DetPedMovRepository {
         Dio(BaseOptions(contentType: "application/json")),
       );
 
-  Future<DetPedMovModel?> getDetPedMov(
+  Future<List<DetPedMovModel>?> getDetPedMov(
     int idAlmacen,
     int idPedido,
     String idSaas,
@@ -18,7 +18,7 @@ class DetPedMovRepository {
     int idSubscription,
   ) async {
     try {
-      final DetPedMovModel? detPedMov = await _opPedidoApi.getDetPedMov(
+      final List<DetPedMovModel>? detPedMov = await _opPedidoApi.getDetPedMov(
         idAlmacen,
         idPedido,
         idSaas,

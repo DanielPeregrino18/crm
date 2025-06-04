@@ -12,11 +12,11 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     CabPedMovVM cabPedMovVM = ref.watch(cabPedMovVMProvider.notifier);
 
-    TextEditingController controller = cabPedMovVM.movimientoController;
-
-    late bool result;
+    TextEditingController controller = TextEditingController();
 
     return Padding(
       padding: EdgeInsets.all(10),
@@ -24,9 +24,9 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
         spacing: 10,
         children: [
           AlmacenesDropDownMenu(
-            setAlmacen: (int id, String nombre) {
-              cabPedMovVM.pedidosVM.seleccionarAlmacen(id, nombre);
-              debugPrint('Id: Almacén: ${cabPedMovVM.pedidosVM.almacenSeleccionado.id}');
+            setAlmacen: (int id) {
+              cabPedMovVM.idAlmacen = id;
+              debugPrint('Id Almacén: ${cabPedMovVM.idAlmacen}');
             },
           ),
           CustomTextField(
@@ -45,12 +45,24 @@ class BuscarPedidoMovimiento extends ConsumerWidget {
                 debugPrint('No se ha ingresado el movimiento');
                 // TODO: Implementar un indicador en pantalla
               } else {
-                result = await cabPedMovVM.getCabPedMov(
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: theme.primary,
+                        backgroundColor: theme.primary.withAlpha(95),
+                      ),
+                    );
+                  },
+                );
+                bool result = await cabPedMovVM.getCabPedMov(
+                  cabPedMovVM.idAlmacen,
                   int.parse(controller.text),
                 );
                 if (result) {
-                  // Navigator.pop(context); // Se puede cerrar el campo de búsqueda por movimiento al encontrar el pedido
-                  context.go('/pedidos/pedido', extra: false);
+                  Navigator.pop(context);
+                  context.go('/pedido/nuevo_detalle_pedido');
                 }
                 // TODO: Implementar un indicador en pantalla en caso de no encontrar el pedido
               }

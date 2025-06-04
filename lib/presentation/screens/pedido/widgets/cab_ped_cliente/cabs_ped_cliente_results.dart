@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:crm/presentation/screens/pedidos/widgets/cab_ped_cliente/card_cab_ped_cliente.dart';
+import 'package:crm/presentation/screens/pedido/widgets/cab_ped_cliente/card_cab_ped_cliente.dart';
 import 'package:crm/presentation/viewmodels/pedidos/op_pedido_vm.dart';
 
 class CabsPedClienteResults extends ConsumerWidget {

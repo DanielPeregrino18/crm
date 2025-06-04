@@ -24,12 +24,26 @@ class MenuAlmacenPeriodo extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> elements = [
       // Almacén
-      AlmacenButton(setAlmacen: setAlmacen),
+      Flexible(
+        flex: 1,
+        child: FittedBox(
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+          child: AlmacenButton(setAlmacen: setAlmacen),
+        ),
+      ),
       // Periodo
-      PeriodoButton(
-        setTipoFecha: setTipoFecha,
-        setFechaInicial: setFechaInicial,
-        setFechaFinal: setFechaFinal,
+      Flexible(
+        flex: 1,
+        child: FittedBox(
+          fit: BoxFit.contain,
+          alignment: Alignment.center,
+          child: PeriodoButton(
+            setTipoFecha: setTipoFecha,
+            setFechaInicial: setFechaInicial,
+            setFechaFinal: setFechaFinal,
+          ),
+        ),
       ),
     ];
 
