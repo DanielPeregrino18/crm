@@ -94,7 +94,7 @@ class CardCabPedRango extends ConsumerWidget {
                 normal: right(cabPedRango.ID_PEDIDO, false),
               ),
               TextBoldNormal(
-                bold: 'Fecha movimiento',
+                bold: 'F. Mov',
                 normal: right(cabPedRango.FECHA_MOVIMIENTO, true),
               ),
               Text(
@@ -185,31 +185,21 @@ class CardCabPedRango extends ConsumerWidget {
             bold: 'Paridad',
             normal: right(cabPedRango.PARIDAD, false),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextBoldNormal(
-                bold: 'F. Registro',
-                normal: right(cabPedRango.FECHA_REGISTRO, true),
-              ),
-              TextBoldNormal(
-                bold: 'F. Orden compra',
-                normal: right(cabPedRango.FECHA_OC, true),
-              ),
-            ],
+          TextBoldNormal(
+            bold: 'F. Registro',
+            normal: right(cabPedRango.FECHA_REGISTRO, true),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextBoldNormal(
-                bold: 'F. Inicio consigna',
-                normal: right(cabPedRango.FECHA_INICIOC, true),
-              ),
-              TextBoldNormal(
-                bold: 'F. Fin consigna',
-                normal: right(cabPedRango.FECHA_FINC, true),
-              ),
-            ],
+          TextBoldNormal(
+            bold: 'F. Orden compra',
+            normal: right(cabPedRango.FECHA_OC, true),
+          ),
+          TextBoldNormal(
+            bold: 'F. Inicio consigna',
+            normal: right(cabPedRango.FECHA_INICIOC, true),
+          ),
+          TextBoldNormal(
+            bold: 'F. Fin consigna',
+            normal: right(cabPedRango.FECHA_FINC, true),
           ),
           TextBoldNormal(
             bold: 'F. Cancelación',
