@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:crm/core/utils/fechas.dart';
+import 'package:crm/core/utils/fecha.dart';
 import 'package:crm/data/models/almacen_seleccionado.dart';
 import 'package:crm/data/models/pedidos/op_pedido_models.dart';
 import 'package:crm/data/repositories/pedidos/op_pedido_repositories.dart';
 
 part 'op_pedido_vm.g.dart';
+
+Fecha fecha = Fecha();
 
 // Provider de uso general para el módulo de pedidos
 @riverpod
@@ -26,10 +28,8 @@ class PedidoVM extends _$PedidoVM {
   );
 
   int tipoFecha = 1;
-
-  String fechaInicio = Fechas().ayerString();
-
-  String fechaFin = Fechas().hoyString();
+  DateTime fechaInicio = fecha.ayerDateTime;
+  DateTime fechaFin = fecha.hoyDateTime;
 
   int idCliente = 0;
 
@@ -108,8 +108,8 @@ class CabsPedClienteVM extends _$CabsPedClienteVM {
           await _cabsPedidoClienteRepository.getCabsPedCliente(
             idAlmacen ?? 0,
             int.parse(clienteController.text),
-            pedidosVM.fechaInicio,
-            pedidosVM.fechaFin,
+            fecha.crearString(pedidosVM.fechaInicio),
+            fecha.crearString(pedidosVM.fechaFin),
             int.parse(folioController.text),
             ordenCompraController.text,
             pedidosVM.idSaas,
@@ -145,8 +145,8 @@ class CabsPedRangoVM extends _$CabsPedRangoVM {
           await _cabsPedidoRangoRepository.getCabsPedRango(
             pedidosVM.almacenSeleccionado.id,
             pedidosVM.tipoFecha,
-            pedidosVM.fechaInicio,
-            pedidosVM.fechaFin,
+            fecha.crearString(pedidosVM.fechaInicio),
+            fecha.crearString(pedidosVM.fechaFin),
             pedidosVM.idCliente,
             pedidosVM.idSaas,
             pedidosVM.idCompany,
