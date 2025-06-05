@@ -4,13 +4,14 @@ import 'package:crm/config/styles/custom_drop_down_menu.dart';
 
 class TipoFechaDropDownMenu extends StatefulWidget {
   final List<TipoFecha> options;
-
   final Function(int) setTipoFecha;
+  final int? initialTipoFecha;
 
   const TipoFechaDropDownMenu({
     super.key,
     required this.options,
     required this.setTipoFecha,
+    this.initialTipoFecha,
   });
 
   @override
@@ -20,7 +21,10 @@ class TipoFechaDropDownMenu extends StatefulWidget {
 class _TipoFechaDropDownMenuState extends State<TipoFechaDropDownMenu> {
   final CustomDropDownMenuStyle styles = CustomDropDownMenuStyle();
 
-  late TipoFecha? tipoFechaSeleccionado = widget.options.first;
+  late TipoFecha? tipoFechaSeleccionado =
+      widget.options[widget.initialTipoFecha != null
+          ? widget.initialTipoFecha! - 1
+          : 0];
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +44,8 @@ class _TipoFechaDropDownMenuState extends State<TipoFechaDropDownMenu> {
       onChanged: (TipoFecha? value) {
         setState(() {
           tipoFechaSeleccionado = value;
-          widget.setTipoFecha(value!.ID_TIPO_FECHA);
         });
+        widget.setTipoFecha(value!.ID_TIPO_FECHA);
       },
     );
   }

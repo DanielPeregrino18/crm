@@ -140,14 +140,14 @@ class _PedidoState extends ConsumerState<Pedido> {
               cabsPedRangoVM.pedidosVM.tipoFecha = tipoF;
               debugPrint('Tipo fecha: ${cabsPedRangoVM.pedidosVM.tipoFecha}');
             },
-            setFechaInicial: (String fechaI) {
-              cabsPedRangoVM.pedidosVM.fechaInicio = fechaI;
+            setFechaInicial: (DateTime fechaI) {
+              cabsPedRangoVM.pedidosVM.fechaInicio = fecha.crearString(fechaI);
               debugPrint(
                 'Fecha inicial: ${cabsPedRangoVM.pedidosVM.fechaInicio}',
               );
             },
-            setFechaFinal: (String fechaF) {
-              cabsPedRangoVM.pedidosVM.fechaFin = fechaF;
+            setFechaFinal: (DateTime fechaF) {
+              cabsPedRangoVM.pedidosVM.fechaFin = fecha.crearString(fechaF);
               debugPrint('Fecha final: ${cabsPedRangoVM.pedidosVM.fechaFin}');
             },
           ),

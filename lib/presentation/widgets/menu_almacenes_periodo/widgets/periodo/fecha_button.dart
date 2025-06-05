@@ -4,10 +4,8 @@ import 'package:crm/core/utils/fecha.dart';
 
 class FechaButton extends StatefulWidget {
   final bool? esFechaInicial;
-
-  final Function(String fecha)? setFecha;
-
-  final String? fechaExistente;
+  final Function(DateTime fecha)? setFecha;
+  final DateTime? fechaExistente;
 
   const FechaButton({
     super.key,
@@ -22,7 +20,7 @@ class FechaButton extends StatefulWidget {
 
 class _FechaState extends State<FechaButton> {
   late bool esFechaInicial;
-
+  DateTime? selectedDate;
   final Fecha fecha = Fecha();
 
   @override
@@ -31,17 +29,20 @@ class _FechaState extends State<FechaButton> {
     super.initState();
   }
 
-  DateTime? selectedDate;
-
   Future<void> _selectDate() async {
     final DateTime? pickedDate = await customDatePicker(
       context,
-      initialDate: esFechaInicial ? fecha.ayerDateTime : DateTime.now(),
+      initialDate:
+          selectedDate ??
+          widget.fechaExistente ??
+          (esFechaInicial ? fecha.ayerDateTime : fecha.hoyDateTime),
     );
     if (pickedDate != null) {
       setState(() {
         selectedDate = pickedDate;
-        widget.setFecha!(fecha.crearString(selectedDate!));
+        if (widget.setFecha != null) {
+          widget.setFecha!(selectedDate!);
+        }
       });
     }
   }
@@ -53,7 +54,7 @@ class _FechaState extends State<FechaButton> {
         selectedDate != null
             ? fecha.crearString(selectedDate!)
             : widget.fechaExistente != null
-            ? widget.fechaExistente!
+            ? fecha.crearString(widget.fechaExistente!)
             : esFechaInicial
             ? fecha.ayerString
             : fecha.hoyString,

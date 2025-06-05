@@ -143,10 +143,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               'Fecha de registro',
               IgnorePointer(
                 child: FechaButton(
-                  fechaExistente:
-                      nuevo
-                          ? null
-                          : fecha.crearString(cabPedido!.FECHA_REGISTRO!),
+                  fechaExistente: nuevo ? null : cabPedido!.FECHA_REGISTRO!,
                 ),
               ),
             ),
@@ -154,10 +151,9 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
             _customRow(
               'Fecha orden de compra',
               FechaButton(
-                fechaExistente:
-                    nuevo ? null : fecha.crearString(cabPedido!.FECHA_OC!),
-                setFecha: (String fecha) {
-                  pedidoVM.FECHA_OC = fecha;
+                fechaExistente: nuevo ? null : cabPedido!.FECHA_OC!,
+                setFecha: (DateTime fechaOC) {
+                  pedidoVM.FECHA_OC = fecha.crearString(fechaOC);
                   debugPrint('Fecha O.C: ${pedidoVM.FECHA_OC}');
                 },
               ),
@@ -230,10 +226,9 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
             _customRow(
               'Fecha inicio consigna',
               FechaButton(
-                fechaExistente:
-                    nuevo ? null : fecha.crearString(cabPedido!.FECHA_INICIOC!),
-                setFecha: (String fecha) {
-                  pedidoVM.FECHA_INICIOC = fecha;
+                fechaExistente: nuevo ? null : cabPedido!.FECHA_INICIOC!,
+                setFecha: (DateTime fechaIC) {
+                  pedidoVM.FECHA_INICIOC = fecha.crearString(fechaIC);
                   debugPrint(
                     'Fecha inicio consigna: ${pedidoVM.FECHA_INICIOC}',
                   );
@@ -244,10 +239,9 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
             _customRow(
               'Fecha fin consigna',
               FechaButton(
-                fechaExistente:
-                    nuevo ? null : fecha.crearString(cabPedido!.FECHA_FINC!),
-                setFecha: (String fecha) {
-                  pedidoVM.FECHA_FINC = fecha;
+                fechaExistente: nuevo ? null : cabPedido!.FECHA_FINC!,
+                setFecha: (DateTime fechaFC) {
+                  pedidoVM.FECHA_FINC = fecha.crearString(fechaFC);
                   debugPrint('Fecha fin consigna: ${pedidoVM.FECHA_FINC}');
                 },
               ),
@@ -350,7 +344,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
       return null;
     }
 
-    final GlobalKey<CustomStepperState> _customStepperKey =
+    final GlobalKey<CustomStepperState> customStepperKey =
         GlobalKey<CustomStepperState>();
 
     return Scaffold(
@@ -377,7 +371,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
                 ),
               ),
               onPressed: () {
-                _customStepperKey.currentState?.goToLastStep();
+                customStepperKey.currentState?.goToLastStep();
               },
               child: Text(
                 'Total: \$${cabPedido?.SUBTOTAL ?? 0}',
@@ -388,7 +382,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
         ],
       ),
       body: CustomStepper(
-        key: _customStepperKey,
+        key: customStepperKey,
         steps: steps,
         onLastStepContinue: mostrarConfirmacion,
       ),
