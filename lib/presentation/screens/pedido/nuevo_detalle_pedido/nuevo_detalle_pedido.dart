@@ -95,7 +95,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               theme,
               'Cliente',
               _isEnabled(cabPedido),
-              cabPedido?.ID_CLIENTE,
+              cabPedido?.Nombre,
             ),
             // Vendedor
             _textField(
@@ -140,7 +140,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
           children: [
             // Fecha de registro
             _customRow(
-              'Fecha de registro',
+              'F. Registro',
               IgnorePointer(
                 child: FechaButton(
                   fechaExistente: nuevo ? null : cabPedido!.FECHA_REGISTRO!,
@@ -149,7 +149,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
             ),
             // Fecha orden compra (O.C)
             _customRow(
-              'Fecha orden de compra',
+              'F. Orden compra',
               FechaButton(
                 fechaExistente: nuevo ? null : cabPedido!.FECHA_OC!,
                 setFecha: (DateTime fechaOC) {
@@ -168,7 +168,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
             // Orden de compra
             _textField(
               theme,
-              'Orden de compra',
+              'Orden compra',
               _isEnabled(cabPedido),
               cabPedido?.OrdenCompra,
             ),
@@ -197,7 +197,12 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               ),
             ),
             // RFC
-            _textField(theme, 'RFC', nuevo ? true : false, 'RFC'),
+            _textField(
+              theme,
+              'RFC',
+              nuevo ? true : false,
+              nuevo ? '' : cabPedMov.rfc,
+            ),
             // Plazo
             _textField(theme, 'Plazo', nuevo ? true : false, 'Plazo'),
             // Descuento
@@ -224,7 +229,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
           children: [
             // Fecha inicio consigna
             _customRow(
-              'Fecha inicio consigna',
+              'F. Inicio consigna',
               FechaButton(
                 fechaExistente: nuevo ? null : cabPedido!.FECHA_INICIOC!,
                 setFecha: (DateTime fechaIC) {
@@ -237,12 +242,12 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
             ),
             // Fecha fin consigna
             _customRow(
-              'Fecha fin consigna',
+              'F. Fin consigna',
               FechaButton(
                 fechaExistente: nuevo ? null : cabPedido!.FECHA_FINC!,
                 setFecha: (DateTime fechaFC) {
                   pedidoVM.FECHA_FINC = fecha.crearString(fechaFC);
-                  debugPrint('Fecha fin consigna: ${pedidoVM.FECHA_FINC}');
+                  debugPrint('F. Fin consigna: ${pedidoVM.FECHA_FINC}');
                 },
               ),
             ),
