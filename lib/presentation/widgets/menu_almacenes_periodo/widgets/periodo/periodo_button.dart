@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:crm/core/utils/fechas.dart';
+import 'package:crm/core/utils/fecha.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/menu_periodo.dart';
 
 class PeriodoButton extends StatefulWidget {
@@ -24,11 +24,12 @@ class _PeriodoButtonState extends State<PeriodoButton> {
   late int tipoFecha;
   late String fechaInicial;
   late String fechaFinal;
+  final Fecha fecha = Fecha();
 
   @override
   void initState() {
-    fechaInicial = Fechas().ayerString();
-    fechaFinal = Fechas().hoyString();
+    fechaInicial = fecha.ayerString;
+    fechaFinal = fecha.hoyString;
     super.initState();
   }
 

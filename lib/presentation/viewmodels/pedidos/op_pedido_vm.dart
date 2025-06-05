@@ -28,8 +28,8 @@ class PedidoVM extends _$PedidoVM {
   );
 
   int tipoFecha = 1;
-  DateTime fechaInicio = fecha.ayerDateTime;
-  DateTime fechaFin = fecha.hoyDateTime;
+  String fechaInicio = fecha.ayerString;
+  String fechaFin = fecha.hoyString;
 
   int idCliente = 0;
 
@@ -108,8 +108,8 @@ class CabsPedClienteVM extends _$CabsPedClienteVM {
           await _cabsPedidoClienteRepository.getCabsPedCliente(
             idAlmacen ?? 0,
             int.parse(clienteController.text),
-            fecha.crearString(pedidosVM.fechaInicio),
-            fecha.crearString(pedidosVM.fechaFin),
+            pedidosVM.fechaInicio,
+            pedidosVM.fechaFin,
             int.parse(folioController.text),
             ordenCompraController.text,
             pedidosVM.idSaas,
@@ -145,8 +145,8 @@ class CabsPedRangoVM extends _$CabsPedRangoVM {
           await _cabsPedidoRangoRepository.getCabsPedRango(
             pedidosVM.almacenSeleccionado.id,
             pedidosVM.tipoFecha,
-            fecha.crearString(pedidosVM.fechaInicio),
-            fecha.crearString(pedidosVM.fechaFin),
+            pedidosVM.fechaInicio,
+            pedidosVM.fechaFin,
             pedidosVM.idCliente,
             pedidosVM.idSaas,
             pedidosVM.idCompany,

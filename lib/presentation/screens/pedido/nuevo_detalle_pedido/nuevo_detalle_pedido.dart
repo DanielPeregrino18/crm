@@ -5,7 +5,6 @@ import 'package:crm/presentation/widgets/custom_row.dart';
 import 'package:crm/presentation/widgets/custom_text_field.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/fecha_button.dart';
 import 'package:flutter/material.dart';
-import 'package:crm/core/utils/fechas.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:crm/data/models/pedidos/cab_ped_mov_models/cab_ped_mov_model.dart';
 import 'package:crm/presentation/widgets/custom_check_box.dart';
@@ -17,8 +16,7 @@ class NuevoDetallePedido extends ConsumerStatefulWidget {
   const NuevoDetallePedido({super.key});
 
   @override
-  ConsumerState<NuevoDetallePedido> createState() =>
-      _NuevoDetallePedidoState();
+  ConsumerState<NuevoDetallePedido> createState() => _NuevoDetallePedidoState();
 }
 
 class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
@@ -62,7 +60,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
 
     final CabPedMovModel? cabPedMov = ref.read(cabPedMovVMProvider).value;
     final CabPedidoModel? cabPedido = cabPedMov?.cabPedido;
-    final bool nuevo = cabPedMov == null? true : false;
+    final bool nuevo = cabPedMov == null ? true : false;
 
     int currentStep = 0;
 
@@ -148,7 +146,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
                   fechaExistente:
                       nuevo
                           ? null
-                          : Fechas().crearString(cabPedido!.FECHA_REGISTRO!),
+                          : fecha.crearString(cabPedido!.FECHA_REGISTRO!),
                 ),
               ),
             ),
@@ -157,7 +155,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               'Fecha orden de compra',
               FechaButton(
                 fechaExistente:
-                    nuevo ? null : Fechas().crearString(cabPedido!.FECHA_OC!),
+                    nuevo ? null : fecha.crearString(cabPedido!.FECHA_OC!),
                 setFecha: (String fecha) {
                   pedidoVM.FECHA_OC = fecha;
                   debugPrint('Fecha O.C: ${pedidoVM.FECHA_OC}');
@@ -233,9 +231,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               'Fecha inicio consigna',
               FechaButton(
                 fechaExistente:
-                    nuevo
-                        ? null
-                        : Fechas().crearString(cabPedido!.FECHA_INICIOC!),
+                    nuevo ? null : fecha.crearString(cabPedido!.FECHA_INICIOC!),
                 setFecha: (String fecha) {
                   pedidoVM.FECHA_INICIOC = fecha;
                   debugPrint(
@@ -249,7 +245,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               'Fecha fin consigna',
               FechaButton(
                 fechaExistente:
-                    nuevo ? null : Fechas().crearString(cabPedido!.FECHA_FINC!),
+                    nuevo ? null : fecha.crearString(cabPedido!.FECHA_FINC!),
                 setFecha: (String fecha) {
                   pedidoVM.FECHA_FINC = fecha;
                   debugPrint('Fecha fin consigna: ${pedidoVM.FECHA_FINC}');
@@ -384,7 +380,7 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
                 _customStepperKey.currentState?.goToLastStep();
               },
               child: Text(
-                'Total: \$${cabPedido?.SUBTOTAL?? 0}',
+                'Total: \$${cabPedido?.SUBTOTAL ?? 0}',
                 style: TextStyle(color: theme.onPrimary),
               ),
             ),

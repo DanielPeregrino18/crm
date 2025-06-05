@@ -1,6 +1,6 @@
 import 'package:crm/presentation/widgets/custom_date_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:crm/core/utils/fechas.dart';
+import 'package:crm/core/utils/fecha.dart';
 
 class FechaButton extends StatefulWidget {
   final bool? esFechaInicial;
@@ -23,6 +23,8 @@ class FechaButton extends StatefulWidget {
 class _FechaState extends State<FechaButton> {
   late bool esFechaInicial;
 
+  final Fecha fecha = Fecha();
+
   @override
   void initState() {
     esFechaInicial = widget.esFechaInicial == true ? true : false;
@@ -34,12 +36,12 @@ class _FechaState extends State<FechaButton> {
   Future<void> _selectDate() async {
     final DateTime? pickedDate = await customDatePicker(
       context,
-      initialDate: esFechaInicial ? Fechas().ayerDateTime : DateTime.now(),
+      initialDate: esFechaInicial ? fecha.ayerDateTime : DateTime.now(),
     );
-    if(pickedDate != null) {
+    if (pickedDate != null) {
       setState(() {
         selectedDate = pickedDate;
-        widget.setFecha!(Fechas().crearString(selectedDate!));
+        widget.setFecha!(fecha.crearString(selectedDate!));
       });
     }
   }
@@ -48,18 +50,13 @@ class _FechaState extends State<FechaButton> {
   Widget build(BuildContext context) {
     return TextButton.icon(
       label: Text(
-        selectedDate !=
-                null // Hay alguna fecha seleccionada?
-            ? Fechas().crearString(
-              selectedDate!,
-            ) // Muestra la fecha seleccionada
-            : widget.fechaExistente !=
-                null // Se pasó una fecha existente?
-            ? widget.fechaExistente! // Muestra la fecha existente
-            : esFechaInicial // Es una fecha inicial?
-            ? Fechas()
-                .ayerString() // Fecha del día anterior
-            : Fechas().hoyString(), // Fecha día actual
+        selectedDate != null
+            ? fecha.crearString(selectedDate!)
+            : widget.fechaExistente != null
+            ? widget.fechaExistente!
+            : esFechaInicial
+            ? fecha.ayerString
+            : fecha.hoyString,
         style: TextStyle(
           fontSize: 16,
           color: Colors.black,
