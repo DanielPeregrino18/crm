@@ -2,7 +2,9 @@ import 'package:crm/config/DB/object_box_connection.dart';
 import 'package:crm/core/dao/almacen_dao.dart';
 import 'package:crm/core/services/almacenes_servicio.dart';
 import 'package:crm/core/services/api_cab_cotizaciones.dart';
+import 'package:crm/core/services/api_colecciones.dart';
 import 'package:crm/data/repositories/almacen_dao_objectbox_impl.dart';
+import 'package:crm/data/repositories/articulos_obx_impl.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +28,12 @@ final almacenServicioProvider = Provider<AlmacenServicio>(
       (ref) => AlmacenServicio(ref.read(almacenDaoImplProvider)),
 );
 
-
 final  formatterProvider = Provider<DateFormat>((ref) =>
     DateFormat('dd/MM/yyyy'),);
+
+final ariculoOBXImplProvider = Provider<ArticulosObxImpl>((ref) =>
+                              ArticulosObxImpl(ref.read(objectBoxProvider), ref.read(apiColleccionesProvider)),);
+
+final apiColleccionesProvider = Provider<ApiColecciones>((ref) =>
+                                        ApiColecciones(ref.read(dioProvider)),);
+

@@ -13,6 +13,8 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
 
   final dynamic initialValue;
+  final FocusNode? focusNode;
+
 
   const CustomTextField({
     super.key,
@@ -22,16 +24,23 @@ class CustomTextField extends StatelessWidget {
     this.isEnabled = true,
     this.controller,
     this.initialValue,
+    this.focusNode
   });
 
   @override
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
+    FocusNode focus = focusNode ?? FocusNode();
 
     return TextFormField(
       keyboardType: textInputType,
+      focusNode: focus,
+      autofocus: false,
       inputFormatters: textInputFormatters,
       controller: controller,
+      onTapOutside: (event) {
+        focus.unfocus();
+      },
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         filled: true,

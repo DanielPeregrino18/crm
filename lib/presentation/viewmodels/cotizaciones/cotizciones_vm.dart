@@ -1,5 +1,7 @@
 import 'package:crm/config/DI/dependencias.dart';
 import 'package:crm/core/services/api_cab_cotizaciones.dart';
+import 'package:crm/core/services/api_colecciones.dart';
+import 'package:crm/data/models/cliente_modelo.dart';
 import 'package:crm/data/models/cotizaciones/cab_cotizacion.dart';
 import 'package:crm/data/models/cotizaciones/det_cotizacion_mov.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 final cotizacionVMProvider = StateProvider<CotizcionesVM>(
-  (ref) => CotizcionesVM(ref.read(apiCabCotizacionProvider), ref.read(formatterProvider)),
+  (ref) => CotizcionesVM(ref.read(apiCabCotizacionProvider), 
+                                        ref.read(formatterProvider),
+                                                  ref.read(apiColleccionesProvider)),
 );
 
 class CotizcionesVM extends ChangeNotifier {
@@ -15,7 +19,6 @@ class CotizcionesVM extends ChangeNotifier {
   DateFormat formatter;
   //Busqueda Principal
   int idAlmacen = 0;
-  SearchController clienteController = SearchController();
   int idCliente = 0;
   int idTipoFecha = 1;
   DateTime fechaInicial = DateTime(
@@ -27,8 +30,11 @@ class CotizcionesVM extends ChangeNotifier {
 
   List<CabCotizacion> cotizaciones = [];
   List<DetCotizacionMov> detallesCotizacion = [];
+  ApiColecciones apiColecciones;
+  FocusNode focusCliente = FocusNode();
+  TextEditingController clienteController = TextEditingController();
 
-  CotizcionesVM(this.apiCabCotizaciones, this.formatter);
+  CotizcionesVM(this.apiCabCotizaciones, this.formatter, this.apiColecciones);
 
   void clearInputCliente() async {
     clienteController.clear();
