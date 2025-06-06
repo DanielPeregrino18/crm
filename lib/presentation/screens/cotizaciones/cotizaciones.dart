@@ -1,4 +1,5 @@
 import 'package:crm/data/models/cliente_modelo.dart';
+import 'package:crm/core/utils/fecha.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/card_cotizacion.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_cliente.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_movimiento.dart';
@@ -28,6 +29,8 @@ class Cotizaciones extends ConsumerStatefulWidget {
 
 class _CotizacionesState extends ConsumerState<Cotizaciones> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final Fecha fecha = Fecha();
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +87,11 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
             setTipoFecha: (int tipoF) {
               cotizacionVM.idTipoFecha = tipoF;
             },
-            setFechaInicial: (String fechaI) {
-              cotizacionVM.setFechaInicial(fechaI);
+            setFechaInicial: (DateTime fechaI) {
+              cotizacionVM.setFechaInicial(fecha.crearString(fechaI));
             },
-            setFechaFinal: (String fechaF) {
-              cotizacionVM.setFechaFin(fechaF);
+            setFechaFinal: (DateTime fechaF) {
+              cotizacionVM.setFechaFin(fecha.crearString(fechaF));
             },
           ),
           Row(

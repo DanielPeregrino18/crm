@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:crm/core/utils/fechas.dart';
+import 'package:crm/core/utils/fecha.dart';
 import 'package:crm/data/models/almacen_seleccionado.dart';
 import 'package:crm/data/models/pedidos/op_pedido_models.dart';
 import 'package:crm/data/repositories/pedidos/op_pedido_repositories.dart';
 
 part 'op_pedido_vm.g.dart';
+
+Fecha fecha = Fecha();
 
 // Provider de uso general para el módulo de pedidos
 @riverpod
@@ -26,10 +28,8 @@ class PedidoVM extends _$PedidoVM {
   );
 
   int tipoFecha = 1;
-
-  String fechaInicio = Fechas().ayerString();
-
-  String fechaFin = Fechas().hoyString();
+  String fechaInicio = fecha.ayerString;
+  String fechaFin = fecha.hoyString;
 
   int idCliente = 0;
 

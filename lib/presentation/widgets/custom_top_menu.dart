@@ -14,6 +14,7 @@ class CustomTopMenu extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
       child: Center(
         child: Row(
+          spacing: 10,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: elements.map((Widget element) => element).toList(),
         ),

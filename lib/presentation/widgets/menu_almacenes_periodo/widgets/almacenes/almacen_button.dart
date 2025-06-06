@@ -39,7 +39,8 @@ class _AlmacenButtonState extends ConsumerState<AlmacenButton> {
   void actualizarAlmacen(int id, String nombre) {
     setState(() {
       idAlmacen = id;
-      nombreAlmacen = nombre;
+      nombreAlmacen =
+          nombre.length > 15 ? '${nombre.substring(0, 15)}...' : nombre;
     });
     widget.setAlmacen?.call(id, nombre);
   }

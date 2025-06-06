@@ -5,12 +5,9 @@ import 'package:crm/presentation/widgets/custom_top_menu.dart';
 
 class MenuAlmacenPeriodo extends StatelessWidget {
   final Function(int, String)? setAlmacen;
-
   final Function(int)? setTipoFecha;
-
-  final Function(String)? setFechaInicial;
-
-  final Function(String)? setFechaFinal;
+  final Function(DateTime)? setFechaInicial;
+  final Function(DateTime)? setFechaFinal;
 
   const MenuAlmacenPeriodo({
     super.key,

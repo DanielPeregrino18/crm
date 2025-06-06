@@ -47,8 +47,6 @@ class CardCabPedRango extends ConsumerWidget {
         ref.watch(detPedMovVMProvider).value?[cabPedRango.ID_PEDIDO];
     final CabPedMovVM cabPedMovVM = ref.watch(cabPedMovVMProvider.notifier);
 
-    final NumberFormat numberFormat = NumberFormat(",##0.##");
-
     String granTotal(
       double cantidad,
       double importe,
@@ -59,7 +57,7 @@ class CardCabPedRango extends ConsumerWidget {
     ) {
       double subtotal = cantidad * importe;
       double granTotal = subtotal - descuento + ieps + iva - ivaRetenido;
-      return numberFormat.format(granTotal);
+      return granTotal.toStringAsFixed(2);
     }
 
     return ExpandableCard(
@@ -94,7 +92,7 @@ class CardCabPedRango extends ConsumerWidget {
                 normal: right(cabPedRango.ID_PEDIDO, false),
               ),
               TextBoldNormal(
-                bold: 'Fecha movimiento',
+                bold: 'F. Mov',
                 normal: right(cabPedRango.FECHA_MOVIMIENTO, true),
               ),
               Text(
@@ -125,44 +123,79 @@ class CardCabPedRango extends ConsumerWidget {
               : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: ScrollPhysics(),
-                child: DataTable(
-                  columnSpacing: 10,
-                  columns: [
-                    DataColumn(
-                      label: Text('Código'),
-                      numeric: true,
-                      headingRowAlignment: MainAxisAlignment.center,
+                child: Table(
+                  columnWidths: {
+                    0: FixedColumnWidth(MediaQuery.of(context).size.width / 2),
+                    1: IntrinsicColumnWidth(),
+                    2: IntrinsicColumnWidth(),
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  border: TableBorder.all(
+                    color: theme.primary.withAlpha(100),
+                    width: 0.5,
+                  ),
+                  children: [
+                    TableRow(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(color: theme.primary),
+                          padding: const EdgeInsets.all(5),
+                          child: Center(
+                            child: Text(
+                              'Artículo',
+                              style: TextStyle(color: theme.onPrimary),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(color: theme.primary),
+                          padding: const EdgeInsets.all(5),
+                          child: Center(
+                            child: Text(
+                              'Cantidad',
+                              style: TextStyle(color: theme.onPrimary),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(color: theme.primary),
+                          padding: const EdgeInsets.all(5),
+                          child: Center(
+                            child: Text(
+                              'Total',
+                              style: TextStyle(color: theme.onPrimary),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    DataColumn(
-                      label: Text('Nombre'),
-                      headingRowAlignment: MainAxisAlignment.center,
-                    ),
-                    DataColumn(
-                      label: Text('Cantidad'),
-                      numeric: true,
-                      headingRowAlignment: MainAxisAlignment.center,
-                    ),
-                    DataColumn(
-                      label: Text('Total'),
-                      numeric: true,
-                      headingRowAlignment: MainAxisAlignment.center,
-                    ),
-                  ],
-                  rows:
-                      detPedMov.map((articulo) {
-                        return DataRow(
-                          cells: [
-                            DataCell(Text(right(articulo.ID_ARTICULO, false))),
-                            DataCell(Text(right(articulo.NOMBRE, false))),
-                            DataCell(Text(right(articulo.CANTIDAD, false))),
-                            DataCell(
-                              Text(
-                                '\$${granTotal(articulo.CANTIDAD!, articulo.IMPORTE!, articulo.DESCUENTO!, articulo.IEPS!, articulo.IVA!, articulo.IVA_RETENIDO!)}',
+                    ...detPedMov.map((articulo) {
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              softWrap: true,
+                              right(
+                                '${articulo.ID_ARTICULO}. ${articulo.NOMBRE}',
+                                false,
                               ),
                             ),
-                          ],
-                        );
-                      }).toList(),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(right(articulo.CANTIDAD, false)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              '\$${granTotal(articulo.CANTIDAD!, articulo.IMPORTE!, articulo.DESCUENTO!, articulo.IEPS!, articulo.IVA!, articulo.IVA_RETENIDO!)}',
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                  ],
                 ),
               ),
       child: Column(
@@ -185,31 +218,21 @@ class CardCabPedRango extends ConsumerWidget {
             bold: 'Paridad',
             normal: right(cabPedRango.PARIDAD, false),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextBoldNormal(
-                bold: 'F. Registro',
-                normal: right(cabPedRango.FECHA_REGISTRO, true),
-              ),
-              TextBoldNormal(
-                bold: 'F. Orden compra',
-                normal: right(cabPedRango.FECHA_OC, true),
-              ),
-            ],
+          TextBoldNormal(
+            bold: 'F. Registro',
+            normal: right(cabPedRango.FECHA_REGISTRO, true),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextBoldNormal(
-                bold: 'F. Inicio consigna',
-                normal: right(cabPedRango.FECHA_INICIOC, true),
-              ),
-              TextBoldNormal(
-                bold: 'F. Fin consigna',
-                normal: right(cabPedRango.FECHA_FINC, true),
-              ),
-            ],
+          TextBoldNormal(
+            bold: 'F. Orden compra',
+            normal: right(cabPedRango.FECHA_OC, true),
+          ),
+          TextBoldNormal(
+            bold: 'F. Inicio consigna',
+            normal: right(cabPedRango.FECHA_INICIOC, true),
+          ),
+          TextBoldNormal(
+            bold: 'F. Fin consigna',
+            normal: right(cabPedRango.FECHA_FINC, true),
           ),
           TextBoldNormal(
             bold: 'F. Cancelación',
