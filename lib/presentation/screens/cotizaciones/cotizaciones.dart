@@ -7,16 +7,14 @@ import 'package:crm/presentation/viewmodels/cliente_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/cotizciones_vm.dart';
 import 'package:crm/presentation/viewmodels/cotizaciones/form_cotizacion_vm.dart';
 import 'package:crm/presentation/widgets/custom_drawer.dart';
-import 'package:crm/presentation/widgets/custom_text_field.dart';
 import 'package:crm/presentation/widgets/drawer_busqueda.dart';
-import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../widgets/custom_search_bar.dart';
 import '../../widgets/menu_almacenes_periodo/menu_almacen_periodo.dart';
 import '../../widgets/search_button.dart';
 
@@ -99,20 +97,33 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
             children: [
               Expanded(
                 flex: 3,
-                child: CustomSearchBar<ClienteModelo>(
-                  controller: cotizacionVM.clienteController,
-                  itemBuilder: (context, value) {
-                    return ListTile(
-                      title: Text(value.nombre),
-                      subtitle: Text(value.razonSocial),
-                    );
-                  },
-                  focusNode: cotizacionVM.focusCliente,
-                  sugerencias: (search) {
-                    return ref
-                        .read(clienteVMProvider)
-                        .getClientesFiltro(search);
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: CustomSearchBar(
+                    controller: cotizacionVM.clienteController,
+                    itemBuilder: (context, value) {
+                      return ListTile(
+                        title: Text("${value.idCliente}.- ${value.nombre}"),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(value.razonSocial),
+                            Text(value.rfc)
+                          ],
+                        ),
+                      );
+                    },
+                    focusNode: cotizacionVM.focusCliente,
+                    sugerencias: (search) {
+                      return ref
+                          .read(clienteVMProvider)
+                          .getClientesFiltro(search);
+                    },
+                    onSelect: (value) {
+
+                    },
+                    label: "Cliente",
+                  ),
                 ),
               ),
               Expanded(
@@ -149,45 +160,6 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
           "Cliente": CotizacionBusquedaCliente(),
         },
       ),
-    );
-  }
-}
-
-class CustomSearchBar<T> extends StatelessWidget { //todo terminar de implementar este widget
-  const CustomSearchBar({
-    super.key,
-    required this.controller,
-    required this.focusNode,
-    required this.itemBuilder,
-    required this.sugerencias,
-  });
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final Widget Function(BuildContext context, T value) itemBuilder;
-
-  final List<T> Function(String search) sugerencias;
-  @override
-  Widget build(BuildContext context) {
-    return TypeAheadField(
-      controller: controller,
-      focusNode: focusNode,
-      hideOnUnfocus: true,
-      builder: (context, controller, focusNode) {
-        return CustomTextField(
-          controller: controller,
-          focusNode: focusNode,
-          label: "Cliente",
-        );
-      },
-      itemBuilder: (context, value) {
-        return itemBuilder(context, value);
-      },
-      onSelected: (value) {
-        focusNode.unfocus();
-      },
-      suggestionsCallback: (search) {
-        return sugerencias(search);
-      },
     );
   }
 }

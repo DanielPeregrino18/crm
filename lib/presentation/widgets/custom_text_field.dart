@@ -8,7 +8,7 @@ class CustomTextField extends StatelessWidget {
 
   final List<TextInputFormatter> textInputFormatters;
 
-  final bool isEnabled;
+  bool isEnabled;
 
   final TextEditingController? controller;
 
@@ -16,7 +16,8 @@ class CustomTextField extends StatelessWidget {
   final FocusNode? focusNode;
 
 
-  const CustomTextField({
+
+  CustomTextField({
     super.key,
     this.label = '',
     this.textInputType = TextInputType.text,

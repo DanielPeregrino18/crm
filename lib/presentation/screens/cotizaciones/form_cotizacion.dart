@@ -1,8 +1,11 @@
 import 'package:crm/presentation/viewmodels/cotizaciones/form_cotizacion_vm.dart';
+import 'package:crm/presentation/viewmodels/vendedor_vm.dart';
 import 'package:crm/presentation/widgets/custom_date_picker.dart';
+import 'package:crm/presentation/widgets/custom_search_bar.dart';
 import 'package:crm/presentation/widgets/search_bar_clientes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../viewmodels/cliente_vm.dart';
 import '../../widgets/custom_check_box.dart';
 import '../../widgets/menu_almacenes_periodo/widgets/almacenes/menu_almacenes.dart';
 
@@ -159,13 +162,45 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     },
                   ),
                 ),
-                //todo colocar el vendedor aqui
-                SearchBarClientes(
-                  hint: "Cliente",
-                  actions: [],
-                  inputController: formCotizacionVM.clienteController,
-                  setIdCliente: (id) {},
-                  initialValue: formCotizacionVM.nombre,
+                CustomSearchBar(
+                    controller: formCotizacionVM.vendedorController,
+                    focusNode: formCotizacionVM.focusVendedor,
+                    itemBuilder: (context, value) {
+                      return ListTile(title: Text("${value.id}.-${value.nombre}"),);
+                    },
+                    sugerencias: (search) {
+                      return ref.read(vendedorVMProvider).getVendedoresFiltro(search);
+                    },
+                    onSelect: (value) {
+                      formCotizacionVM.focusCliente.requestFocus();
+                      formCotizacionVM.setVendedor(value);
+                    },
+                    label: "Vendedor"
+                ),
+                CustomSearchBar(
+                    controller: formCotizacionVM.clienteController,
+                    focusNode: formCotizacionVM.focusCliente,
+                    itemBuilder: (context, value) {
+                      return ListTile(
+                        title: Text("${value.idCliente}.- ${value.nombre}"),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(value.razonSocial),
+                            Text(value.rfc)
+                          ],
+                        ),
+                      );
+                    },
+                    sugerencias: (search) {
+                      return ref
+                          .read(clienteVMProvider)
+                          .getClientesFiltro(search);
+                    },
+                    onSelect: (value) {
+                      formCotizacionVM.setCliente(value);
+                    },
+                    label: "Cliente"
                 ),
                 _customTextField(
                   theme,
