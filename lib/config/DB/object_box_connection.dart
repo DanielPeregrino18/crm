@@ -1,3 +1,4 @@
+import 'package:crm/domain/entities/articulos_ob.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:crm/data/data_sources/objectbox.g.dart';
@@ -7,10 +8,12 @@ class ObjectBoxConnection {
   late final Store _store;
 
   late final Box<AlmacenOB> almacenBox;
+  late final Box<ArticulosOB> articulosBox;
 
   // Obtiene las conexiones a las bases de datos.
   ObjectBoxConnection._create(this._store) {
     almacenBox = Box<AlmacenOB>(_store);
+    articulosBox = Box<ArticulosOB>(_store);
   }
 
   static Future<ObjectBoxConnection> create() async {

@@ -24,6 +24,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(ariculoOBXImplProvider).cargarArticulos();
     return ScreenUtilInit(
         designSize: Size(430, 930),
         builder: (context, child) {

@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import '../../data/models/cotizaciones/cab_cotizacion_mov.dart';
 
 part 'api_cab_cotizaciones.g.dart';
+
 @RestApi(baseUrl: 'http://192.168.1.222:8080/api/operaciones/POSCotizacion')
 abstract class ApiCabCotizaciones {
 
