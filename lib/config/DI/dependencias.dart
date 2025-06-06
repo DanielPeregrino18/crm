@@ -9,31 +9,38 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-final dioProvider =  Provider<Dio>((ref) => Dio(),);
+final dioProvider = Provider<Dio>((ref) => Dio());
 
-final apiCabCotizacionProvider = Provider<ApiCabCotizaciones>((ref) =>
-                                    ApiCabCotizaciones(ref.read(dioProvider)),);
+final apiCabCotizacionProvider = Provider<ApiCabCotizaciones>(
+  (ref) => ApiCabCotizaciones(ref.read(dioProvider)),
+);
 
 // ObjectBox
 final objectBoxProvider = Provider<ObjectBoxConnection>(
-      (ref) => throw UnimplementedError(),
+  (ref) => throw UnimplementedError(),
 );
 
 // Almacenes
 final almacenDaoImplProvider = Provider<AlmacenLDBDao>(
-      (ref) => AlmacenDAOObjectboxImpl(ref.read(objectBoxProvider)),
+  (ref) => AlmacenDAOObjectboxImpl(ref.read(objectBoxProvider)),
 );
 
 final almacenServicioProvider = Provider<AlmacenServicio>(
-      (ref) => AlmacenServicio(ref.read(almacenDaoImplProvider)),
+  (ref) => AlmacenServicio(ref.read(almacenDaoImplProvider)),
 );
 
-final  formatterProvider = Provider<DateFormat>((ref) =>
-    DateFormat('dd/MM/yyyy'),);
+final formatterProvider = Provider<DateFormat>(
+  (ref) => DateFormat('dd/MM/yyyy'),
+);
 
-final ariculoOBXImplProvider = Provider<ArticulosObxImpl>((ref) =>
-                              ArticulosObxImpl(ref.read(objectBoxProvider), ref.read(apiColleccionesProvider)),);
+final ariculoOBXImplProvider = Provider<ArticulosObxImpl>(
+  (ref) => ArticulosObxImpl(
+    ref.read(objectBoxProvider),
+    ref.read(apiColleccionesProvider),
+  ),
+);
 
-final apiColleccionesProvider = Provider<ApiColecciones>((ref) =>
-                                        ApiColecciones(ref.read(dioProvider)),);
+final apiColleccionesProvider = Provider<ApiColecciones>(
+  (ref) => ApiColecciones(ref.read(dioProvider)),
+);
 

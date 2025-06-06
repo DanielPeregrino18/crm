@@ -5,9 +5,7 @@ part 'cab_ped_cliente.g.dart';
 @JsonSerializable()
 class CabPedCliente {
   String? Clave;
-
   String? OrdenCompra;
-
   DateTime? Fecha;
   String? Nombre;
   String? Total;

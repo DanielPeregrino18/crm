@@ -5,11 +5,9 @@ part 'cab_ped_mov_model.g.dart';
 
 @JsonSerializable()
 class CabPedMovModel {
-
   int? idListaPrecio;
   String? rfc;
   int? idMoneda;
-
   CabPedidoModel? cabPedido;
 
   CabPedMovModel({
