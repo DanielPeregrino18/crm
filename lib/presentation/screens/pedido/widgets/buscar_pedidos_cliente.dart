@@ -52,8 +52,8 @@ class BuscarPedidosCliente extends ConsumerWidget {
               Text('Fecha inicial', style: textStyle),
               FechaButton(
                 esFechaInicial: true,
-                setFecha: (String fechaI) {
-                  getCabsPedClienteVM.pedidosVM.fechaInicio = fechaI;
+                setFecha: (DateTime fechaI) {
+                  getCabsPedClienteVM.pedidosVM.fechaInicio = fecha.crearString(fechaI);
                   debugPrint(
                     'Fecha inicial: ${getCabsPedClienteVM.pedidosVM.fechaInicio}',
                   );
@@ -66,8 +66,8 @@ class BuscarPedidosCliente extends ConsumerWidget {
             children: [
               Text('Fecha final', style: textStyle),
               FechaButton(
-                setFecha: (String fechaF) {
-                  getCabsPedClienteVM.pedidosVM.fechaFin = fechaF;
+                setFecha: (DateTime fechaF) {
+                  getCabsPedClienteVM.pedidosVM.fechaFin = fecha.crearString(fechaF);
                   debugPrint(
                     'Fecha final: ${getCabsPedClienteVM.pedidosVM.fechaFin}',
                   );

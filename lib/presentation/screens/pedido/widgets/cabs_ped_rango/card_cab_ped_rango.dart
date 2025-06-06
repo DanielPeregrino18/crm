@@ -123,45 +123,79 @@ class CardCabPedRango extends ConsumerWidget {
               : SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: ScrollPhysics(),
-                child: DataTable(
-                  columnSpacing: 10,
-                  columns: [
-                    DataColumn(
-                      label: Text('Artículo'),
-                      headingRowAlignment: MainAxisAlignment.center,
+                child: Table(
+                  columnWidths: {
+                    0: FixedColumnWidth(MediaQuery.of(context).size.width / 2),
+                    1: IntrinsicColumnWidth(),
+                    2: IntrinsicColumnWidth(),
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  border: TableBorder.all(
+                    color: theme.primary.withAlpha(100),
+                    width: 0.5,
+                  ),
+                  children: [
+                    TableRow(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(color: theme.primary),
+                          padding: const EdgeInsets.all(5),
+                          child: Center(
+                            child: Text(
+                              'Artículo',
+                              style: TextStyle(color: theme.onPrimary),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(color: theme.primary),
+                          padding: const EdgeInsets.all(5),
+                          child: Center(
+                            child: Text(
+                              'Cantidad',
+                              style: TextStyle(color: theme.onPrimary),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(color: theme.primary),
+                          padding: const EdgeInsets.all(5),
+                          child: Center(
+                            child: Text(
+                              'Total',
+                              style: TextStyle(color: theme.onPrimary),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    DataColumn(
-                      label: Text('Cantidad'),
-                      numeric: true,
-                      headingRowAlignment: MainAxisAlignment.center,
-                    ),
-                    DataColumn(
-                      label: Text('Total'),
-                      numeric: true,
-                      headingRowAlignment: MainAxisAlignment.center,
-                    ),
+                    ...detPedMov.map((articulo) {
+                      return TableRow(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              softWrap: true,
+                              right(
+                                '${articulo.ID_ARTICULO}. ${articulo.NOMBRE}',
+                                false,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(right(articulo.CANTIDAD, false)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(
+                              '\$${granTotal(articulo.CANTIDAD!, articulo.IMPORTE!, articulo.DESCUENTO!, articulo.IEPS!, articulo.IVA!, articulo.IVA_RETENIDO!)}',
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
                   ],
-                  rows:
-                      detPedMov.map((articulo) {
-                        return DataRow(
-                          cells: [
-                            DataCell(
-                              Text(
-                                right(
-                                  '${articulo.ID_ARTICULO}. ${articulo.NOMBRE}',
-                                  false,
-                                ),
-                              ),
-                            ),
-                            DataCell(Text(right(articulo.CANTIDAD, false))),
-                            DataCell(
-                              Text(
-                                '\$${granTotal(articulo.CANTIDAD!, articulo.IMPORTE!, articulo.DESCUENTO!, articulo.IEPS!, articulo.IVA!, articulo.IVA_RETENIDO!)}',
-                              ),
-                            ),
-                          ],
-                        );
-                      }).toList(),
                 ),
               ),
       child: Column(

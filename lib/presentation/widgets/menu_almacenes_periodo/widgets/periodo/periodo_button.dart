@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:crm/core/utils/fechas.dart';
+import 'package:crm/core/utils/fecha.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/menu_periodo.dart';
 
 class PeriodoButton extends StatefulWidget {
   final Function(int)? setTipoFecha;
-
-  final Function(String)? setFechaInicial;
-
-  final Function(String)? setFechaFinal;
+  final Function(DateTime)? setFechaInicial;
+  final Function(DateTime)? setFechaFinal;
 
   const PeriodoButton({
     super.key,
@@ -22,13 +20,15 @@ class PeriodoButton extends StatefulWidget {
 
 class _PeriodoButtonState extends State<PeriodoButton> {
   late int tipoFecha;
-  late String fechaInicial;
-  late String fechaFinal;
+  late DateTime fechaInicial;
+  late DateTime fechaFinal;
+  final Fecha fecha = Fecha();
 
   @override
   void initState() {
-    fechaInicial = Fechas().ayerString();
-    fechaFinal = Fechas().hoyString();
+    tipoFecha = 1;
+    fechaInicial = fecha.ayerDateTime;
+    fechaFinal = fecha.hoyDateTime;
     super.initState();
   }
 
@@ -45,20 +45,23 @@ class _PeriodoButtonState extends State<PeriodoButton> {
 
   void actualizarTipoFecha(int tipoF) {
     widget.setTipoFecha?.call(tipoF);
+    setState(() {
+      tipoFecha = tipoF;
+    });
   }
 
-  void actualizarFechaInicial(String fechaI) {
+  void actualizarFechaInicial(DateTime fechaI) {
+    widget.setFechaInicial?.call(fechaI);
     setState(() {
       fechaInicial = fechaI;
     });
-    widget.setFechaInicial?.call(fechaI);
   }
 
-  void actualizarFechaFinal(String fechaF) {
+  void actualizarFechaFinal(DateTime fechaF) {
+    widget.setFechaFinal?.call(fechaF);
     setState(() {
       fechaFinal = fechaF;
     });
-    widget.setFechaFinal?.call(fechaF);
   }
 
   @override
@@ -73,7 +76,7 @@ class _PeriodoButtonState extends State<PeriodoButton> {
       label: Row(
         children: [
           Text(
-            fechaInicial,
+            fecha.crearString(fechaInicial),
             style: TextStyle(
               fontSize: 14,
               color: Colors.black,
@@ -82,7 +85,7 @@ class _PeriodoButtonState extends State<PeriodoButton> {
           ),
           Icon(Icons.arrow_right),
           Text(
-            fechaFinal,
+            fecha.crearString(fechaFinal),
             style: TextStyle(
               fontSize: 14,
               color: Colors.black,
@@ -98,6 +101,9 @@ class _PeriodoButtonState extends State<PeriodoButton> {
             setTipoFecha: actualizarTipoFecha,
             setFechaInicial: actualizarFechaInicial,
             setFechaFinal: actualizarFechaFinal,
+            initialTipoFecha: tipoFecha,
+            initialDateFechaInicial: fechaInicial,
+            initialDateFechaFinal: fechaFinal,
           ),
         );
       },

@@ -6,16 +6,20 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/
 
 class MenuPeriodo extends StatelessWidget {
   final Function(int tipoFecha) setTipoFecha;
-
-  final Function(String fechaInicial) setFechaInicial;
-
-  final Function(String fechaFinal) setFechaFinal;
+  final Function(DateTime fechaInicial) setFechaInicial;
+  final Function(DateTime fechaFinal) setFechaFinal;
+  final int? initialTipoFecha;
+  final DateTime? initialDateFechaInicial;
+  final DateTime? initialDateFechaFinal;
 
   const MenuPeriodo({
     super.key,
     required this.setTipoFecha,
     required this.setFechaInicial,
     required this.setFechaFinal,
+    this.initialTipoFecha,
+    this.initialDateFechaInicial,
+    this.initialDateFechaFinal,
   });
 
   @override
@@ -60,10 +64,18 @@ class MenuPeriodo extends StatelessWidget {
                 child: TipoFechaDropDownMenu(
                   options: options,
                   setTipoFecha: setTipoFecha,
+                  initialTipoFecha: initialTipoFecha,
                 ),
               ),
-              FechaButton(esFechaInicial: true, setFecha: setFechaInicial),
-              FechaButton(setFecha: setFechaFinal),
+              FechaButton(
+                esFechaInicial: true,
+                setFecha: setFechaInicial,
+                fechaExistente: initialDateFechaInicial,
+              ),
+              FechaButton(
+                setFecha: setFechaFinal,
+                fechaExistente: initialDateFechaFinal,
+              ),
             ],
           ),
         ],
