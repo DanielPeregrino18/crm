@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../../config/DI/dependencias.dart';
+import '../../../viewmodels/cliente_vm.dart';
 import '../../../widgets/almacenes_drop_down_menu.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_date_picker.dart';
+import '../../../widgets/custom_search_bar.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/search_bar_clientes.dart';
 import 'card_cotizacion_movimiento.dart';
@@ -44,11 +46,29 @@ class _CotizacionBusquedaClienteState
               busquedaCotClieVM.idAlmacen = id;
             },
           ),
-          SearchBarClientes(
-            hint: "Cliente",
-            actions: searchBarActions,
-            inputController: busquedaCotClieVM.clienteController,
-            setIdCliente: (int id) { print(id); },
+          CustomSearchBar(
+              controller: TextEditingController(),
+              focusNode: FocusNode(),
+              itemBuilder: (context, value) {
+                return ListTile(
+                  title: Text("${value.idCliente}.- ${value.nombre}"),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(value.razonSocial),
+                      Text(value.rfc)
+                    ],
+                  ),
+                );
+              },
+              sugerencias: (search) {
+                return ref
+                    .read(clienteVMProvider)
+                    .getClientesFiltro(search);
+              },
+              onSelect: (value) {
+              },
+              label: "Cliente"
           ),
           CustomTextField(
             label: "Ordenes de compra",

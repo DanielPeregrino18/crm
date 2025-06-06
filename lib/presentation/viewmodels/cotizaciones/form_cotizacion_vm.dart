@@ -1,7 +1,10 @@
 import 'package:crm/config/DI/dependencias.dart';
+import 'package:crm/data/models/cliente_modelo.dart';
 import 'package:crm/data/models/cotizaciones/cab_cotizacion.dart';
 import 'package:crm/data/models/cotizaciones/cab_cotizacion_mov.dart';
+import 'package:crm/data/models/vendedor_modelo.dart';
 import 'package:crm/presentation/viewmodels/almacenes_vm.dart';
+import 'package:crm/presentation/viewmodels/vendedor_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -17,10 +20,11 @@ class FormCotizacionVM extends ChangeNotifier {
   int idAlmacen = 0;
   String almacenLabel = "0";
   int idClienteController = 0;
-  SearchController clienteController = SearchController();
+  TextEditingController vendedorController = TextEditingController();
+  FocusNode focusVendedor = FocusNode();
+  TextEditingController clienteController = TextEditingController();
+  FocusNode focusCliente = FocusNode();
   String nombre = "";
-  int idVendedorController = 0;
-  SearchController vendedorController = SearchController();
   TextEditingController sucursalController = TextEditingController(text: "1.-CLIENTE PRUEBA",);
   TextEditingController direccionController = TextEditingController();
   int idListaPrecios = 1;
@@ -135,6 +139,16 @@ class FormCotizacionVM extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setCliente(ClienteModelo cliente){
+    clienteController = TextEditingController(text: cliente.nombre);
+    notifyListeners();
+  }
+
+  void setVendedor(VendedorModelo vendedor){
+    vendedorController = TextEditingController(text: vendedor.nombre);
+    notifyListeners();
+  }
+
   void setCabCotizacion(CabCotizacionMov cabCotizacionMov) {
     if(cabCotizacionMov.cabCotizacion!=null) {
       CabCotizacion cabCotizacion = cabCotizacionMov.cabCotizacion!;
@@ -187,7 +201,6 @@ class FormCotizacionVM extends ChangeNotifier {
     idClienteController = 0;
     clienteController.clear();
     nombre = "";
-    idVendedorController = 0;
     vendedorController.clear();
     sucursalController.clear();
     direccionController.clear();
