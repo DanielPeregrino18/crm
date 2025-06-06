@@ -6,8 +6,9 @@ import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/almacene
 
 class AlmacenButton extends ConsumerStatefulWidget {
   final Function(int, String)? setAlmacen;
+  final int? initialValueIdAlmacen;
 
-  const AlmacenButton({super.key, this.setAlmacen});
+  const AlmacenButton({super.key, this.setAlmacen, this.initialValueIdAlmacen});
 
   @override
   ConsumerState<AlmacenButton> createState() => _AlmacenButtonState();
@@ -16,12 +17,28 @@ class AlmacenButton extends ConsumerStatefulWidget {
 class _AlmacenButtonState extends ConsumerState<AlmacenButton> {
   late int idAlmacen;
   late String nombreAlmacen;
+  late AlmacenOB? initialValueAlmacen;
+
+  AlmacenOB? searchInitialValueAlmacen(int idAlmacen) {
+    return ref
+        .read(almacenesVMProvider)
+        .almacenes
+        .firstWhere((AlmacenOB almacenOB) => almacenOB.id_almacen == idAlmacen);
+  }
 
   @override
   void initState() {
-    idAlmacen = 0;
-    nombreAlmacen = 'TODOS';
+    idAlmacen = widget.initialValueIdAlmacen ?? 0;
     ref.read(almacenesVMProvider).getAllAlmacenesLDB();
+
+    if (widget.initialValueIdAlmacen != null) {
+      initialValueAlmacen = searchInitialValueAlmacen(idAlmacen);
+      nombreAlmacen =
+          initialValueAlmacen != null ? initialValueAlmacen!.nombre : 'TODOS';
+    } else {
+      nombreAlmacen = 'TODOS';
+    }
+
     super.initState();
   }
 

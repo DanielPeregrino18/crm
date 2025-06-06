@@ -207,7 +207,7 @@ class _PedidoState extends ConsumerState<Pedido> {
                         ],
                       ),
                     )
-                    : cabsPedRango == null
+                    : cabsPedRango == null || cabsPedRango.length == 0
                     ? SizedBox(
                       height: MediaQuery.of(context).size.height / 2,
                       child: Column(

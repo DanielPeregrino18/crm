@@ -11,6 +11,7 @@ import 'package:crm/presentation/widgets/custom_check_box.dart';
 import 'package:crm/presentation/screens/pedido/nuevo_detalle_pedido/widgets/confirmation_widget.dart';
 import 'package:crm/presentation/widgets/custom_stepper.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/almacenes/almacen_button.dart';
+import 'package:go_router/go_router.dart';
 
 class NuevoDetallePedido extends ConsumerStatefulWidget {
   const NuevoDetallePedido({super.key});
@@ -20,21 +21,16 @@ class NuevoDetallePedido extends ConsumerStatefulWidget {
 }
 
 class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
-  late PedidoVM pedidoVM = ref.watch(pedidoVMProvider);
+  late bool nuevo = GoRouterState.of(context).extra == true ? true : false;
 
   bool _isEnabled(CabPedidoModel? cabPedido) =>
       cabPedido?.ESTATUS == 'FACTURADO' ? false : true;
 
-  Widget _textField(
-    ColorScheme theme,
-    String label,
-    bool isEnabled,
-    dynamic initialValue,
-  ) {
+  Widget _textField(String label, dynamic initialValue, [bool? isEnabled]) {
     return CustomTextField(
       label: label,
-      isEnabled: isEnabled,
-      initialValue: initialValue,
+      isEnabled: nuevo ? true : isEnabled ?? false,
+      initialValue: nuevo ? null : initialValue,
     );
   }
 
@@ -58,11 +54,14 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
   Widget build(BuildContext context) {
     final ColorScheme theme = Theme.of(context).colorScheme;
 
+    final PedidoVM pedidoVM = ref.watch(pedidoVMProvider);
     final CabPedMovModel? cabPedMov = ref.read(cabPedMovVMProvider).value;
     final CabPedidoModel? cabPedido = cabPedMov?.cabPedido;
-    final bool nuevo = cabPedMov == null ? true : false;
 
     int currentStep = 0;
+
+    final GlobalKey<CustomStepperState> customStepperKey =
+        GlobalKey<CustomStepperState>();
 
     List<Step> steps = [
       // Datos del Pedido 1/4
@@ -88,45 +87,24 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
                       );
                     },
                   )
-                  : IgnorePointer(child: AlmacenButton()),
+                  : IgnorePointer(
+                    child: AlmacenButton(
+                      initialValueIdAlmacen: cabPedido?.ID_ALMACEN,
+                    ),
+                  ),
             ),
             // Cliente
-            _textField(
-              theme,
-              'Cliente',
-              _isEnabled(cabPedido),
-              cabPedido?.Nombre,
-            ),
+            _textField('Cliente', cabPedido?.Nombre, _isEnabled(cabPedido)),
             // Vendedor
-            _textField(
-              theme,
-              'Vendedor',
-              nuevo ? true : false,
-              cabPedido?.ID_VENDEDOR,
-            ),
+            _textField('Vendedor', cabPedido?.ID_VENDEDOR),
             // Sucursal
-            _textField(
-              theme,
-              'Sucursal',
-              nuevo ? true : false,
-              cabPedido?.ID_SUCURSAL_CTE,
-            ),
+            _textField('Sucursal', cabPedido?.ID_SUCURSAL_CTE),
             // Atención a
-            _textField(
-              theme,
-              'Atención a',
-              nuevo ? true : false,
-              cabPedido?.ATENCION,
-            ),
+            _textField('Atención a', cabPedido?.ATENCION),
             // Dirección
-            _textField(theme, 'Dirección', _isEnabled(cabPedido), 'Dirección'),
+            _textField('Dirección', 'Dirección', _isEnabled(cabPedido)),
             // Lista de precios
-            _textField(
-              theme,
-              'Lista de precios',
-              nuevo ? true : false,
-              'Lista precios',
-            ),
+            _textField('Lista de precios', 'Lista precios'),
           ],
         ),
       ),
@@ -159,18 +137,12 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               ),
             ),
             // No. de Serie
-            _textField(
-              theme,
-              'No. de Serie',
-              nuevo ? true : false,
-              'No. de Serie',
-            ),
+            _textField('No. de Serie', 'No. de Serie'),
             // Orden de compra
             _textField(
-              theme,
               'Orden compra',
-              _isEnabled(cabPedido),
               cabPedido?.OrdenCompra,
+              _isEnabled(cabPedido),
             ),
           ],
         ),
@@ -197,25 +169,15 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               ),
             ),
             // RFC
-            _textField(
-              theme,
-              'RFC',
-              nuevo ? true : false,
-              nuevo ? '' : cabPedMov.rfc,
-            ),
+            _textField('RFC', nuevo ? '' : cabPedMov?.rfc),
             // Plazo
-            _textField(theme, 'Plazo', nuevo ? true : false, 'Plazo'),
+            _textField('Plazo', 'Plazo'),
             // Descuento
-            _textField(theme, 'Descuento', false, cabPedido?.DESCUENTO),
+            _textField('Descuento', cabPedido?.DESCUENTO, false),
             // Moneda
-            _textField(theme, 'Moneda', nuevo ? true : false, 'Moneda'),
+            _textField('Moneda', 'Moneda'),
             // Paridad
-            _textField(
-              theme,
-              'Paridad',
-              nuevo ? true : false,
-              cabPedido?.PARIDAD,
-            ),
+            _textField('Paridad', cabPedido?.PARIDAD),
           ],
         ),
       ),
@@ -252,14 +214,9 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
               ),
             ),
             // Campo addenda
-            _textField(
-              theme,
-              'Campo addenda',
-              nuevo ? true : false,
-              cabPedido?.CampoAddenda,
-            ),
+            _textField('Campo addenda', cabPedido?.CampoAddenda),
             // Observaciones
-            _textField(theme, 'Observaciones', true, cabPedido?.OBSERVACIONES),
+            _textField('Observaciones', cabPedido?.OBSERVACIONES, true),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -342,16 +299,6 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
       ),
     ];
 
-    Function? mostrarConfirmacion() {
-      if (cabPedido == null) {
-        modalButtonSheetFullScreen(ConfirmationWidget());
-      }
-      return null;
-    }
-
-    final GlobalKey<CustomStepperState> customStepperKey =
-        GlobalKey<CustomStepperState>();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.primary,
@@ -389,7 +336,11 @@ class _NuevoDetallePedidoState extends ConsumerState<NuevoDetallePedido> {
       body: CustomStepper(
         key: customStepperKey,
         steps: steps,
-        onLastStepContinue: mostrarConfirmacion,
+        onLastStepContinue: () {
+          if (nuevo) {
+            modalButtonSheetFullScreen(ConfirmationWidget());
+          }
+        },
       ),
     );
   }
