@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
@@ -23,7 +24,7 @@ class _AlmacenButtonState extends ConsumerState<AlmacenButton> {
     return ref
         .read(almacenesVMProvider)
         .almacenes
-        .firstWhere((AlmacenOB almacenOB) => almacenOB.id_almacen == idAlmacen);
+        .firstWhereOrNull((almacen) => almacen.id_almacen == idAlmacen);
   }
 
   @override
@@ -34,7 +35,9 @@ class _AlmacenButtonState extends ConsumerState<AlmacenButton> {
     if (widget.initialValueIdAlmacen != null) {
       initialValueAlmacen = searchInitialValueAlmacen(idAlmacen);
       nombreAlmacen =
-          initialValueAlmacen != null ? initialValueAlmacen!.nombre : 'TODOS';
+          initialValueAlmacen != null
+              ? initialValueAlmacen!.nombre
+              : 'Almacén no guardado';
     } else {
       nombreAlmacen = 'TODOS';
     }
