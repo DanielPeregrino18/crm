@@ -27,9 +27,7 @@ class Cotizaciones extends ConsumerStatefulWidget {
 
 class _CotizacionesState extends ConsumerState<Cotizaciones> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final Fecha fecha = Fecha();
-
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     var cotizacionVM = ref.watch(cotizacionVMProvider);
@@ -86,10 +84,10 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
               cotizacionVM.idTipoFecha = tipoF;
             },
             setFechaInicial: (DateTime fechaI) {
-              cotizacionVM.setFechaInicial(fecha.crearString(fechaI));
+              cotizacionVM.fechaInicial = fechaI;
             },
             setFechaFinal: (DateTime fechaF) {
-              cotizacionVM.setFechaFin(fecha.crearString(fechaF));
+              cotizacionVM.fechaFin = fechaF;
             },
           ),
           Row(
@@ -120,7 +118,10 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
                           .getClientesFiltro(search);
                     },
                     onSelect: (value) {
-
+                      cotizacionVM.setCliente(value);
+                    },
+                    onClean: () {
+                      cotizacionVM.idCliente = 0;
                     },
                     label: "Cliente",
                   ),
@@ -132,15 +133,42 @@ class _CotizacionesState extends ConsumerState<Cotizaciones> {
                   height: 56,
                   child: SearchButton(
                     onPressed: () async {
+                      setState(() {
+                        isLoading = true;
+                      });
                       await cotizacionVM.buscarCotizacionesRango();
-                      setState(() {});
+                      setState(() {
+                        isLoading = false;
+                      });
                     },
                   ),
                 ),
               ),
             ],
           ),
-          Divider(height: 20),
+          Divider(height: 5),
+          Text(
+            'Resultados: ${cotizacionVM.cotizaciones.length}',
+            style: TextStyle(color: theme.primary),
+          ),
+          isLoading ?
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 2,
+            child: Column(
+              spacing: 15,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(
+                  backgroundColor: theme.primary.withAlpha(95),
+                ),
+                Text(
+                  'Buscando cotizaciones...',
+                  style: TextStyle(fontSize: 16.sp),
+                ),
+              ],
+            ),
+          ) :
           Expanded(
             child: ListView.builder(
               itemCount: cotizacionVM.cotizaciones.length,

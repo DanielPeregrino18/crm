@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../data/models/cliente_modelo.dart';
+
 final busquedaCotClieVMProvider = ChangeNotifierProvider.autoDispose<BusquedaCotClieVM>(
   (ref) => BusquedaCotClieVM(
     ref.read(formatterProvider),
@@ -16,7 +18,10 @@ final busquedaCotClieVMProvider = ChangeNotifierProvider.autoDispose<BusquedaCot
 
 class BusquedaCotClieVM extends ChangeNotifier {
   int idAlmacen = 0;
-  SearchController clienteController = SearchController();
+  int idCliente = 0;
+  FocusNode focusCliente = FocusNode();
+  TextEditingController clienteController = TextEditingController();
+
   TextEditingController ordenCompraController = TextEditingController();
   TextEditingController folioController = TextEditingController();
   DateTime fechaInicial = DateTime.now();
@@ -46,7 +51,7 @@ class BusquedaCotClieVM extends ChangeNotifier {
   Future<bool> buscarCotizaciones() async {
     cotizacionesCliente = await apiCabCotizaciones.getCabsCotCliente(
       idAlmacen,
-      1,
+      idCliente,
       formatter.format(fechaInicial),
       formatter.format(fechaFin),
       folioController.text == "" ? 0 : int.parse(folioController.text),
@@ -60,5 +65,11 @@ class BusquedaCotClieVM extends ChangeNotifier {
 
   Future<bool> buscarCotizacionMov({required int idMov}) {
     return busquedaCotMovVM.buscarCotizacionMov(idMov: idMov, idAlm: idAlmacen);
+  }
+
+  void setCliente(ClienteModelo cliente) {
+    idCliente = cliente.idCliente;
+    clienteController = TextEditingController(text: cliente.nombre);
+    notifyListeners();
   }
 }

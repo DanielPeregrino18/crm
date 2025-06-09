@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-final cotizacionVMProvider = StateProvider<CotizcionesVM>(
+final cotizacionVMProvider = ChangeNotifierProvider<CotizcionesVM>(
   (ref) => CotizcionesVM(ref.read(apiCabCotizacionProvider), 
                                         ref.read(formatterProvider),
                                                   ref.read(apiColleccionesProvider)),
@@ -46,7 +46,7 @@ class CotizcionesVM extends ChangeNotifier {
       idTipoFecha,
       formatter.format(fechaInicial),
       formatter.format(fechaFin),
-      1,
+      idCliente,
       "19cf4bcd-c52c-41bf-9fc8-b1f3d91af2df",
       2,
       10,
@@ -65,10 +65,16 @@ class CotizcionesVM extends ChangeNotifier {
     print(detallesCotizacion.length);
     notifyListeners();
   }
-  void setFechaInicial(String fecha){
-    fechaInicial = DateFormat('d/M/y').parse(fecha);
+  void setFechaInicial(DateTime fecha){
+    fechaInicial = fecha;
   }
-  void setFechaFin(String fecha){
-    fechaFin = DateFormat('d/M/y').parse(fecha);
+  void setFechaFin(DateTime fecha){
+    fechaFin = fecha;
+  }
+
+  void setCliente(ClienteModelo cliente) {
+    idCliente = cliente.idCliente;
+    clienteController = TextEditingController(text: cliente.nombre);
+    notifyListeners();
   }
 }

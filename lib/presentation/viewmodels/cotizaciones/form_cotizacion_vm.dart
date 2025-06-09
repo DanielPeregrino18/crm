@@ -139,16 +139,16 @@ class FormCotizacionVM extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setVendedor(VendedorModelo vendedor){
+    vendedorController = TextEditingController(text: vendedor.nombre);
+    focusCliente.requestFocus();
+    notifyListeners();
+  }
+
   void setCliente(ClienteModelo cliente){
     clienteController = TextEditingController(text: cliente.nombre);
     notifyListeners();
   }
-
-  void setVendedor(VendedorModelo vendedor){
-    vendedorController = TextEditingController(text: vendedor.nombre);
-    notifyListeners();
-  }
-
   void setCabCotizacion(CabCotizacionMov cabCotizacionMov) {
     if(cabCotizacionMov.cabCotizacion!=null) {
       CabCotizacion cabCotizacion = cabCotizacionMov.cabCotizacion!;

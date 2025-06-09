@@ -14,9 +14,7 @@ class CustomTextField extends StatelessWidget {
 
   final dynamic initialValue;
   final FocusNode? focusNode;
-
-
-
+  final Function()? onClean;
   CustomTextField({
     super.key,
     this.label = '',
@@ -25,7 +23,8 @@ class CustomTextField extends StatelessWidget {
     this.isEnabled = true,
     this.controller,
     this.initialValue,
-    this.focusNode
+    this.focusNode,
+    this.onClean
   });
 
   @override
@@ -48,6 +47,13 @@ class CustomTextField extends StatelessWidget {
         fillColor: theme.primary.withAlpha(15),
         label: Text(label),
         floatingLabelStyle: TextStyle(fontSize: 20),
+        suffixIcon: controller != null ? InkWell(
+          onTap: (){
+            controller!.clear();
+            if(onClean!=null){ onClean!();}
+            },
+          child: Icon(Icons.highlight_remove_rounded, color: theme.primary,),
+        ): null,
       ),
       enabled: isEnabled,
       initialValue: initialValue == null ? null : '$initialValue',
