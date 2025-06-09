@@ -3,7 +3,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'custom_text_field.dart';
 
 class CustomSearchBar<T> extends StatelessWidget {
-  CustomSearchBar({
+  const CustomSearchBar({
     super.key,
     required this.controller,
     required this.focusNode,
@@ -11,14 +11,16 @@ class CustomSearchBar<T> extends StatelessWidget {
     required this.sugerencias,
     required this.onSelect,
     required this.label,
-    this.isEnabled = true
+    this.isEnabled = true,
+    this.onClean
   });
   final TextEditingController controller;
   final FocusNode focusNode;
   final Widget Function(BuildContext context, T value) itemBuilder;
   final Function(T value) onSelect;
   final String label;
-  bool? isEnabled;
+  final bool isEnabled;
+  final void Function()? onClean;
   final List<T> Function(String search) sugerencias;
   @override
   Widget build(BuildContext context) {
@@ -29,10 +31,11 @@ class CustomSearchBar<T> extends StatelessWidget {
       hideOnEmpty: true,
       builder: (context, controller, focusNode) {
         return CustomTextField(
-          isEnabled: isEnabled!,
+          isEnabled: isEnabled,
           controller: controller,
           focusNode: focusNode,
           label: label,
+          onClean: onClean,
         );
       },
       itemBuilder: (context, value) {

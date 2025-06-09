@@ -36,116 +36,122 @@ class _CotizacionBusquedaClienteState
         icon: Icon(Icons.clear, color: theme.primary),
       ),
     ];
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        spacing: 15,
-        children: [
-          AlmacenesDropDownMenu(
-            setAlmacen: (int id) {
-              busquedaCotClieVM.idAlmacen = id;
-            },
-          ),
-          CustomSearchBar(
-              controller: TextEditingController(),
-              focusNode: FocusNode(),
-              itemBuilder: (context, value) {
-                return ListTile(
-                  title: Text("${value.idCliente}.- ${value.nombre}"),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(value.razonSocial),
-                      Text(value.rfc)
-                    ],
-                  ),
-                );
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          spacing: 15,
+          children: [
+            AlmacenesDropDownMenu(
+              setAlmacen: (int id) {
+                busquedaCotClieVM.idAlmacen = id;
               },
-              sugerencias: (search) {
-                return ref
-                    .read(clienteVMProvider)
-                    .getClientesFiltro(search);
-              },
-              onSelect: (value) {
-              },
-              label: "Cliente"
-          ),
-          CustomTextField(
-            label: "Ordenes de compra",
-            isEnabled: true,
-            controller: busquedaCotClieVM.ordenCompraController,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text("Fecha Inicial"),
-              TextButton(
-                onPressed: () async {
-                  busquedaCotClieVM.setFechaInicial(await customDatePicker(context, initialDate: busquedaCotClieVM.fechaInicial));
+            ),
+            CustomSearchBar(
+                controller: busquedaCotClieVM.clienteController,
+                focusNode: busquedaCotClieVM.focusCliente,
+                itemBuilder: (context, value) {
+                  return ListTile(
+                    title: Text("${value.idCliente}.- ${value.nombre}"),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(value.razonSocial),
+                        Text(value.rfc)
+                      ],
+                    ),
+                  );
                 },
-                child: Text(
-                  ref
-                      .read(formatterProvider)
-                      .format(busquedaCotClieVM.fechaInicial),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text("Fecha Fin"),
-              TextButton(
-                onPressed: () async {
-                  busquedaCotClieVM.setFechaFin(await customDatePicker(context, initialDate: busquedaCotClieVM.fechaFin));
+                sugerencias: (search) {
+                  return ref
+                      .read(clienteVMProvider)
+                      .getClientesFiltro(search);
                 },
-                child: Text(
-                  ref
-                      .read(formatterProvider)
-                      .format(busquedaCotClieVM.fechaFin),
-                ),
-              ),
-            ],
-          ),
-          CustomTextField(
-            label: "Folio",
-            isEnabled: true,
-            controller: busquedaCotClieVM.folioController,
-          ),
-          CustomButton(
-            onPressed: () async {
-              var mostrarCotizaciones = await busquedaCotClieVM.buscarCotizaciones();
-              if(mostrarCotizaciones){
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListView.builder(
-                          itemCount: busquedaCotClieVM.cotizacionesCliente.length,
-                          itemBuilder: (context, index) {
-                            return CardCotizacionMovimiento(cotCliente: busquedaCotClieVM.cotizacionesCliente[index],);
-                          },
-                        ),
-                      ),
-                    );
+                onSelect: (value) {
+                  busquedaCotClieVM.setCliente(value);
+                },
+                onClean: () {
+                  busquedaCotClieVM.idCliente = 0;
+                },
+                label: "Cliente"
+            ),
+            CustomTextField(
+              label: "Ordenes de compra",
+              isEnabled: true,
+              controller: busquedaCotClieVM.ordenCompraController,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text("Fecha Inicial"),
+                TextButton(
+                  onPressed: () async {
+                    busquedaCotClieVM.setFechaInicial(await customDatePicker(context, initialDate: busquedaCotClieVM.fechaInicial));
                   },
-                );
-              }else {
-                Fluttertoast.showToast(
-                    msg: "No hay elementos para mostrar.",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 3,
-                    textColor: Colors.white,
-                    fontSize: 18.0
-                );
-              }
-            },
-            label: "Buscar",
-          ),
-        ],
+                  child: Text(
+                    ref
+                        .read(formatterProvider)
+                        .format(busquedaCotClieVM.fechaInicial),
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text("Fecha Fin"),
+                TextButton(
+                  onPressed: () async {
+                    busquedaCotClieVM.setFechaFin(await customDatePicker(context, initialDate: busquedaCotClieVM.fechaFin));
+                  },
+                  child: Text(
+                    ref
+                        .read(formatterProvider)
+                        .format(busquedaCotClieVM.fechaFin),
+                  ),
+                ),
+              ],
+            ),
+            CustomTextField(
+              label: "Folio",
+              isEnabled: true,
+              controller: busquedaCotClieVM.folioController,
+            ),
+            CustomButton(
+              onPressed: () async {
+                var mostrarCotizaciones = await busquedaCotClieVM.buscarCotizaciones();
+                if(mostrarCotizaciones){
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            itemCount: busquedaCotClieVM.cotizacionesCliente.length,
+                            itemBuilder: (context, index) {
+                              return CardCotizacionMovimiento(cotCliente: busquedaCotClieVM.cotizacionesCliente[index],);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }else {
+                  Fluttertoast.showToast(
+                      msg: "No hay elementos para mostrar.",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 3,
+                      textColor: Colors.white,
+                      fontSize: 18.0
+                  );
+                }
+              },
+              label: "Buscar",
+            ),
+          ],
+        ),
       ),
     );
   }

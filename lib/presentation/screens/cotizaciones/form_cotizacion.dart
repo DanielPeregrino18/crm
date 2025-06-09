@@ -2,7 +2,7 @@ import 'package:crm/presentation/viewmodels/cotizaciones/form_cotizacion_vm.dart
 import 'package:crm/presentation/viewmodels/vendedor_vm.dart';
 import 'package:crm/presentation/widgets/custom_date_picker.dart';
 import 'package:crm/presentation/widgets/custom_search_bar.dart';
-import 'package:crm/presentation/widgets/search_bar_clientes.dart';
+import 'package:crm/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../viewmodels/cliente_vm.dart';
@@ -18,25 +18,6 @@ class FormCotizacion extends ConsumerStatefulWidget {
 
 class _FormCotizacionState extends ConsumerState<FormCotizacion> {
   int _currentStep = 0;
-
-  TextFormField _customTextField(
-    ColorScheme theme,
-    String label,
-    bool isEnabled,
-    TextEditingController textController,
-  ) {
-    return TextFormField(
-      controller: textController,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        filled: true,
-        fillColor: theme.primary.withAlpha(15),
-        label: Text(label),
-        floatingLabelStyle: TextStyle(fontSize: 20),
-      ),
-      enabled: isEnabled,
-    );
-  }
 
   Widget _customRow(ColorScheme theme, String left, Widget right) {
     return Container(
@@ -85,7 +66,6 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
     final formCotizacionVM = ref.watch(formCotizacionVMProvider);
     String estatus = formCotizacionVM.estatusLabel;
     bool isEnabled = estatus == "NUEVO" || estatus == "COTIZADO";
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: theme.primary,
@@ -122,7 +102,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                         ElevatedButton(
                           onPressed: details.onStepContinue,
                           child: Text(
-                            _currentStep == 4 ? 'Finalizar' : 'Siguiente',
+                            _currentStep == 6 ? 'Finalizar' : 'Siguiente',
                           ),
                         ),
                       ],
@@ -172,7 +152,6 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                       return ref.read(vendedorVMProvider).getVendedoresFiltro(search);
                     },
                     onSelect: (value) {
-                      formCotizacionVM.focusCliente.requestFocus();
                       formCotizacionVM.setVendedor(value);
                     },
                     label: "Vendedor"
@@ -202,17 +181,15 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     },
                     label: "Cliente"
                 ),
-                _customTextField(
-                  theme,
-                  'Sucursal',
-                  false,
-                  formCotizacionVM.sucursalController,
+                CustomTextField(
+                  label: "Sucursal",
+                  controller: formCotizacionVM.sucursalController,
+                  isEnabled: false
                 ),
-                _customTextField(
-                  theme,
-                  'Dirección',
-                  false,
-                  formCotizacionVM.direccionController,
+                CustomTextField(
+                    label: "Dirección",
+                    controller: formCotizacionVM.direccionController,
+                    isEnabled: false
                 ),
                 _customRow(
                   theme,
@@ -291,23 +268,20 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     },
                   ),
                 ),
-                _customTextField(
-                  theme,
-                  'No. de Serie',
-                  isEnabled,
-                  formCotizacionVM.noSerieController,
+                CustomTextField(
+                    label: "No. de Serie",
+                    controller: formCotizacionVM.noSerieController,
+                    isEnabled: isEnabled
                 ),
-                _customTextField(
-                  theme,
-                  'Orden de compra',
-                  isEnabled,
-                  formCotizacionVM.ordenCompraController,
+                CustomTextField(
+                    label: "Orden de compra",
+                    controller: formCotizacionVM.ordenCompraController,
+                    isEnabled: isEnabled
                 ),
-                _customTextField(
-                  theme,
-                  'Procesado',
-                  false,
-                  formCotizacionVM.procesadoController,
+                CustomTextField(
+                    label: "Procesado",
+                    controller: formCotizacionVM.procesadoController,
+                    isEnabled: false
                 ),
               ],
             ),
@@ -332,25 +306,21 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
-                _customTextField(
-                  theme,
-                  'RFC',
-                  false,
-                  formCotizacionVM.rfcController,
+                CustomTextField(
+                    label: "RFC",
+                    controller: formCotizacionVM.rfcController,
+                    isEnabled: false
                 ),
-                _customTextField(
-                  theme,
-                  'Plazo',
-                  false,
-                  formCotizacionVM.plazoController,
+                CustomTextField(
+                    label: "Plazo",
+                    controller: formCotizacionVM.plazoController,
+                    isEnabled: false
                 ),
-                _customTextField(
-                  theme,
-                  'Descuento',
-                  isEnabled,
-                  formCotizacionVM.descuentoController,
+                CustomTextField(
+                    label: "Descuento",
+                    controller: formCotizacionVM.descuentoController,
+                    isEnabled: isEnabled
                 ),
-                //_customTextField(theme, 'Moneda', true, ), todo cambiarlo a dropdown
                 _customRow(
                   theme,
                   'Moneda',
@@ -370,11 +340,10 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     },
                   ) : Text('${listaMonedas.firstWhere((element) => element['id'] == formCotizacionVM.idMoneda,)['nombre']}'),
                 ),
-                _customTextField(
-                  theme,
-                  'Paridad',
-                  false,
-                  formCotizacionVM.paridadController,
+                CustomTextField(
+                    label: "Paridad",
+                    controller: formCotizacionVM.paridadController,
+                    isEnabled: false
                 ),
               ],
             ),
@@ -422,17 +391,15 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
                     },
                   ),
                 ),
-                _customTextField(
-                  theme,
-                  'Campo addenda',
-                  isEnabled,
-                  formCotizacionVM.campoAddendaController,
+                CustomTextField(
+                    label: "Campo addenda",
+                    controller: formCotizacionVM.campoAddendaController,
+                    isEnabled: isEnabled
                 ),
-                _customTextField(
-                  theme,
-                  'Observaciones',
-                  isEnabled,
-                  formCotizacionVM.observacionesController,
+                CustomTextField(
+                    label: "Observaciones",
+                    controller: formCotizacionVM.observacionesController,
+                    isEnabled: isEnabled
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -463,85 +430,80 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
           Step(
             isActive: _currentStep >= 4,
             title: Text('Domicilio'),
-            content: Column(
-              spacing: 15,
-              children: [
-                _customTextField(
-                  theme,
-                  'Domicilio',
-                  true,
-                  formCotizacionVM.domicilioController,
-                ),
-                _customTextField(
-                  theme,
-                  'Colonia',
-                  true,
-                  formCotizacionVM.coloniaController,
-                ),
-                _customTextField(
-                  theme,
-                  'Estado',
-                  true,
-                  formCotizacionVM.estadoController,
-                ),
-                _customTextField(
-                  theme,
-                  'Ciudad',
-                  true,
-                  formCotizacionVM.ciudadController,
-                ),
-                _customTextField(
-                  theme,
-                  'Entre calles',
-                  true,
-                  formCotizacionVM.entreCallesController,
-                ),
-                _customTextField(
-                  theme,
-                  'Atención a',
-                  isEnabled,
-                  formCotizacionVM.atencionAContoller,
-                ),
-                _customRow(
-                  theme,
-                  'Fecha de Entrega',
-                  TextButton(
-                    child: Text(
-                      formCotizacionVM.getfechaEntrega(),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                    onPressed: () async {
-                      formCotizacionVM.setFechaEntrega(await customDatePicker(context));
-                    },
+            content: Padding(
+              padding: EdgeInsets.symmetric(vertical: 5),
+              child: Column(
+                spacing: 15,
+                children: [
+                  CustomTextField(
+                    label: "Domicilio",
+                    controller: formCotizacionVM.domicilioController,
                   ),
-                ),
-                _customRow(
-                  theme,
-                  'Hora de Entrega',
-                  TextButton(
-                    child: Text(
-                      formCotizacionVM.horaEntrega.format(context),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                    onPressed: () async {
-                      formCotizacionVM.setHoraEntrega(
-                          await customHourPicker(
-                            context,
-                            formCotizacionVM.horaEntrega.hour,
-                            formCotizacionVM.horaEntrega.minute,
-                            "Hora de entrega",
-                          )
-                      );
-                    },
+                  CustomTextField(
+                    label: "Colonia",
+                    controller: formCotizacionVM.coloniaController,
                   ),
-                ),
-              ],
+                  CustomTextField(
+                      label: "Estado",
+                      controller: formCotizacionVM.estadoController,
+                      isEnabled: true
+                  ),
+                  CustomTextField(
+                      label: "Ciudad",
+                      controller: formCotizacionVM.ciudadController,
+                      isEnabled: true
+                  ),
+                  CustomTextField(
+                      label: "Entre calles",
+                      controller: formCotizacionVM.entreCallesController,
+                      isEnabled: true
+                  ),
+                  CustomTextField(
+                      label: "Atención a",
+                      controller: formCotizacionVM.atencionAContoller,
+                      isEnabled: isEnabled
+                  ),
+                  _customRow(
+                    theme,
+                    'Fecha de Entrega',
+                    TextButton(
+                      child: Text(
+                        formCotizacionVM.getfechaEntrega(),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      onPressed: () async {
+                        formCotizacionVM.setFechaEntrega(await customDatePicker(context));
+                      },
+                    ),
+                  ),
+                  _customRow(
+                    theme,
+                    'Hora de Entrega',
+                    TextButton(
+                      child: Text(
+                        formCotizacionVM.horaEntrega.format(context),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                      onPressed: () async {
+                        formCotizacionVM.setHoraEntrega(
+                            await customHourPicker(
+                              context,
+                              formCotizacionVM.horaEntrega.hour,
+                              formCotizacionVM.horaEntrega.minute,
+                              "Hora de entrega",
+                            )
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Step(
@@ -610,7 +572,7 @@ class _FormCotizacionState extends ConsumerState<FormCotizacion> {
         },
         currentStep: _currentStep,
         onStepContinue: () {
-          if (_currentStep != 5) {
+          if (_currentStep != 6) {
             setState(() {
               _currentStep += 1;
             });
