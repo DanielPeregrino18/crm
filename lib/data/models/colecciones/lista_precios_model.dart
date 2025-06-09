@@ -4,10 +4,10 @@ part 'lista_precios_model.g.dart';
 
 @JsonSerializable()
 class ListaPreciosModel {
-  int? ID_LISTA;
-  int? ID_ARTICULO;
-  double? PRECIO;
-  double? DESCUENTO;
+  int ID_LISTA;
+  int ID_ARTICULO;
+  double PRECIO;
+  double DESCUENTO;
 
   ListaPreciosModel({
     required this.ID_LISTA,

@@ -207,7 +207,7 @@ class _PedidoState extends ConsumerState<Pedido> {
                         ],
                       ),
                     )
-                    : cabsPedRango == null || cabsPedRango.length == 0
+                    : cabsPedRango == null || cabsPedRango.isEmpty
                     ? SizedBox(
                       height: MediaQuery.of(context).size.height / 2,
                       child: Column(
@@ -262,18 +262,18 @@ class _PedidoState extends ConsumerState<Pedido> {
           ),
         ],
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     if (!isLoading) {
-      //       if (almacenes.isEmpty) {
-      //         cargarAlmacenes();
-      //       } else {
-      //         guardarAlmacenes(almacenes);
-      //       }
-      //     }
-      //   },
-      //   child: Icon(Icons.storefront),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (!isLoading) {
+            if (almacenes.isEmpty) {
+              cargarAlmacenes();
+            } else {
+              guardarAlmacenes(almacenes);
+            }
+          }
+        },
+        child: Icon(Icons.storefront),
+      ),
     );
   }
 }

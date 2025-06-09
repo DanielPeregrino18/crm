@@ -6,8 +6,8 @@ import 'package:crm/data/data_sources/objectbox.g.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
 
 class ObjectBoxConnection {
+  static ObjectBoxConnection? _instance;
   late final Store _store;
-
   late final Box<AlmacenOB> almacenBox;
   late final Box<ArticulosOB> articulosBox;
   late final Box<ListaPreciosOB> listaPreciosBox;
@@ -27,6 +27,16 @@ class ObjectBoxConnection {
       ),
       macosApplicationGroup: "objectbox.demo",
     );
-    return ObjectBoxConnection._create(store);
+    _instance = ObjectBoxConnection._create(store);
+    return _instance!;
+  }
+
+  static ObjectBoxConnection get instance {
+    if (_instance == null) {
+      throw Exception(
+        'ObjectBoxConnection no inicializada. Llama a create() primero',
+      );
+    }
+    return _instance!;
   }
 }

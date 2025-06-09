@@ -4,16 +4,16 @@ import 'package:objectbox/objectbox.dart';
 class ListaPreciosOB {
   @Id()
   int id;
-  int? ID_LISTA;
-  int? ID_ARTICULO;
-  double? PRECIO;
-  double? DESCUENTO;
+  int ID_LISTA;
+  int ID_ARTICULO;
+  double PRECIO;
+  double DESCUENTO;
 
   ListaPreciosOB({
     this.id = 0,
-    this.ID_LISTA,
-    this.ID_ARTICULO,
-    this.PRECIO,
-    this.DESCUENTO,
+    required this.ID_LISTA,
+    required this.ID_ARTICULO,
+    required this.PRECIO,
+    required this.DESCUENTO,
   });
 }

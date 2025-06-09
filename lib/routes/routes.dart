@@ -6,6 +6,7 @@ import 'package:crm/presentation/screens/screens.dart';
 
 final routerProvider = Provider<GoRouter>(
   (ref) => GoRouter(
+    initialLocation: '/carga',
     routes: <RouteBase>[
       GoRoute(
         path: '/',
@@ -30,6 +31,12 @@ final routerProvider = Provider<GoRouter>(
             builder: (context, state) => NuevoDetallePedido(),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/carga',
+        builder: (context, state) {
+          return Carga();
+        },
       ),
     ],
   ),
