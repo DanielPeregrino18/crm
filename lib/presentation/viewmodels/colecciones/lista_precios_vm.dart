@@ -8,16 +8,29 @@ import 'package:flutter/cupertino.dart';
 
 part 'lista_precios_vm.g.dart';
 
+// Credenciales
 int idAlmacen = 0;
 String idSaas = '6378459f-59c3-4d81-9fa1-4b07d7bf95a6';
 int idCompany = 2;
 int idSubscription = 97;
 
 @riverpod
+class ListaPreciosMsgVM extends _$ListaPreciosMsgVM {
+  @override
+  String build() {
+    return 'Cargando...';
+  }
+
+  void changeMsg(String msg) {
+    state = msg;
+  }
+}
+
+@riverpod
 class ListaPreciosVM extends _$ListaPreciosVM {
   @override
   Future<List<ListaPreciosModel>?> build() async {
-    return obtenerListaPrecios();
+    return null;
   }
 
   final ListaPreciosRepository _listaPreciosRepository =
@@ -37,7 +50,7 @@ class ListaPreciosVM extends _$ListaPreciosVM {
       );
       return listaPrecios;
     } catch (e) {
-      debugPrint('Error al obtener los datos de listas de precios: $e');
+      debugPrint('Error al obtener la lista de precios: $e');
       return null;
     }
   }
@@ -82,37 +95,12 @@ class ListaPreciosLDBVM extends _$ListaPreciosLDBVM {
     return _listaPreciosService.agregarListaPreciosLDB(listaPreciosLDB);
   }
 
-  bool eliminarListaPreciosLDB(int idListaPreciosLDB) {
-    return _listaPreciosService.eliminarListaPreciosLDB(idListaPreciosLDB);
-  }
-
-  bool actualizarListaPreciosLDB(ListaPreciosOB listaPreciosLDB) {
-    return _listaPreciosService.actualizarListaPreciosLDB(listaPreciosLDB);
-  }
-}
-
-@riverpod
-class Hola extends _$Hola {
-  late final ListaPreciosService _listaPreciosService;
-
-  @override
-  List<ListaPreciosOB> build() {
-    _listaPreciosService = ref.read(listaPreciosServiceVMProvider);
-    return [];
-  }
-
-  ListaPreciosOB? getListaPrecioById(int idListaPreciosLDB) {
-    return _listaPreciosService.getListaPrecioById(idListaPreciosLDB);
-  }
-
-  void getAllListaPreciosLDB() {
-    state = _listaPreciosService.getAllListaPreciosLDB();
-  }
-
-  bool agregarListaPreciosLDB(List<ListaPreciosModel>? listaPreciosCargada) {
+  bool agregarColeccionListaPreciosLDB(
+    List<ListaPreciosModel>? listaPreciosCargada,
+  ) {
     try {
       if (listaPreciosCargada != null && listaPreciosCargada.isNotEmpty) {
-        late List<ListaPreciosOB> listaPreciosOB = [];
+        List<ListaPreciosOB> coleccionListaPreciosOB = [];
 
         for (ListaPreciosModel item in listaPreciosCargada) {
           ListaPreciosOB list = ListaPreciosOB(
@@ -121,16 +109,20 @@ class Hola extends _$Hola {
             PRECIO: item.PRECIO,
             DESCUENTO: item.DESCUENTO,
           );
-          listaPreciosOB.add(list);
+          coleccionListaPreciosOB.add(list);
         }
 
-        final dao = ref.read(listaPreciosDAOVMProvider);
-        dao.listaPreciosBox.putMany(listaPreciosOB);
-        debugPrint('Longitud lista precios local: ${dao.listaPreciosBox.count()}');
+        bool result = _listaPreciosService.agregarColeccionListaPreciosLDB(
+          coleccionListaPreciosOB,
+        );
 
-        return true;
+        debugPrint(
+          'Cantidad listas de precios LDB: ${_listaPreciosService.cantidadListasPreciosLDB()}',
+        );
+
+        return result;
       } else {
-        debugPrint('Lista de precios cargada vacía');
+        debugPrint('Lista de precios cargada nula o vacía');
         return false;
       }
     } catch (e) {

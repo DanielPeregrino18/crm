@@ -1,5 +1,6 @@
 import 'package:crm/core/dao/almacen_dao.dart';
 import 'package:crm/domain/entities/almacen_ob.dart';
+
 class AlmacenServicio {
   final AlmacenLDBDao almacenRepositorio;
 

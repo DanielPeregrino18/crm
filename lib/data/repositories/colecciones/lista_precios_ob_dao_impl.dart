@@ -2,6 +2,7 @@ import 'package:crm/core/dao/lista_precios_dao.dart';
 import 'package:crm/config/DB/object_box_connection.dart';
 import 'package:crm/domain/entities/lista_precios_ob.dart';
 import 'package:crm/data/data_sources/objectbox.g.dart';
+import 'package:flutter/cupertino.dart';
 
 class ListaPreciosOBDAOImpl extends ListaPreciosLDBDAO {
   final listaPreciosBox = ObjectBoxConnection.instance.listaPreciosBox;
@@ -24,6 +25,24 @@ class ListaPreciosOBDAOImpl extends ListaPreciosLDBDAO {
     } catch (e) {
       return false;
     }
+  }
+
+  @override
+  bool agregarColeccionListaPreciosLDB(
+    List<ListaPreciosOB> coleccionListaPreciosOB,
+  ) {
+    try {
+      listaPreciosBox.removeAll();
+      listaPreciosBox.putMany(coleccionListaPreciosOB);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  int cantidadListasPreciosLDB() {
+    return listaPreciosBox.count();
   }
 
   @override

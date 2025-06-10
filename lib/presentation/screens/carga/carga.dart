@@ -1,8 +1,8 @@
-import 'package:crm/data/models/colecciones/lista_precios_model.dart';
-import 'package:crm/domain/entities/lista_precios_ob.dart';
-import 'package:crm/presentation/viewmodels/colecciones/lista_precios_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:crm/data/models/colecciones/lista_precios_model.dart';
+import 'package:crm/presentation/viewmodels/colecciones/lista_precios_vm.dart';
+import 'package:go_router/go_router.dart';
 
 class Carga extends ConsumerStatefulWidget {
   const Carga({super.key});
@@ -12,13 +12,15 @@ class Carga extends ConsumerStatefulWidget {
 }
 
 class _CargaState extends ConsumerState<Carga> {
-  late ColorScheme theme = Theme.of(context).colorScheme;
-
   bool isLoading = false;
-  late String leyenda;
-  late List<ListaPreciosModel>? listaPreciosCargada = [];
+  String leyenda = 'Cargando...';
+  List<ListaPreciosModel>? listaPreciosCargada = [];
 
-  void cargarListaPrecios() async {
+  void cargarGuardarListaPrecios() async {
+    bool result = false;
+
+    // Consulta datos
+
     setState(() {
       isLoading = true;
       leyenda = 'Cargando lista de precios...';
@@ -27,107 +29,48 @@ class _CargaState extends ConsumerState<Carga> {
     listaPreciosCargada =
         await ref.read(listaPreciosVMProvider.notifier).obtenerListaPrecios();
 
-    setState(() {
-      isLoading = false;
-    });
-  }
+    // Guardado en local
 
-  void guardarListaPrecios() async {
     setState(() {
-      isLoading = true;
       leyenda = 'Guardando lista de precios...';
     });
 
-    await ref
-        .read(holaProvider.notifier)
-        .agregarListaPreciosLDB(listaPreciosCargada);
+    result = ref
+        .read(listaPreciosLDBVMProvider.notifier)
+        .agregarColeccionListaPreciosLDB(listaPreciosCargada);
 
-    // if (listaPreciosCargada != null) {
-    //   if (listaPreciosCargada!.isNotEmpty) {
-    //     late List<ListaPreciosOB> listaPreciosOB = [];
-    //
-    //     for (ListaPreciosModel item in listaPreciosCargada!) {
-    //       ListaPreciosOB list = ListaPreciosOB(
-    //         ID_LISTA: item.ID_LISTA,
-    //         ID_ARTICULO: item.ID_ARTICULO,
-    //         PRECIO: item.PRECIO,
-    //         DESCUENTO: item.DESCUENTO,
-    //       );
-    //       listaPreciosOB.add(list);
-    //     }
-    //
-    //     bool result = ref
-    //           .read(listaPreciosLDBVMProvider.notifier)
-    //           .agregarListaPreciosLDB(listaPreciosLDB);
+    await Future.delayed(const Duration(seconds: 2), () {});
 
-    // int i = 1;
-    //
-    // for (ListaPreciosModel item in listaPreciosCargada!) {
-    //   ListaPreciosOB listaPreciosLDB = ListaPreciosOB(
-    //     ID_LISTA: item.ID_LISTA,
-    //     ID_ARTICULO: item.ID_ARTICULO,
-    //     PRECIO: item.PRECIO,
-    //     DESCUENTO: item.DESCUENTO,
-    //   );
-    //
-    //   debugPrint(
-    //     "Guardando lista precios...${i++}/${listaPreciosCargada?.length}",
-    //   );
-    //
-    //   bool result = ref
-    //       .read(listaPreciosLDBVMProvider.notifier)
-    //       .agregarListaPreciosLDB(listaPreciosLDB);
-    //
-    //   if (result == false) {
-    //     debugPrint(
-    //       "Lista de precios no almacenada, ID_LISTA duplicado: ${listaPreciosLDB.ID_LISTA}, ID_ARTICULO duplicado: ${listaPreciosLDB.ID_ARTICULO}",
-    //     );
-    //   } else {
-    //     debugPrint(
-    //       "Guardando lista precios...${i++}/${listaPreciosCargada?.length}",
-    //     );
-    //   }
-    // }
-    //   ListaPreciosModel listaPrecios = listaPreciosCargada![105670];
-    //
-    //   ListaPreciosOB listaPreciosLDB = ListaPreciosOB(
-    //     ID_LISTA: listaPrecios.ID_LISTA,
-    //     ID_ARTICULO: listaPrecios.ID_ARTICULO,
-    //     PRECIO: listaPrecios.PRECIO,
-    //     DESCUENTO: listaPrecios.DESCUENTO,
-    //   );
-    //
-    //   bool result = ref
-    //       .read(listaPreciosLDBVMProvider.notifier)
-    //       .agregarListaPreciosLDB(listaPreciosLDB);
-    //
-    //   if (result == false) {
-    //     debugPrint(
-    //       "Lista de precios no almacenada localmente, ID_LISTA duplicado: ${listaPreciosLDB.ID_LISTA}, ID_ARTICULO duplicado: ${listaPreciosLDB.ID_ARTICULO}",
-    //     );
-    //   } else {
-    //     debugPrint(
-    //       "Guardando lista precios...${i++}/${listaPreciosCargada?.length}",
-    //     );
-    //   }
-    // } else {
-    //   debugPrint("No hay listas de precios para guardar");
-    //   }
-    // }
+    setState(() {
+      leyenda =
+          result
+              ? 'Lista de precios guardada correctamente'
+              : 'Error al guardar la lista de precios';
+    });
+
+    await Future.delayed(const Duration(seconds: 2), () {});
 
     setState(() {
       ref.watch(listaPreciosLDBVMProvider.notifier).getAllListaPreciosLDB();
       isLoading = false;
     });
+
+    // Redirección siguiente pantalla
+    if (mounted && result) {
+      context.go('/');
+    }
   }
 
   @override
   void initState() {
+    // cargarGuardarListaPrecios();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme theme = Theme.of(context).colorScheme;
+
     return Scaffold(
       backgroundColor: theme.onPrimary,
       body: Center(
@@ -151,19 +94,19 @@ class _CargaState extends ConsumerState<Carga> {
                   spacing: 10,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
+                    TextButton.icon(
                       onPressed: () {
-                        cargarListaPrecios();
+                        cargarGuardarListaPrecios();
                       },
-                      child: Text('Cargar lista precios'),
+                      label: Text('Lista de precios'),
+                      icon: Icon(Icons.list),
                     ),
-                    ElevatedButton(
+                    TextButton.icon(
                       onPressed: () {
-                        if (listaPreciosCargada != null) {
-                          guardarListaPrecios();
-                        }
+                        context.go('/');
                       },
-                      child: Text('Guardar lista precios'),
+                      label: Text('Inicio'),
+                      icon: Icon(Icons.home),
                     ),
                   ],
                 ),

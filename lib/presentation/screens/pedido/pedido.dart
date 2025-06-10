@@ -262,18 +262,18 @@ class _PedidoState extends ConsumerState<Pedido> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (!isLoading) {
-            if (almacenes.isEmpty) {
-              cargarAlmacenes();
-            } else {
-              guardarAlmacenes(almacenes);
-            }
-          }
-        },
-        child: Icon(Icons.storefront),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     if (!isLoading) {
+      //       if (almacenes.isEmpty) {
+      //         cargarAlmacenes();
+      //       } else {
+      //         guardarAlmacenes(almacenes);
+      //       }
+      //     }
+      //   },
+      //   child: Icon(Icons.storefront),
+      // ),
     );
   }
 }

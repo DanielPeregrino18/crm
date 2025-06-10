@@ -29,6 +29,14 @@ class ListaPreciosService {
     return listaPreciosRepository.agregarListaPreciosLDB(listaPreciosOB);
   }
 
+  bool agregarColeccionListaPreciosLDB(List<ListaPreciosOB> coleccionListaPreciosOB) {
+    return listaPreciosRepository.agregarColeccionListaPreciosLDB(coleccionListaPreciosOB);
+  }
+
+  int cantidadListasPreciosLDB () {
+    return listaPreciosRepository.cantidadListasPreciosLDB();
+  }
+
   bool eliminarListaPreciosLDB(int idListaPreciosLDB) {
     return listaPreciosRepository.eliminarListaPreciosLDB(idListaPreciosLDB);
   }
