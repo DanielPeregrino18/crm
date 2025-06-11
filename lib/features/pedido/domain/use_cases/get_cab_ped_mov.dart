@@ -11,7 +11,9 @@ class GetCabPedMovUseCase
   GetCabPedMovUseCase(this._cabPedMovRepository);
 
   @override
-  Future<DataState<CabPedMovEntity?>> call({required GetCabPedMovParams params}) {
-    return _cabPedMovRepository.getCabPedMov(params.idAlmacen, params.idPedido);
+  Future<DataState<CabPedMovEntity?>> call({
+    required GetCabPedMovParams params,
+  }) {
+    return _cabPedMovRepository.getCabPedMov(params);
   }
 }

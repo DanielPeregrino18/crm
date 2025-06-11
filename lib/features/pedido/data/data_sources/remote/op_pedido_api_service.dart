@@ -9,7 +9,7 @@ part 'op_pedido_api_service.g.dart';
 abstract class OpPedidoApiService {
   factory OpPedidoApiService(Dio dio) = _OpPedidoApiService;
 
-  @GET('/GetCabsPedCliente')
+  @GET('/GetCabPedMov')
   Future<HttpResponse<CabPedMovModel?>> getCabPedMov({
     @Query('idAlmacen') int? idAlmacen,
     @Query('idPedido') int? idPedido,

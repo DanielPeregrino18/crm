@@ -1,3 +1,6 @@
+import 'package:crm/features/pedido/data/data_sources/remote/op_pedido_api_service.dart';
+import 'package:crm/features/pedido/data/models/cab_ped_mov_models/cab_ped_mov_params.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -50,6 +53,32 @@ class PedidoVM extends _$PedidoVM {
   final SearchController clienteSearchController = SearchController();
 }
 
+@riverpod
+class OpPedidoApiServiceVM extends _$OpPedidoApiServiceVM {
+  @override
+  OpPedidoApiService build() {
+    final Dio dio = Dio(BaseOptions(contentType: "application/json"));
+    dio.interceptors.add(
+      LogInterceptor(
+        request: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: false,
+        error: true,
+      ),
+    );
+    return OpPedidoApiService(dio);
+  }
+}
+
+@riverpod
+class CabPedMovRepositoryImplVM extends _$CabPedMovRepositoryImplVM {
+  @override
+  CabPedMovRepositoryImpl build() {
+    return CabPedMovRepositoryImpl(ref.read(opPedidoApiServiceVMProvider));
+  }
+}
+
 // Provider para la obtención de un pedido por número de movimiento
 @riverpod
 class CabPedMovVM extends _$CabPedMovVM {
@@ -60,18 +89,17 @@ class CabPedMovVM extends _$CabPedMovVM {
 
   int idAlmacen = 0;
 
-  late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
-
-  final CabPedMovRepositoryImpl _cabPedMovRepositoryImpl =
-      CabPedMovRepositoryImpl();
+  late final CabPedMovRepositoryImpl _cabPedMovRepositoryImpl = ref.read(
+    cabPedMovRepositoryImplVMProvider,
+  );
 
   Future<bool> getCabPedMov(int idAlmacen, int idPedido) async {
     try {
-      final CabPedMovModel? pedido =
-      await _cabPedMovRepositoryImpl
-          .getCabPedMov(idAlmacen, idPedido);
-      state = AsyncData(pedido);
-      return true;
+      final pedido = await _cabPedMovRepositoryImpl.getCabPedMov(
+        GetCabPedMovParams(idAlmacen: idAlmacen, idPedido: idPedido),
+      );
+      state = AsyncData(pedido.data);
+      return pedido.data != null ? true : false;
     } catch (e) {
       state = AsyncData(null);
       debugPrint('Error al obtener los datos del pedido: $e');

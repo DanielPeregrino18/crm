@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:crm/features/pedido/data/models/cab_ped_mov_models/cab_ped_mov_params.dart';
 import 'package:crm/features/pedido/domain/repositories/cab_ped_mov_repository.dart';
 import 'package:crm/features/pedido/data/data_sources/remote/op_pedido_api_service.dart';
 import 'package:dio/dio.dart';
@@ -9,23 +9,16 @@ import 'package:crm/core/constants/constants.dart';
 
 class CabPedMovRepositoryImpl extends CabPedMovRepository {
   final OpPedidoApiService _opPedidoApiService;
-
   CabPedMovRepositoryImpl(this._opPedidoApiService);
-
-  // CabPedMovRepositoryImpl()
-  //   : _opPedidoApiService = OpPedidoApiService(
-  //       Dio(BaseOptions(contentType: "application/json")),
-  //     );
 
   @override
   Future<DataState<CabPedMovModel?>> getCabPedMov(
-    int idAlmacen,
-    int idPedido,
+    GetCabPedMovParams params,
   ) async {
     try {
       final httpResponse = await _opPedidoApiService.getCabPedMov(
-        idAlmacen: idAlmacen,
-        idPedido: idPedido,
+        idAlmacen: params.idAlmacen,
+        idPedido: params.idPedido,
         idSaas: idSaas,
         idCompany: idCompany,
         idSubscription: idSubscription,
@@ -34,7 +27,7 @@ class CabPedMovRepositoryImpl extends CabPedMovRepository {
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
       } else {
-        return DataFailed(
+        return DataException(
           DioException(
             error: httpResponse.response.statusMessage,
             response: httpResponse.response,
@@ -44,7 +37,7 @@ class CabPedMovRepositoryImpl extends CabPedMovRepository {
         );
       }
     } on DioException catch (e) {
-      return DataFailed(e);
+      return DataException(e);
     }
   }
 

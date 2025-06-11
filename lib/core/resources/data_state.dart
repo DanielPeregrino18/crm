@@ -11,6 +11,6 @@ class DataSuccess<T> extends DataState<T> {
   const DataSuccess(T data) : super(data: data);
 }
 
-class DataFailed<T> extends DataState<T> {
-  const DataFailed(DioException exception) : super(exception: exception);
+class DataException<T> extends DataState<T> {
+  const DataException(DioException exception) : super(exception: exception);
 }

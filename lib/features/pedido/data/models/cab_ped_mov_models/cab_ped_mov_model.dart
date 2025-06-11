@@ -7,10 +7,10 @@ part 'cab_ped_mov_model.g.dart';
 @JsonSerializable()
 class CabPedMovModel extends CabPedMovEntity {
   const CabPedMovModel({
-    int? idListaPrecio,
-    String? rfc,
-    int? idMoneda,
-    CabPedidoModel? cabPedido,
+    super.idListaPrecio,
+    super.rfc,
+    super.idMoneda,
+    super.cabPedido,
   });
 
   factory CabPedMovModel.fromJson(Map<String, dynamic> json) =>
