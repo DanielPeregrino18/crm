@@ -50,6 +50,7 @@ abstract class OpPedidoApiService {
     @Query('idSaas') String idSaas,
     @Query('idCompany') int idCompany,
     @Query('idSubscription') int idSubscription,
+    @CancelRequest() CancelToken? cancelToken,
   );
 
   @GET('/GetDetPedMov')

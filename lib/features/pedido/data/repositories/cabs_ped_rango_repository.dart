@@ -19,6 +19,7 @@ class CabsPedidoRangoRepository {
     String idSaas,
     int idCompany,
     int idSubscription,
+    CancelToken? cancelToken,
   ) async {
     try {
       final List<CabPedRangoModel>? cabsPedRango = await _opPedidoApiService
@@ -31,6 +32,7 @@ class CabsPedidoRangoRepository {
             idSaas,
             idCompany,
             idSubscription,
+            cancelToken,
           );
       return cabsPedRango;
     } catch (e) {

@@ -152,20 +152,26 @@ class CabsPedClienteVM extends _$CabsPedClienteVM {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CabsPedRangoVM extends _$CabsPedRangoVM {
   @override
   FutureOr<List<CabPedRangoModel>?> build() async {
     return null;
   }
 
-  late PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
+  late final PedidoVM pedidosVM = ref.watch(pedidoVMProvider);
 
   final CabsPedidoRangoRepository _cabsPedidoRangoRepository =
       CabsPedidoRangoRepository();
 
+  // an object from package:dio that allows cancelling http requests
+  final CancelToken cancelToken = CancelToken();
+
   Future<bool> getCabsPedRango() async {
     try {
+      // when the provider is destroyed, cancel the http request
+      ref.onDispose(() => cancelToken.cancel());
+
       final List<CabPedRangoModel>? cabsPedRango =
           await _cabsPedidoRangoRepository.getCabsPedRango(
             pedidosVM.almacenSeleccionado.id,
@@ -176,6 +182,7 @@ class CabsPedRangoVM extends _$CabsPedRangoVM {
             pedidosVM.idSaas,
             pedidosVM.idCompany,
             pedidosVM.idSubscription,
+            cancelToken,
           );
       state = AsyncData(cabsPedRango);
       debugPrint('Número de resultados: ${state.value?.length}');
