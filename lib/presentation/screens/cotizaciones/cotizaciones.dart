@@ -1,5 +1,5 @@
 import 'package:crm/data/models/cliente_modelo.dart';
-import 'package:crm/core/utils/fecha.dart';
+import 'package:crm/core/util/fecha.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/card_cotizacion.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_cliente.dart';
 import 'package:crm/presentation/screens/cotizaciones/widgets/cotizacion_busqueda_movimiento.dart';

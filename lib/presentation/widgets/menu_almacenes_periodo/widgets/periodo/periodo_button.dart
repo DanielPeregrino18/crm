@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:crm/core/utils/fecha.dart';
+import 'package:crm/core/util/fecha.dart';
 import 'package:crm/presentation/widgets/menu_almacenes_periodo/widgets/periodo/menu_periodo.dart';
 
 class PeriodoButton extends StatefulWidget {

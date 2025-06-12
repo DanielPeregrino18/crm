@@ -1,6 +1,6 @@
 import 'package:crm/presentation/widgets/custom_date_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:crm/core/utils/fecha.dart';
+import 'package:crm/core/util/fecha.dart';
 
 class FechaButton extends StatefulWidget {
   final bool? esFechaInicial;

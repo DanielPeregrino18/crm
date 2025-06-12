@@ -54,6 +54,9 @@ dependencies:
   fluttertoast: ^8.2.12
   after_layout: ^1.2.0
   flutter_typeahead: ^5.2.0
+  collection: ^1.19.1 # Para manejo de resultados en búsquedas con Object Box
+  equatable: ^2.0.7 # Compación sencilla de valores al trabajar con riverpod
+
   flutter_localizations:
     sdk: flutter
 

@@ -26,18 +26,18 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.read(ariculoOBXImplProvider).cargarArticulos();
     return ScreenUtilInit(
-        designSize: Size(430, 930),
-        builder: (context, child) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-            ],
-            theme: ThemeData(useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue)),
-            routerConfig: ref.watch(routerProvider),
-          );
-        }
+      designSize: Size(430, 930),
+      builder: (context, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: [GlobalMaterialLocalizations.delegate],
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+          ),
+          routerConfig: ref.watch(routerProvider),
+        );
+      },
     );
   }
 }
-
